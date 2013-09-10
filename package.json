@@ -44,6 +44,8 @@
         
         "karma-safari-launcher": "~0.1",
         
+        "karma-opera-launcher": "~0.1",
+        
         "karma-ie-launcher": "~0.1"
 
     }
