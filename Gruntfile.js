@@ -39,6 +39,13 @@ module.exports = function (grunt) {
     karma: {
         unit: {
             configFile: 'karma.conf.js'
+        },
+        
+        continuous: {
+            configFile: 'karma.conf.js',
+            singleRun: true,
+            reporters: ['progress'],
+            browsers: ['PhantomJS', 'Firefox']
         }
     }
     
@@ -50,6 +57,6 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-jsdoc');
   
-  grunt.registerTask('travis', ['jshint', 'karma']);
+  grunt.registerTask('travis', ['jshint', 'karma:continuous']);
 
 };
