@@ -40,7 +40,11 @@
         
         "expect.js" : "~0.2",
         
-        "karma-coverage": "~0.1"
+        "karma-coverage": "~0.1",
+        
+        "karma-safari-launcher": "~0.1",
+        
+        "karma-ie-launcher": "~0.1"
 
     }
 }
