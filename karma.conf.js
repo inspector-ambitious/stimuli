@@ -71,7 +71,7 @@ module.exports = function(config) {
     // - Safari (only Mac)
     // - PhantomJS
     // - IE (only Windows)
-    browsers: ['Firefox'],
+    browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'Opera', 'IE'],
 
 
     // If browser does not capture in given timeout [ms], kill it
@@ -80,6 +80,6 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: true
+    singleRun: false
   });
 };
