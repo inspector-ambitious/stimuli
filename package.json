@@ -1,0 +1,42 @@
+{
+    
+    "name": "domino",
+            
+    "description": "DOM Testing library",
+
+    "private": true,
+            
+    "main": "./src/domino",
+  
+    "author": "Nicolas Ferrero <ferrero.nicolas@gmail.com>",
+  
+    "version": "0.1.0",
+    
+    "repository": {
+
+        "type": "git",
+                
+        "url": "https://github.com/yhwh/domino.git"
+
+    },
+          
+    "devDependencies": {
+        
+        "karma": "~0.10",
+                
+        "karma-mocha": "~0.1",
+        
+        "grunt": "~0.4",
+        
+        "grunt-contrib-jshint": "~0.6",
+        
+        "grunt-karma": "~0.6",
+        
+        "grunt-jsdoc": "~0.4",
+        
+        "expect.js" : "~0.2",
+        
+        "karma-coverage": "~0.1"
+
+    }
+}
