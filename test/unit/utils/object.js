@@ -23,11 +23,15 @@ define(['utils/object'], function(Domino) {
             
                         
             it('should merge two object properties', function() {
+                
                 var a = {a: 1};
+                
                 var b = {b: 2};
                 
                 expect(a).to.be(Obj.merge(a, b));
+                
                 expect(a.a).to.be(1);
+                
                 expect(a.b).to.be(2);
                 
             });

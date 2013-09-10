@@ -7,7 +7,14 @@
   "jquery": true,
   "devel": true,
   "globals": {
-    "Domino": true
+    "Domino": true,
+    "define": true,
+    "describe": true,
+    "beforeEach": true,
+    "afterEach": true,
+    "it": true,
+    "expect": true,
+    "requirejs": true
   },
   "debug": false,
   "strict": false,

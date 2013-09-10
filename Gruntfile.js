@@ -50,6 +50,6 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-jsdoc');
   
-  grunt.registerTask('default', ['jshint', 'karma', 'jsdoc']);
+  grunt.registerTask('travis', ['jshint', 'karma']);
 
 };
