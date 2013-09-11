@@ -3,16 +3,35 @@ Domino [![Build Status](https://travis-ci.org/yhwh/domino.png?branch=master)](ht
 
 A Dom Events injection library.
 
-Build
-----------
+Supported Browsers:
 
-Install all dependencies:
+* IE8-10
+* Firefox
+* Chrome
+* Safari
+* PhantomJS
+
+How to build
+------------
+
+Install grunt:
+
+    npm install -g grunt-cli
+
+Install all required node modules: 
 
     npm install
 
+Build domino in build/domino.js:
 
-Running Tests
+    grunt build
+
+How to tests
 -------------
+
+To lint all js files:
+
+    grunt 
 
 To execute all unit tests, use:
 
