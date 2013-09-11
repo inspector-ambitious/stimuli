@@ -24,6 +24,10 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     cp -r ../build/domino.js .
 
+    git add docs
+
+    git add domino.js
+
     git commit -a -m "Publishing JSDoc"
 
     git push origin gh-pages
