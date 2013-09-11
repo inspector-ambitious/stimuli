@@ -15,7 +15,7 @@ before_script:
   - npm install -g grunt-cli
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - bash .travis/sauce_connect_setup.sh
+  - .travis/sauce_connect_setup.sh
 
 script:
   - grunt jshint 
@@ -26,4 +26,4 @@ script:
   - grunt build
 
 after_script:
-  - bash .travis/ghpages-deploy.sh
+  - .travis/ghpages-deploy.sh
