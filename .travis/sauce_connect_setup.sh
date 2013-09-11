@@ -24,11 +24,11 @@ fi
 # Get Connect and start it
 mkdir -p $CONNECT_DIR
 cd $CONNECT_DIR
-curl $CONNECT_URL > $CONNECT_DOWNLOAD
-unzip $CONNECT_DOWNLOAD
+curl $CONNECT_URL -o $CONNECT_DOWNLOAD 2> /dev/null 1> /dev/null
+unzip $CONNECT_DOWNLOAD 2> /dev/null 1> /dev/null
 java -jar Sauce-Connect.jar --readyfile $READY_FILE \
     $TUNNEL_IDENTIFIER \
-    $SAUCE_USERNAME $SAUCE_ACCESS_KEY &
+    $SAUCE_USERNAME $SAUCE_ACCESS_KEY 2> /dev/null 1> /dev/null &
 
 # Wait for Connect to be ready before exiting
 while [ ! -f $READY_FILE ]; do
