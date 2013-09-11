@@ -37,6 +37,7 @@ module.exports = function (grunt) {
     },
 
     karma: {
+        
         unit: {
             configFile: 'karma.unit.conf.js'
         },
@@ -65,4 +66,5 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-jsdoc');
   
+  grunt.registerTask('testwatch', ['karma:unit']);
 };
