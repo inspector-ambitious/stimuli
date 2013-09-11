@@ -41,29 +41,6 @@ define(['mixins/observable'], function(Domino) {
                 
             });
             
-            it('should defer the listener call if the defer options is passed', function(done) {
-                
-                var arg1 = null;
-                var arg2 = null;
-                var arg3 = null;
-                
-                var listener = function(a, b, c) {
-                    expect(a).to.be(1);
-                    expect(b).to.be(2);
-                    expect(c).to.be(3);
-                    done();
-                };
-                
-                observable.subscribe('event1', listener);
-                
-                observable.publish('event1', 1, 2, 3, {defer: 1});
-                
-                expect(arg1).to.be(null);
-                expect(arg2).to.be(null);
-                expect(arg3).to.be(null);
-                
-            });
-            
             it('should not call the listener if a different event is published', function() {
                 
                 var arg1 = null;

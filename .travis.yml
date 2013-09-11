@@ -6,7 +6,11 @@ env:
   global:
     - secure: "a1+XryJ+Mhsmmv6N3CegrSTYqCyeTfwY9a1w8HEpLW796IbTlzYN9TsddHDnfOmuKLQyf4nAgM5tRkrf+pFnBBmw2us65GBGltldzSqp5KElIAHghhsveoVS6njx6D+EUzzCNdePMXDKkIPBIqeZEq+2Cu0mzpZy751tuh2h6cg="
     - secure: "R0KYNHt8IpYYbf6HdkYYIvcmDaRoj7izd5NPFqGYU0Zvjnfg3MykBH6CKycTyDwEHmbLEyW0kPTAweBMeRZGTSUpucKtVtGNBZgyda6xas3CSe8n4KvE+YVoq1dCq+zmTPAZw4rKLczVDvSHzTh2pgAIxDB/r9o4na22diV4X34="
-    
+    - secure: "Ts+jqjUL9UNOskYZQ+O9+WHfJowz8jAWaP8xyqftSMnMvQ9y4XRjgZUMHqFQDD6AE07szHP18+fYNfoXv7pBBKEECvjqN7gOUTr9ZT4zzXqvzIy/f5A4B2l5N3kA0UD+gcRm0V5vJOU8ta6Shzh4XK0nAhudDXuim0tsBD3X3X8="
+    - secure: "GkVEmIFtwL5zfo5PKcCLYlKnrwi9xN6byr34PEwqq8++v3Aous6P2gCkWO5jDFB8VJbVGJ4sUc24Ca6R6OrlO1itx7+++1iCI4JiDE0/noxamPTsfMOml4oo3Ty7IiPVv3SLN7V4yT1pRecF63mHufbCX2d0YfFdt5XoVFUnL4s="
+    - secure: "eogTxfM0sMy8GB3ohAuC3of04kmnl7k+Bp2Leo7V+68bknB+jT8+5YtvVf7PAOuM5sH3HPLzVe8C85K9IAc3/fVVBQgcEfiSpvzolKl24vB6delEcdk6E6tMFAqDDz6l/JNLdRhWSkHxBZkE8oFqMHW2OMeYSfSRzlgGdLs/zTQ="
+    - secure: "aERTcyc5WT76CIYPDtrAMirDKJaWMBD1Wgd8AkwNV2hK3lYZIqZaMGwildkHY4sX/vzTnhjXVGEbaFESTCiZTqDml5jURmG/gX1Q9dr4jUfR9T2t0yI5yRJ97ue7aX5A5pBw+xB7YJHovhfaubNlIm7oSefcokPk1899pu7jEOs="
+
 before_script:
   - npm install -g grunt-cli
   - export DISPLAY=:99.0

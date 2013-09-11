@@ -25,21 +25,13 @@ define(['domino', 'utils/object'], function(Domino) {
                 listeners = me.listeners[eventName],
                 length = listeners.length,
                 i = 0,
-                defer = args[args.length - 1].defer || 0,
                 listener;
             
-            function callAllListeners() {
-                for (; i < length; i++) {
-                    listener = listeners[i];
-                    listener.fn.apply(listener.scope, args);
-                }
+            for (; i < length; i++) {
+                listener = listeners[i];
+                listener.fn.apply(listener.scope, args);
             }
-            if (defer) {
-                setTimeout(callAllListeners, defer);
-            } else {
-                callAllListeners();
-            }
-                
+        
         },
                 
         /**

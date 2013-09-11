@@ -8,4 +8,4 @@ Running Tests
 
 To execute all unit tests, use:
 
-    grunt karma:unit
+    grunt testwatcha
