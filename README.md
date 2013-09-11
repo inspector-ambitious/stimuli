@@ -3,7 +3,7 @@ Domino [![Build Status](https://travis-ci.org/yhwh/domino.png?branch=master)](ht
 
 A Dom Events injection library.
 
-[Download latest stable version](http://yhwh.github.io/domino/domino.js)
+[Download latest stable version](http://yhwh.github.io/domino/build/domino.js)
 
 Supported Browsers:
 
@@ -41,7 +41,7 @@ To execute all unit tests, use:
 
 To generate test coverage report in coverage/ folder, use:
 
-    grunt coverage
+    grunt testcoverage
 
 
 Contributors Tips
