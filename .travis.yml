@@ -6,7 +6,6 @@ env:
   global:
     - secure: "oBTf6zxMUxVo3fZK63zIy6YqM9O1bBAb4GxSEIsXv+X/l56ZkJ7hj0tLQWqBKw3jz2LAmOiEhjVi3yR0IIvvYiVLAgKAbYsZGamrw05zcQCNiweqV7xkfyI9RPdz3nzaymH3wiwoGAeAoyt9hkw5boW5naQgUMKozlqwSMoQoTw="
     - secure: "FytS+R4O7PryTVJwflq3h4EjvjjGInkb5JYSyA4BxyHyInS/PfGyTrn0KJS++Pqx09pbVBcbgPHRLfTYI4f975hfY9TJG6yJIBR4klHsicZ7Gp6kgaGYJqqo0H+TU/nRxsFePyZdhyKW99YgdAatM+tSQIYuF7P8+UQOA5O97wk="
-    - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
     - LOGS_DIR=/tmp/domino-build/logs
     
 before_script:
