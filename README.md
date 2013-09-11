@@ -15,7 +15,7 @@ Supported Browsers:
 
 [Contributors Code Documentation](http://yhwh.github.io/domino/docs)
 
-[Current Test Code Coverage](http://yhwh.github.io/domino/coverage)
+[Tests Code Coverage](http://yhwh.github.io/domino/coverage)
 
 How to build
 ------------
