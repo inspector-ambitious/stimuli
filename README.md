@@ -35,13 +35,18 @@ Build domino in build/domino.js:
 How to tests
 ------------
 
-To lint all js files:
+The js framework used for testing are: [mocha](http://visionmedia.github.io/mocha/),
+[Sinon.JS](http://sinonjs.org/) and [expect.js](https://github.com/LearnBoost/expect.js/).
 
-    grunt jshint
+The tests are automatically run with [http://karma-runner.github.io/](http://karma-runner.github.io/)
 
-To execute all unit tests, use:
+To execute all the tests, use:
 
     grunt test
+
+To lint all the js files:
+
+    grunt jshint
 
 To generate test coverage report in coverage/ folder, use:
 
@@ -49,8 +54,12 @@ To generate test coverage report in coverage/ folder, use:
 
 
 Contributors Tips
------------------
+------------------
 
-* Please send a pull request to the development branch
+* Send a pull request to the development branch
+
+* Unit test everything (and try to avoid mocking)
+
+* Design matters [SOLID Javascript](http://aspiringcraftsman.com/series/solid-javascript/)
 
 
