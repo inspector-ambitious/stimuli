@@ -14,6 +14,14 @@
     <!--[if lt IE 8]>
     <link rel="stylesheet" href="stylesheets/ie.css">
     <![endif]-->
+    
+    <script>
+      $(document).ready(function() {
+          $('#readme-md-content').html('<img src="loading.gif"/>')
+          .load('http://markdown.io/http://raw.github.com/yhwh/domino/master/README.md #md-content', function() {});
+      });
+    </script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
   </head>
@@ -38,64 +46,11 @@
           <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
         </div>
 
-        <h1>
-<a name="domino--" class="anchor" href="#domino--"><span class="octicon octicon-link"></span></a>Domino <a href="https://travis-ci.org/yhwh/domino"><img src="https://travis-ci.org/yhwh/domino.png?branch=master" alt="Build Status"></a> </h1>
+        <div id="readme-md-content">
 
-<p>A Dom Events injection library.</p>
+        </div>
 
-<p><a href="http://yhwh.github.io/domino/domino.js">Download latest stable version</a></p>
-
-<p>Supported Browsers:</p>
-
-<ul>
-<li>IE8-10</li>
-<li>Firefox</li>
-<li>Chrome</li>
-<li>Safari</li>
-<li>PhantomJS</li>
-</ul><h2>
-<a name="how-to-build" class="anchor" href="#how-to-build"><span class="octicon octicon-link"></span></a>How to build</h2>
-
-<p>Install grunt:</p>
-
-<pre><code>npm install -g grunt-cli
-</code></pre>
-
-<p>Install all required node modules: </p>
-
-<pre><code>npm install
-</code></pre>
-
-<p>Build domino in build/domino.js:</p>
-
-<pre><code>grunt build
-</code></pre>
-
-<h2>
-<a name="how-to-tests" class="anchor" href="#how-to-tests"><span class="octicon octicon-link"></span></a>How to tests</h2>
-
-<p>To lint all js files:</p>
-
-<pre><code>grunt jshint
-</code></pre>
-
-<p>To execute all unit tests, use:</p>
-
-<pre><code>grunt test
-</code></pre>
-
-<p>To generate test coverage report in coverage/ folder, use:</p>
-
-<pre><code>grunt coverage
-</code></pre>
-
-<h2>
-<a name="contributors-tips" class="anchor" href="#contributors-tips"><span class="octicon octicon-link"></span></a>Contributors Tips</h2>
-
-<ul>
-<li><p>You may want to have a look at the generated <a href="http://yhwh.github.io/domino/docs">JSDoc</a></p></li>
-<li><p>Please send a pull request to the development branch</p></li>
-</ul>
+        
       </section>
 
     </div>
