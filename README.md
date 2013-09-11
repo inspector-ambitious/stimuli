@@ -41,7 +41,7 @@ To execute all unit tests, use:
 
 To generate test coverage report in coverage/ folder, use:
 
-    grunt coverage
+    grunt testcoverage
 
 
 Contributors Tips
