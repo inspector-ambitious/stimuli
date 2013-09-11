@@ -28,6 +28,5 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     git push origin gh-pages
 
-
 fi
 
