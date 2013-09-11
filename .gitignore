@@ -20,3 +20,6 @@ nbproject
 docs
 
 coverage
+
+*.sublime-project
+*.sublime-workspace

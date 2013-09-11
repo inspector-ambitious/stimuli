@@ -1,6 +1,6 @@
 'use strict';
 
-define(['domino', 'utils/object'], function(Domino) {
+define(['domino', 'utils/object', 'mixins/observable'], function(Domino) {
         
     /**
      * This class allows to schedule events.
@@ -70,11 +70,10 @@ define(['domino', 'utils/object'], function(Domino) {
 
         };
         
-        me.publish('emit', {
-            data: data,
-            callback: callback,
-            defer: me.options.speed * me.options.interval
-        });
+        setTimeout(function() {
+            me.publish('emit', data, callback);
+        }, me.options.speed * me.options.interval);
+
         
     }
  

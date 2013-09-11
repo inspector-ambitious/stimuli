@@ -10,7 +10,7 @@
   
     "author": "Nicolas Ferrero <ferrero.nicolas@gmail.com>",
   
-    "version": "0.1.0",
+    "version": "0.0.1",
     
     "repository": {
 
@@ -39,16 +39,18 @@
         "grunt-jsdoc": "~0.4",
         
         "expect.js" : "~0.2",
+
+        "sinon": "~1.7",
         
         "karma-coverage": "~0.1",
         
         "karma-safari-launcher": "~0.1",
         
-        "karma-opera-launcher": "~0.1",
-        
         "karma-ie-launcher": "~0.1",
         
-        "karma-sauce-launcher": "~0.1"
+        "karma-sauce-launcher": "~0.1",
+        
+        "karma-ievms": "~0.0"
 
     }
 }

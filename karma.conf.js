@@ -20,7 +20,11 @@ module.exports = function(config) {
       {pattern: 'src/**/*.js', included: false},
       
       {pattern: 'test/unit/**/*.js', included: false},
-      
+
+      {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false, included: true },
+
+      {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false, included: true },
+
       'test/unit.js'
       
     ],
@@ -39,11 +43,65 @@ module.exports = function(config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['progress', 'coverage'],
+    reporters: ['dots'],
 
     coverageReporter: {
         type : 'html',
-        dir : 'coverage/'
+        dir : 'coverage/',
+        type: 'lcov'
+    },
+
+    sauceLabs: {
+                 
+        startConnect: false,
+        
+        testName: 'Domino Unit Tests',
+        
+        tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
+        
+    },
+
+
+    customLaunchers: {
+        
+      'SL_Chrome': {
+        base: 'SauceLabs',
+        browserName: 'chrome'
+      },
+      
+      'SL_Firefox': {
+        base: 'SauceLabs',
+        browserName: 'firefox'
+      },
+      
+      'SL_Safari': {
+        base: 'SauceLabs',
+        browserName: 'safari',
+        platform: 'Mac 10.8',
+        version: '6'
+      },
+      
+      'SL_IE_8': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 7',
+        version: '8'
+      },
+      
+      'SL_IE_9': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 2008',
+        version: '9'
+      },
+      
+      'SL_IE_10': {
+        base: 'SauceLabs',
+        browserName: 'internet explorer',
+        platform: 'Windows 2012',
+        version: '10'
+      }
+      
     },
 
     // web server port
@@ -60,18 +118,7 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: true,
-
-
-    // Start these browsers, currently available:
-    // - Chrome
-    // - ChromeCanary
-    // - Firefox
-    // - Opera
-    // - Safari (only Mac)
-    // - PhantomJS
-    // - IE (only Windows)
-    browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari'],
+    autoWatch: false,
 
 
     // If browser does not capture in given timeout [ms], kill it
@@ -80,7 +127,7 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
-    singleRun: false,
+    singleRun: true,
     
     reportSlowerThan: 500
     
