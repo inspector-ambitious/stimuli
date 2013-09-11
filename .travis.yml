@@ -1,7 +1,14 @@
-language: "node_js"
-node_js: "0.10"
+language: node_js
+
+node_js: 0.10
+
+env:
+  global:
+    - secure: "a1+XryJ+Mhsmmv6N3CegrSTYqCyeTfwY9a1w8HEpLW796IbTlzYN9TsddHDnfOmuKLQyf4nAgM5tRkrf+pFnBBmw2us65GBGltldzSqp5KElIAHghhsveoVS6njx6D+EUzzCNdePMXDKkIPBIqeZEq+2Cu0mzpZy751tuh2h6cg="
+    - secure: "R0KYNHt8IpYYbf6HdkYYIvcmDaRoj7izd5NPFqGYU0Zvjnfg3MykBH6CKycTyDwEHmbLEyW0kPTAweBMeRZGTSUpucKtVtGNBZgyda6xas3CSe8n4KvE+YVoq1dCq+zmTPAZw4rKLczVDvSHzTh2pgAIxDB/r9o4na22diV4X34="
+    
 before_script:
-  - "npm install -g grunt-cli"
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - "./.travis/scripts/install_browsers.sh"
+  - npm install -g grunt-cli
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+  - bash .travis/sauce_connect_setup.sh
