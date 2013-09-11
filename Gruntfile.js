@@ -73,6 +73,25 @@ module.exports = function (grunt) {
 
         coverage: {
             configFile: 'karma.conf.js',
+            files: [
+
+              {pattern: 'node_modules/expect.js/expect.js', watched: false},
+
+              {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
+
+              {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
+
+              {pattern: 'src/domino.js'},
+                   
+              {pattern: 'src/utils/object.js'},
+              
+              {pattern: 'src/mixins/observable.js'},
+
+              {pattern: 'src/utils/scheduler.js'},
+
+              {pattern: 'test/unit/**/*.js'},
+              
+            ],
             browsers: ['Chrome'],
             reporters: ['coverage']
         },

@@ -26,11 +26,17 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     cp ../README.md .
 
+    COVERAGE_REPORT=`find ../coverage -name lcov-report`
+
+    cp -r "$COVERAGE_REPORT" coverage
+
     git add docs
 
     git add domino.js
 
     git add README.md
+
+    git add coverage
 
     git commit -a -m "Publishing JSDoc"
 
