@@ -21,7 +21,7 @@
     },
           
     "scripts": {
-        "test": "grunt travis"
+        "test": "grunt jshint && grunt karma:sauce1 && grunt karma:sauce2 && grunt karma:sauce3"
     },
 
     "devDependencies": {

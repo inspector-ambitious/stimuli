@@ -65,6 +65,4 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-jsdoc');
   
-  grunt.registerTask('travis', ['jshint', 'karma:sauce1', 'karma:sauce2', 'karma:sauce3']);
-
 };
