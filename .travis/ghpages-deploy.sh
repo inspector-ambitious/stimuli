@@ -20,19 +20,19 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     git checkout gh-pages
 
+    COVERAGE_REPORT=`find ../coverage -name lcov-report`
+
     cp -r ../docs .
 
-    cp ../build/domino.js .
+    cp -r ../build .
 
     cp ../README.md .
-
-    COVERAGE_REPORT=`find ../coverage -name lcov-report`
 
     cp -r "$COVERAGE_REPORT" coverage
 
     git add docs
 
-    git add domino.js
+    git add build
 
     git add README.md
 

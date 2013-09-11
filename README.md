@@ -3,7 +3,7 @@ Domino [![Build Status](https://travis-ci.org/yhwh/domino.png?branch=master)](ht
 
 A Dom Events injection library.
 
-[Download latest stable version](http://yhwh.github.io/domino/domino.js)
+[Download latest stable version](http://yhwh.github.io/domino/build/domino.js)
 
 Supported Browsers:
 
