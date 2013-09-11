@@ -48,7 +48,7 @@ module.exports = function (grunt) {
         
         continuous2: {
             configFile: 'karma.continuous.conf.js',
-            browsers: ['SL_Safari', 'SL_IE_8']  
+            browsers: ['SL_Safari', 'SL_IE_8']
         },
         
         continuous3: {

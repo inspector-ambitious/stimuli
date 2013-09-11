@@ -119,7 +119,7 @@ module.exports = function(config) {
     browsers: ['SL_Chrome', 'SL_Firefox', 'SL_Safari', 'SL_IE_8', 'SL_IE_9', 'SL_IE_10', 'PhantomJS'],
 
     // If browser does not capture in given timeout [ms], kill it
-    captureTimeout: 30000,
+    captureTimeout: 60000,
 
     // Continuous Integration mode
     // if true, it capture browsers, run tests and exit
