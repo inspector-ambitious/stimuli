@@ -22,7 +22,8 @@ script:
   - grunt karma:sauce1 
   - grunt karma:sauce2
   - grunt karma:sauce3 
-  - grunt jsdoc 
+  - grunt jsdoc
+  - grunt build
 
 after_script:
   - bash .travis/ghpages-deploy.sh
