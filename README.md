@@ -3,6 +3,8 @@ Domino [![Build Status](https://travis-ci.org/yhwh/domino.png?branch=master)](ht
 
 A Dom Events injection library.
 
+[Download latest stable version](http://yhwh.github.io/domino/domino.js)
+
 Supported Browsers:
 
 * IE8-10
@@ -27,7 +29,7 @@ Build domino in build/domino.js:
     grunt build
 
 How to tests
--------------
+------------
 
 To lint all js files:
 
@@ -40,3 +42,13 @@ To execute all unit tests, use:
 To generate test coverage report in coverage/ folder, use:
 
     grunt coverage
+
+
+Contributors Tips
+-----------------
+
+* You may want to have a look at the generated [JSDoc](http://yhwh.github.io/domino/docs)
+
+* Please send a pull request to the development branch
+
+
