@@ -11,6 +11,9 @@ env:
     - secure: "ipvXACA3RpS8EL2kleCshZ8Ys3t8ehaUmKk8qcLNhDltnLTLKJqhR9r4aZc9wiTafkUlp3lYUQpn54yqwxJoul+H+vcWUqvwzLXJLyoTlopyI9AV+DHhuC+CWzrd68UUHlvbiETMsN3ersciaV907s/415CcE3Bx8rdO6xRs3v0="
     - secure: "FBCyQQpcsOreZ0khYc0YNZWFTo6JJVyp8HwL8/FNRP6ecRAI2jKEgfWPiIUuPBtRO+MIfmWm9fRKJtmi8XMHtQc6aDt+gd/uqLICVd00K6cN3ui89uc3QpJiLjMONQ6WJmYjDNCNKQgYq3pP4WRk+MZyE/G++Wp1kBkF9HyBpdE="
 
+before_install:
+  - npm config set loglevel error
+
 before_script:
   - npm install -g grunt-cli
   - export DISPLAY=:99.0
