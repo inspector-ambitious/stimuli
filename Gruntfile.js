@@ -45,6 +45,12 @@ module.exports = function (grunt) {
             browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7'],
         },
 
+        coverage: {
+            configFile: 'karma.conf.js',
+            browsers: ['Chrome'],
+            reporters: ['coverage']
+        },
+
         sauce1: {
             configFile: 'karma.conf.js',
             browsers: ['SL_Chrome', 'SL_Firefox', 'PhantomJS']
@@ -70,4 +76,5 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-jsdoc');
   
   grunt.registerTask('testwatcha', ['karma:watcha']);
+  grunt.registerTask('testcoverage', ['karma:coverage']);
 };

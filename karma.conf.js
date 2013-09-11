@@ -21,8 +21,10 @@ module.exports = function(config) {
       
       {pattern: 'test/unit/**/*.js', included: false},
 
-      { pattern: 'node_modules/sinon/pkg/sinon.js', watched: false, included: true },
-      
+      {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false, included: true },
+
+      {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false, included: true },
+
       'test/unit.js'
       
     ],
@@ -41,11 +43,12 @@ module.exports = function(config) {
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['dots', 'coverage'],
+    reporters: ['dots'],
 
     coverageReporter: {
         type : 'html',
-        dir : 'coverage/'
+        dir : 'coverage/',
+        type: 'lcov'
     },
 
     sauceLabs: {
