@@ -22,7 +22,7 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     cp -r ../docs .
 
-    cp -r ../buid/domino.js .
+    cp -r ../build/domino.js .
 
     git commit -a -m "Publishing JSDoc"
 

@@ -31,7 +31,7 @@ How to tests
 
 To lint all js files:
 
-    grunt 
+    grunt jshint
 
 To execute all unit tests, use:
 
