@@ -18,12 +18,4 @@ before_script:
   - .travis/sauce_connect_setup.sh
 
 script:
-  - grunt jshint
-  - grunt build
-  - grunt karma:sauce1 
-  - grunt karma:sauce2
-  - grunt karma:sauce3 
-  - grunt jsdoc
-
-after_script:
-  - .travis/ghpages-deploy.sh
+  - "grunt jshint && grunt build && grunt karma:sauce1 && grunt karma:sauce2 && grunt karma:sauce3 && grunt jsdoc && .travis/ghpages-deploy.sh"
