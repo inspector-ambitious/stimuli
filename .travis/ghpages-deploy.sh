@@ -4,6 +4,8 @@
 
 if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
+    echo "Deploying jsdocumentation on gh-pages"
+    
     git clone https://$GITHUB_LOGIN:$GITHUB_PASSWORD@github.com/yhwh/domino.git
 
     cd domino
