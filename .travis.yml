@@ -6,7 +6,6 @@ env:
   global:
     - secure: "TT39iIHA4Tg1Fmq/6CKjFEpvB5KSTYHg63N9vQ/fRiLn+nAJMqA/atZANvRAXPhWSnTTT/gXAtoIG6BvpfjZbNtWi6S7M3pKQHTaR5XogptsYgqFQDLvHmH9IRJLB6ZcWzGnDJJjhFnpp7jj0ficOFnVoKSMk3t29UhykGTXsZ4="
     - secure: "NQtguLPVqOHhEtJ9/RiomEC61SVaB0OYcY6QJfalAQc+OeuTiYKmwL3uODIB7DJrLCdw0xR4R8r0i+2GBH+lN2k4xr5SBp0f+lwePpROaS2qnhQYGESFYy/J3O2XX9agltgV0VpD1V7emZsr8p47funkSKP8FTGt4AoHybdW2iA="
-    - SAUCE_CONNECT_READY_FILE=/tmp/sauce-connect-ready
     - LOGS_DIR=/tmp/domino-build/logs
     
 before_script:
@@ -15,7 +14,6 @@ before_script:
   - npm install -g grunt-cli
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - ./.travis/sauce/sauce_connect_block.sh
 
 script:
   - ./travis_script.sh
