@@ -1,6 +1,6 @@
 'use strict';
 
-define(['domino', 'utils/object', 'mixins/observable'], function(Domino) {
+(function() {
         
     /**
      * This class allows to schedule events.
@@ -10,18 +10,21 @@ define(['domino', 'utils/object', 'mixins/observable'], function(Domino) {
      * @param {Object} options
      * @returns {Scheduler}
      */
+
     Domino.utils.Scheduler = function(options) {
         this.options = options;
         this.queue = [];
         this.locked = false;
     };
     
+    // Applies Observable mixin
     Domino.utils.Object.merge(Domino.utils.Scheduler.prototype, Domino.mixins.Observable);
 
     /**
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
+
     Domino.utils.Scheduler.prototype.receive = function(data) {
 
         var me = this;
@@ -30,11 +33,10 @@ define(['domino', 'utils/object', 'mixins/observable'], function(Domino) {
 
         emit(me);
 
-
     };
     
     
-    // private    
+    // Schedules emission of received data   
     function emit(me) {
 
         if (me.locked || me.queue.length === 0) {
@@ -73,9 +75,7 @@ define(['domino', 'utils/object', 'mixins/observable'], function(Domino) {
         setTimeout(function() {
             me.publish('emit', data, callback);
         }, me.options.speed * me.options.interval);
-
         
     }
  
-    return Domino;
-});
+})();

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 CONNECT_URL="http://saucelabs.com/downloads/Sauce-Connect-latest.zip"
 STARTUP_TIMEOUT=90
 CONNECT_DIR="/tmp/sauce-connect-$RANDOM"

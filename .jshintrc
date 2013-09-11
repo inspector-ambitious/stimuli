@@ -14,7 +14,6 @@
     "afterEach": true,
     "it": true,
     "expect": true,
-    "requirejs": true,
     "sinon": true
   },
   "debug": false,
