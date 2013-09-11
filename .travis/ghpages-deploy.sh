@@ -22,15 +22,15 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     cp -r ../docs .
 
-    cp -r ../build/domino.js .
+    cp ../build/domino.js .
 
-    md2html ../README.md > readme.html
+    cp ../README.md .
 
     git add docs
 
     git add domino.js
 
-    git add readme.html
+    git add README.md
 
     git commit -a -m "Publishing JSDoc"
 
