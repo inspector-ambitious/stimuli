@@ -5,6 +5,7 @@ STARTUP_TIMEOUT=90
 CONNECT_DIR="/tmp/sauce-connect-$RANDOM"
 CONNECT_DOWNLOAD="Sauce_Connect.zip"
 READY_FILE="connect-ready-$RANDOM"
+LOG_FILE="/tmp/sauce-connect-log"
 
 if [ -n "$TRAVIS" ] && [ -n "$TRAVIS_JOB_NUMBER" ]; then
     if [ -z $(which java) ]; then
@@ -24,11 +25,12 @@ fi
 # Get Connect and start it
 mkdir -p $CONNECT_DIR
 cd $CONNECT_DIR
-curl $CONNECT_URL -o $CONNECT_DOWNLOAD 2> /dev/null 1> /dev/null
-unzip $CONNECT_DOWNLOAD 2> /dev/null 1> /dev/null
+curl $CONNECT_URL -o $CONNECT_DOWNLOAD
+unzip $CONNECT_DOWNLOAD
 java -jar Sauce-Connect.jar --readyfile $READY_FILE \
+    --logfile $LOG_FILE \
     $TUNNEL_IDENTIFIER \
-    $SAUCE_USERNAME $SAUCE_ACCESS_KEY 2> /dev/null 1> /dev/null &
+    $SAUCE_USERNAME $SAUCE_ACCESS_KEY &
 
 # Wait for Connect to be ready before exiting
 while [ ! -f $READY_FILE ]; do
