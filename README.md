@@ -13,6 +13,10 @@ Supported Browsers:
 * Safari
 * PhantomJS
 
+[Contributors Code Documentation](http://yhwh.github.io/domino/docs)
+
+[Current Test Code Coverage](http://yhwh.github.io/domino/coverage)
+
 How to build
 ------------
 
@@ -46,8 +50,6 @@ To generate test coverage report in coverage/ folder, use:
 
 Contributors Tips
 -----------------
-
-* You may want to have a look at the generated [JSDoc](http://yhwh.github.io/domino/docs)
 
 * Please send a pull request to the development branch
 
