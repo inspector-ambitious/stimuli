@@ -38,14 +38,22 @@ module.exports = function (grunt) {
 
     karma: {
         unit: {
-            configFile: 'karma.conf.js'
+            configFile: 'karma.unit.conf.js'
         },
         
-        continuous: {
-            configFile: 'karma.conf.js',
-            singleRun: true,
-            reporters: ['progress'],
-            browsers: ['PhantomJS', 'Firefox', 'Opera']
+        sauce1: {
+            configFile: 'karma.continuous.conf.js',
+            browsers: ['SL_Chrome', 'SL_Firefox', 'PhantomJS']
+        },
+        
+        sauce2: {
+            configFile: 'karma.continuous.conf.js',
+            browsers: ['SL_Safari', 'SL_IE_8']
+        },
+        
+        sauce3: {
+            configFile: 'karma.continuous.conf.js',
+            browsers: ['SL_IE_9', 'SL_IE_10']
         }
     }
     
@@ -57,6 +65,4 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-jsdoc');
   
-  grunt.registerTask('travis', ['jshint', 'karma:continuous']);
-
 };

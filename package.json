@@ -21,7 +21,7 @@
     },
           
     "scripts": {
-        "test": "grunt travis"
+        "test": "grunt jshint && grunt karma:sauce1 && grunt karma:sauce2 && grunt karma:sauce3"
     },
 
     "devDependencies": {
@@ -46,7 +46,9 @@
         
         "karma-opera-launcher": "~0.1",
         
-        "karma-ie-launcher": "~0.1"
+        "karma-ie-launcher": "~0.1",
+        
+        "karma-sauce-launcher": "~0.1"
 
     }
 }
