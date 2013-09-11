@@ -4,19 +4,14 @@ node_js: 0.10
 
 env:
   global:
-    - secure: "TT39iIHA4Tg1Fmq/6CKjFEpvB5KSTYHg63N9vQ/fRiLn+nAJMqA/atZANvRAXPhWSnTTT/gXAtoIG6BvpfjZbNtWi6S7M3pKQHTaR5XogptsYgqFQDLvHmH9IRJLB6ZcWzGnDJJjhFnpp7jj0ficOFnVoKSMk3t29UhykGTXsZ4="
-    - secure: "NQtguLPVqOHhEtJ9/RiomEC61SVaB0OYcY6QJfalAQc+OeuTiYKmwL3uODIB7DJrLCdw0xR4R8r0i+2GBH+lN2k4xr5SBp0f+lwePpROaS2qnhQYGESFYy/J3O2XX9agltgV0VpD1V7emZsr8p47funkSKP8FTGt4AoHybdW2iA="
-    - LOGS_DIR=/tmp/domino-build/logs
+    - secure: "a1+XryJ+Mhsmmv6N3CegrSTYqCyeTfwY9a1w8HEpLW796IbTlzYN9TsddHDnfOmuKLQyf4nAgM5tRkrf+pFnBBmw2us65GBGltldzSqp5KElIAHghhsveoVS6njx6D+EUzzCNdePMXDKkIPBIqeZEq+2Cu0mzpZy751tuh2h6cg="
+    - secure: "R0KYNHt8IpYYbf6HdkYYIvcmDaRoj7izd5NPFqGYU0Zvjnfg3MykBH6CKycTyDwEHmbLEyW0kPTAweBMeRZGTSUpucKtVtGNBZgyda6xas3CSe8n4KvE+YVoq1dCq+zmTPAZw4rKLczVDvSHzTh2pgAIxDB/r9o4na22diV4X34="
     
 before_script:
-  - mkdir -p $LOGS_DIR
-  - ./.travis/sauce/sauce_connect_setup.sh
   - npm install -g grunt-cli
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+  - bash .travis/sauce_connect_setup.sh
 
 script:
   - ./travis_script.sh
-  
-after_script:
-  - ./.travis/print_logs.sh
