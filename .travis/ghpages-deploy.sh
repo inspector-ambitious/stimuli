@@ -28,15 +28,11 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     cp ../README.md .
 
+    cp ../package.json .
+
     cp -r "$COVERAGE_REPORT" coverage
 
-    git add docs
-
-    git add build
-
-    git add README.md
-
-    git add coverage
+    git add *
 
     git commit -a -m "Publishing JSDoc"
 
