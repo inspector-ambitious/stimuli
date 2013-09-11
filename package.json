@@ -20,10 +20,6 @@
 
     },
           
-    "scripts": {
-        "test": "grunt travis"
-    },
-
     "devDependencies": {
         
         "karma": "~0.10",

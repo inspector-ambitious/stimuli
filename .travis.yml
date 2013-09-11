@@ -14,6 +14,9 @@ before_script:
   - npm install -g grunt-cli
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
+
+script:
+  - ./travis_script.sh
   
 after_script:
   - ./.travis/print_logs.sh
