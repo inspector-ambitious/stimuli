@@ -1,5 +1,29 @@
 'use strict';
 
+// DominoFiles
+var dominoFiles = [
+    'src/domino.js',
+    'src/utils/object.js',
+    'src/mixins/observable.js',
+    'src/utils/scheduler.js',
+];
+
+var karmaFiles = [
+
+  {pattern: 'node_modules/expect.js/expect.js', watched: false},
+
+  {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
+
+  {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false}
+
+];
+
+dominoFiles.forEach(function(dominoFile) {
+  karmaFiles.push({pattern: dominoFile});
+});
+
+karmaFiles.push({pattern: 'test/unit/**/*.js'});
+
 module.exports = function (grunt) {
 
   grunt.initConfig({
@@ -47,25 +71,7 @@ module.exports = function (grunt) {
             
             autoWatch: true,
             
-            files: [
-
-              {pattern: 'node_modules/expect.js/expect.js', watched: false},
-
-              {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
-
-              {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
-
-              {pattern: 'src/domino.js'},
-                   
-              {pattern: 'src/utils/object.js'},
-              
-              {pattern: 'src/mixins/observable.js'},
-
-              {pattern: 'src/utils/scheduler.js'},
-
-              {pattern: 'test/unit/**/*.js'},
-              
-            ],
+            files: karmaFiles,
 
             browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7'],
 
@@ -73,26 +79,8 @@ module.exports = function (grunt) {
 
         coverage: {
             configFile: 'karma.conf.js',
-            files: [
-
-              {pattern: 'node_modules/expect.js/expect.js', watched: false},
-
-              {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
-
-              {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
-
-              {pattern: 'src/domino.js'},
-                   
-              {pattern: 'src/utils/object.js'},
-              
-              {pattern: 'src/mixins/observable.js'},
-
-              {pattern: 'src/utils/scheduler.js'},
-
-              {pattern: 'test/unit/**/*.js'},
-              
-            ],
-            browsers: ['Chrome'],
+            files: karmaFiles,
+            browsers: ['PhantomJS'],
             reporters: ['coverage']
         },
 
@@ -128,12 +116,7 @@ module.exports = function (grunt) {
 
         dist: {
 
-          src: [
-            'src/domino.js',
-            'src/utils/object.js',
-            'src/mixins/observable.js',
-            'src/utils/scheduler.js'
-          ],
+          src: dominoFiles,
 
           dest: 'build/domino.js',
         }
