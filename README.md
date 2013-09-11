@@ -38,9 +38,13 @@ How to tests
 The js framework used for testing are: [mocha](http://visionmedia.github.io/mocha/),
 [Sinon.JS](http://sinonjs.org/) and [expect.js](https://github.com/LearnBoost/expect.js/).
 
-The tests are automatically run with [http://karma-runner.github.io/](http://karma-runner.github.io/)
+The tests are automatically run with [karma](http://karma-runner.github.io/).
 
-To execute all the tests, use:
+To test IE with [ievms](https://github.com/xdissent/ievms):
+
+curl -s https://raw.github.com/xdissent/ievms/master/ievms.sh | env IEVMS_VERSIONS="8 9 10" bash
+
+To execute all the tests:
 
     grunt test
 
@@ -48,7 +52,7 @@ To lint all the js files:
 
     grunt jshint
 
-To generate test coverage report in coverage/ folder, use:
+To generate test coverage report in coverage/ folder:
 
     grunt testcoverage
 
