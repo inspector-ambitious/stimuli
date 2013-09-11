@@ -41,20 +41,20 @@ module.exports = function (grunt) {
             configFile: 'karma.unit.conf.js'
         },
         
-        continuous1: {
+        continuous: {
             configFile: 'karma.continuous.conf.js',
             browsers: ['SL_Chrome', 'SL_Firefox', 'PhantomJS']
-        },
-        
-        continuous2: {
-            configFile: 'karma.continuous.conf.js',
-            browsers: ['SL_Safari', 'SL_IE_8']
-        },
-        
-        continuous3: {
-            configFile: 'karma.continuous.conf.js',
-            browsers: ['SL_IE_9', 'SL_IE_10']
         }
+//        
+//        continuous: {
+//            configFile: 'karma.continuous.conf.js',
+//            browsers: ['SL_Safari', 'SL_IE_8']
+//        },
+//        
+//        continuous3: {
+//            configFile: 'karma.continuous.conf.js',
+//            browsers: ['SL_IE_9', 'SL_IE_10']
+//        }
     }
     
   });
@@ -65,6 +65,6 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-jsdoc');
   
-  grunt.registerTask('travis', ['jshint', 'karma:continuous1', 'karma:continuous2', 'karma:continuous3']);
+  grunt.registerTask('travis', ['jshint', 'karma:continuous']);
 
 };
