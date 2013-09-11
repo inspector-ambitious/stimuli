@@ -48,7 +48,7 @@
         
         "karma-ie-launcher": "~0.1",
         
-        "karma-sauce-launcher": "~0.0.4"
+        "karma-sauce-launcher": "~0.1"
 
     }
 }
