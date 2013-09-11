@@ -19,10 +19,6 @@
         "url": "https://github.com/yhwh/domino.git"
 
     },
-          
-    "scripts": {
-        "test": "grunt travis"
-    },
 
     "devDependencies": {
         

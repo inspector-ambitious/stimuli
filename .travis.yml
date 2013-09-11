@@ -17,5 +17,8 @@ before_script:
   - sh -e /etc/init.d/xvfb start
   - ./.travis/sauce/sauce_connect_block.sh
   
+script: 
+  - ./.travis/script.sh
+  
 after_script:
   - ./.travis/print_logs.sh
