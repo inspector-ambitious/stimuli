@@ -8,11 +8,22 @@
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/pygment_trac.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
     <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+    <script src="javascripts/vendor/showdown.js"></script>
+    <script src="javascripts/vendor/extensions/github.js"></script>
+
     <script>
-      $(document).ready(function() {
-          $('#readmemd').load('readme.html');
-      });
+        $.ajax('README.md', {
+            success:function(readmecontent) {
+              $(function() {
+                  var converter = new Showdown.converter();
+                  $('#readmemd').html(converter.makeHtml(readmecontent));
+              });
+            }
+        });
+
+
     </script>
 
     <!--[if lt IE 9]>
