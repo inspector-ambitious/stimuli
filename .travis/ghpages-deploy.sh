@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # deploy to jsdoc only if the build is run on the master branch
 
 if [[ "$TRAVIS_BRANCH" == "master" ]]; then
@@ -18,16 +20,13 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     git checkout gh-pages
 
-    git pull origin gh-pages
-
     cp -r ../docs .
 
-    git add docs
+    cp -r ../buid/domino.js .
 
     git commit -a -m "Publishing JSDoc"
 
     git push origin gh-pages
-
 
 fi
 

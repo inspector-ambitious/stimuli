@@ -3,7 +3,9 @@
 module.exports = function (grunt) {
 
   grunt.initConfig({
-      
+    
+    pkg: grunt.file.readJSON('package.json'),
+
     jshint: {
         
       files: [
@@ -32,17 +34,41 @@ module.exports = function (grunt) {
                 destination: 'docs'
             }
         }
-   
         
     },
 
     karma: {
         
         watcha: {
+
             configFile: 'karma.conf.js',
+            
             singleRun: false,
+            
             autoWatch: true,
+            
+            files: [
+
+              {pattern: 'node_modules/expect.js/expect.js', watched: false},
+
+              {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
+
+              {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
+
+              {pattern: 'src/domino.js'},
+                   
+              {pattern: 'src/utils/object.js'},
+              
+              {pattern: 'src/mixins/observable.js'},
+
+              {pattern: 'src/utils/scheduler.js'},
+
+              {pattern: 'test/unit/**/*.js'},
+              
+            ],
+
             browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7'],
+
         },
 
         coverage: {
@@ -65,16 +91,44 @@ module.exports = function (grunt) {
             configFile: 'karma.conf.js',
             browsers: ['SL_IE_9', 'SL_IE_10']
         }
+    },
+
+    concat: {
+
+        options: {
+            stripBanners: true,
+
+            banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n' +
+                    '\'use strict\';\n',
+
+            process: function(src, filepath) {
+                return '\n// Source: ' + filepath + '\n' +
+                        src.replace(/'use strict';\n/gm, '');
+            },
+        },
+
+        dist: {
+
+          src: [
+            'src/domino.js',
+            'src/utils/object.js',
+            'src/mixins/observable.js',
+            'src/utils/scheduler.js'
+          ],
+
+          dest: 'build/domino.js',
+        }
     }
     
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
-
   grunt.loadNpmTasks('grunt-karma');
-
   grunt.loadNpmTasks('grunt-jsdoc');
-  
-  grunt.registerTask('testwatcha', ['karma:watcha']);
+  grunt.loadNpmTasks('grunt-contrib-concat');
+
+  grunt.registerTask('test', ['karma:watcha']);
   grunt.registerTask('testcoverage', ['karma:coverage']);
+  grunt.registerTask('build', ['concat:dist']);
+
 };

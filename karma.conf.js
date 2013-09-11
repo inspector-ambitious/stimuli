@@ -9,23 +9,21 @@ module.exports = function(config) {
 
 
     // frameworks to use
-    frameworks: ['mocha', 'requirejs'],
+    frameworks: ['mocha'],
 
 
     // list of files / patterns to load in the browser
     files: [
-        
-      'node_modules/expect.js/expect.js',
-      
-      {pattern: 'src/**/*.js', included: false},
-      
-      {pattern: 'test/unit/**/*.js', included: false},
 
-      {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false, included: true },
+      {pattern: 'node_modules/expect.js/expect.js', watched: false},
 
-      {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false, included: true },
+      {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
 
-      'test/unit.js'
+      {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
+
+      {pattern: 'build/domino.js'},
+                   
+      {pattern: 'test/unit/**/*.js'},
       
     ],
 

@@ -2,7 +2,7 @@
     
     "name": "domino",
             
-    "description": "DOM Testing library",
+    "description": "DOM event injection library.",
 
     "private": true,
             
@@ -22,10 +22,6 @@
           
     "devDependencies": {
         
-        "karma": "~0.10",
-                
-        "karma-mocha": "~0.1",
-        
         "grunt": "~0.4",
         
         "grunt-contrib-jshint": "~0.6",
@@ -33,10 +29,16 @@
         "grunt-karma": "~0.6",
         
         "grunt-jsdoc": "~0.4",
+
+        "grunt-contrib-concat": "~0.3",
         
         "expect.js" : "~0.2",
 
         "sinon": "~1.7",
+
+        "karma": "~0.10",
+                
+        "karma-mocha": "~0.1",
         
         "karma-coverage": "~0.1",
         
