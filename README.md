@@ -9,10 +9,10 @@ Supported Browsers
 ------------------
 
 * IE8-10
-* Firefox
-* Chrome
-* Safari
-* PhantomJS
+* Firefox 22+
+* Chrome 23+
+* Safari 6+
+* PhantomJS 1.9+
 
 
 How to build
