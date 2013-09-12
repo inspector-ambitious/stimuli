@@ -3,10 +3,10 @@
 /**
 * This mixin allows Objects to subscribe and publish events. 
 * @mixin
-* @memberof Domino.mixins
+* @memberof Domino.core
 */
 
-Domino.mixins.Observable = {
+Domino.core.Observable = {
     
     /**
      * Publishes an event.

@@ -10,13 +10,7 @@
 var Domino = function(options) {};
 
 /**
- * @namespace Domino.mixins
+ * @namespace Domino.core
  */
 
-Domino.mixins = {};
-
-/**
- * @namespace Domino.utils
- */
- 
-Domino.utils = {};
+Domino.core = {};

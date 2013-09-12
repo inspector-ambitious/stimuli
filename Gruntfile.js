@@ -3,9 +3,9 @@
 // DominoFiles
 var dominoFiles = [
     'src/domino.js',
-    'src/utils/object.js',
-    'src/mixins/observable.js',
-    'src/utils/scheduler.js',
+    'src/core/object.js',
+    'src/core/observable.js',
+    'src/core/scheduler.js',
 ];
 
 var karmaFiles = [
@@ -63,7 +63,7 @@ module.exports = function (grunt) {
 
     karma: {
         
-        watcha: {
+        watch: {
 
             configFile: 'karma.conf.js',
             
@@ -74,6 +74,14 @@ module.exports = function (grunt) {
             files: karmaFiles,
 
             browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7'],
+
+        },
+
+        quick: {
+            
+            configFile: 'karma.conf.js',
+            files: karmaFiles,
+            browsers: ['PhantomJS']
 
         },
 
@@ -138,7 +146,8 @@ module.exports = function (grunt) {
 
           src: dominoFiles,
 
-          dest: 'build/domino.js',
+          dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js'
+
         }
     }
     
@@ -149,8 +158,10 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-jsdoc');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
-  grunt.registerTask('test', ['karma:watcha']);
-  grunt.registerTask('testcoverage', ['karma:coverage']);
+  grunt.registerTask('lint', ['jshint']);
+  grunt.registerTask('watchtest', ['karma:watch']);
+  grunt.registerTask('quicktest', ['karma:quick']);
+  grunt.registerTask('cov', ['karma:coverage']);
   grunt.registerTask('build', ['concat:dist']);
 
 };

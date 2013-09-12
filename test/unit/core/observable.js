@@ -1,4 +1,4 @@
-describe('Domino.mixins.Observable', function() {
+describe('Domino.core.Observable', function() {
     
     var observable;
     
@@ -6,7 +6,7 @@ describe('Domino.mixins.Observable', function() {
         
         var ObservableClass = function() {};
         
-        Domino.utils.Object.merge(ObservableClass.prototype, Domino.mixins.Observable);
+        Domino.core.Object.merge(ObservableClass.prototype, Domino.core.Observable);
         
         observable = new ObservableClass();
     });

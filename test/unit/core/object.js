@@ -1,9 +1,9 @@
-describe('Domino.utils.Object', function() {
+describe('Domino.core.Object', function() {
     
     var Obj;
     
     beforeEach(function() {
-        Obj = Domino.utils.Object;
+        Obj = Domino.core.Object;
     });
     
     afterEach(function() {
