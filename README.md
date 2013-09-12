@@ -1,11 +1,9 @@
-Domino [![Build Status](https://travis-ci.org/yhwh/domino.png?branch=master)](https://travis-ci.org/yhwh/domino) 
-======
 
-A Dom Events injection library.
+A Dom events injection library.
 
-[Download latest stable version](http://yhwh.github.io/domino/build/domino.js)
 
-Supported Browsers:
+Supported Browsers
+------------------
 
 * IE8-10
 * Firefox
@@ -13,9 +11,6 @@ Supported Browsers:
 * Safari
 * PhantomJS
 
-[Contributors Code Documentation](http://yhwh.github.io/domino/docs)
-
-[Tests Code Coverage](http://yhwh.github.io/domino/coverage)
 
 How to build
 ------------
