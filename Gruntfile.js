@@ -12,6 +12,10 @@ var dominoFiles = [
 
 var karmaFiles = [
 
+  {pattern: 'test/vendor/*.js' },
+
+  {pattern: 'test/fixtures/**/*.html', included: false},
+
   {pattern: 'node_modules/expect.js/expect.js', watched: false},
 
   {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
@@ -45,14 +49,17 @@ module.exports = function (grunt) {
       ],
       
       options: {
-        jshintrc: '.jshintrc'
+
+        jshintrc: '.jshintrc',
+
+        ignores: [ 'test/vendor/jquery-1.10.2.js']
+
       }
       
     },
     
     jsdoc: {
         
-
         dist : {
             src: ['src/**/*.js'],
             
@@ -184,7 +191,7 @@ module.exports = function (grunt) {
     concat: {
 
         options: {
-            
+
             stripBanners: true,
 
             banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n' +
