@@ -79,21 +79,21 @@ module.exports = function(config) {
         version: '6'
       },
       
-      'SL_IE_8': {
+      'SL_IE8': {
         base: 'SauceLabs',
         browserName: 'internet explorer',
         platform: 'Windows 7',
         version: '8'
       },
       
-      'SL_IE_9': {
+      'SL_IE9': {
         base: 'SauceLabs',
         browserName: 'internet explorer',
         platform: 'Windows 2008',
         version: '9'
       },
       
-      'SL_IE_10': {
+      'SL_IE10': {
         base: 'SauceLabs',
         browserName: 'internet explorer',
         platform: 'Windows 2012',

@@ -21,4 +21,15 @@ before_script:
   - .travis/sauce_connect_setup.sh
 
 script:
-  - "grunt jshint && grunt build && grunt karma:sauce1 && grunt karma:sauce2 && grunt karma:sauce3 && grunt jsdoc && grunt testcoverage && .travis/ghpages-deploy.sh"
+  - grunt jshint && 
+    grunt build && 
+    grunt karma:phantomjsci && 
+    grunt karma:chromeci && 
+    grunt karma:firefoxci && 
+    grunt karma:safarici &&
+    grunt karma:ie8ci &&
+    grunt karma:ie9ci &&
+    grunt karma:ie10ci &&
+    grunt jsdoc && 
+    grunt testcoverage 
+    && .travis/ghpages-deploy.sh

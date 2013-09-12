@@ -84,19 +84,39 @@ module.exports = function (grunt) {
             reporters: ['coverage']
         },
 
-        sauce1: {
+        phantomjsci: {
             configFile: 'karma.conf.js',
-            browsers: ['SL_Chrome', 'SL_Firefox', 'PhantomJS']
+            browsers: ['PhantomJS']
         },
         
-        sauce2: {
+        chromeci: {
             configFile: 'karma.conf.js',
-            browsers: ['SL_Safari', 'SL_IE_8']
+            browsers: ['SL_Chrome']
+        },
+
+        firefoxci: {
+            configFile: 'karma.conf.js',
+            browsers: ['SL_Firefox']
+        },
+
+        safarici: {
+            configFile: 'karma.conf.js',
+            browsers: ['SL_Safari']
         },
         
-        sauce3: {
+        ie8ci: {
             configFile: 'karma.conf.js',
-            browsers: ['SL_IE_9', 'SL_IE_10']
+            browsers: ['SL_IE8']
+        },
+
+        ie9ci: {
+            configFile: 'karma.conf.js',
+            browsers: ['SL_IE9']
+        },
+
+        ie10ci: {
+            configFile: 'karma.conf.js',
+            browsers: ['SL_IE10']
         }
     },
 
