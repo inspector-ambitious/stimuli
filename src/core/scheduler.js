@@ -1,7 +1,7 @@
 'use strict';
 
 (function() {
-        
+
     /**
      * This class allows to schedule events.
      * @constructor
@@ -16,7 +16,7 @@
         this.queue = [];
         this.locked = false;
     };
-    
+
     // Applies Observable mixin
     Domino.core.Object.merge(Domino.core.Scheduler.prototype, Domino.core.Observable);
 
@@ -34,9 +34,10 @@
         emit(me);
 
     };
-    
-    
+
+
     // Schedules emission of received data   
+
     function emit(me) {
 
         if (me.locked || me.queue.length === 0) {
@@ -47,9 +48,9 @@
 
         var data = me.queue.shift(),
             fn = data.callback || function() {};
-    
+
         delete data.callback;
-        
+
         var callback = function() {
             var args = Array.prototype.slice.call(arguments, 0);
 
@@ -63,7 +64,7 @@
                 });
 
                 fn.apply(me, args);
-            // synchronous action callback
+                // synchronous action callback
             } else {
                 fn.apply(me, args);
                 me.locked = false;
@@ -71,11 +72,11 @@
             }
 
         };
-        
+
         setTimeout(function() {
             me.publish('emit', data, callback);
         }, me.options.speed * me.options.interval);
-        
+
     }
- 
+
 })();

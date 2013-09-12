@@ -18,11 +18,11 @@ describe('Domino.device.Abstract', function() {
     });
 
     it('should emit data in the correct format', function(done) {
-        
+
         var options = {
             test: 1
         };
-        
+
         var cb = function() {
             return 1;
         };

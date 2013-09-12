@@ -12,5 +12,5 @@ TestHelper.loadFixture = function(url, callback) {
 
 // 
 TestHelper.unloadFixture = function() {
-     $('#fixtures').remove();
+    $('#fixtures').remove();
 };

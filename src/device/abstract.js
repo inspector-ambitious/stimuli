@@ -1,13 +1,13 @@
 'use strict';
 
 (function() {
-    
+
     Domino.device.Abstract = {
 
-        send: function (action, options, callback) {
-            
+        send: function(action, options, callback) {
+
             var me = this;
-            
+
             callback = callback || function() {};
 
             if (typeof options === "undefined") {
@@ -25,7 +25,7 @@
                 action: action,
 
                 options: options,
-                
+
                 callback: callback
 
             });
