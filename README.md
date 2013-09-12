@@ -1,5 +1,5 @@
 
-A Dom events injection library.
+A DOM events injection library.
 
 
 Supported Browsers
