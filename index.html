@@ -28,7 +28,7 @@
             success:function(package) {
               $(function() {
                   var converter = new Showdown.converter();
-                  $('#dominoversion').html(converter.makeHtml(package.version));
+                  $('.version').html(converter.makeHtml(package.version));
               });
             }
         });
@@ -42,16 +42,40 @@
   <body>
     <div class="wrapper">
       <header>
-        <h1>Domino</h1>
+        <a href="http://yhwh.github.io/domino/"><h1>Domino</h1></a>
         <p></p>
-
-        <p class="view">This project is maintained by <a href="https://github.com/yhwh">yhwh</a></p>
-
+        <p class="view">This project is maintained by <a href="https://github.com/yhwh">yhwh</a> 
+        </p>
         <ul>
-          <li><a href="build/domino.js">Download <strong><span id="dominoversion"></span></strong></a></li>
-          <li><a href="https://github.com/yhwh/domino">View On <strong>GitHub</strong></a></li>
+          <li><a href="build/domino.js">Download Latest<strong><span class="version"></span></strong></a></li>
           <li><a href="https://twitter.com/intent/user?screen_name=froginator">Follow On<strong>Twitter</strong></a></li>
+          <li><a href="https://github.com/yhwh/domino">View On <strong>GitHub</strong></a></li>
         </ul>
+
+        <p>
+          <a href="http://yhwh.github.io/domino/">Home</a> 
+        </p>
+
+        <p>
+          <a href="http://yhwh.github.io/domino/docs">API Documentation</a> 
+        </p>
+
+        <p>
+          <a href="http://yhwh.github.io/domino/coverage">Tests Code Coverage</a> 
+        </p>
+
+        <p>
+            Latests Builds<br/>
+            <small>Master</small><br/>
+            <a href="https://travis-ci.org/yhwh/domino">
+              <img src="https://travis-ci.org/yhwh/domino.png?branch=master" alt="Build Status" title="">
+            </a><br/>
+          
+            <small>Development</small><br/>
+            <a href="https://travis-ci.org/yhwh/domino">
+              <img src="https://travis-ci.org/yhwh/domino.png?branch=development" alt="Build Status" title="">
+            </a>
+        </p>
 
       </header>
       <section id="readmemd">
