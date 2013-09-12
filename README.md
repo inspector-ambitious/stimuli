@@ -1,4 +1,7 @@
 
+Description
+-----------
+
 A DOM events injection library.
 
 
