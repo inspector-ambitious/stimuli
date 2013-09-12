@@ -40,7 +40,7 @@ The tests are automatically run with [karma](http://karma-runner.github.io/).
 
 To test IE with [ievms](https://github.com/xdissent/ievms):
 
-curl -s https://raw.github.com/xdissent/ievms/master/ievms.sh | env IEVMS_VERSIONS="8 9 10" bash
+    curl -s https://raw.github.com/xdissent/ievms/master/ievms.sh | env IEVMS_VERSIONS="8 9 10" bash
 
 To execute all the tests:
 
