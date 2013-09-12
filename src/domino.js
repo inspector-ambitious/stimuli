@@ -14,3 +14,9 @@ var Domino = function(options) {};
  */
 
 Domino.core = {};
+
+/**
+ * @namespace Domino.device
+ */
+
+Domino.device = {};
