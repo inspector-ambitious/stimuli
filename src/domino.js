@@ -8,7 +8,7 @@
  */
 
 var Domino = function(options) {
-    
+
     this.devices = {};
 
     if (typeof Domino.device.Mouse !== 'undefined') {
@@ -24,7 +24,7 @@ Domino.prototype.getMouse = function() {
 /**
  * @namespace Domino.core
  */
- 
+
 Domino.core = {};
 
 /**
