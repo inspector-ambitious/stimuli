@@ -13,10 +13,14 @@
         return this.send('leftClick', options, callback);
     };
 
+    Mouse.prototype.click = Mouse.prototype.leftClick;
+
     Mouse.prototype.rightClick = function(options, callback) {
         return this.send('rightClick', options, callback);
     };
     
+    Mouse.prototype.context = Mouse.prototype.rightClick;
+
     Mouse.prototype.middleClick = function(options, callback) {
         return this.send('middleClick', options, callback);
     };

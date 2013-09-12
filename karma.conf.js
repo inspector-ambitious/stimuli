@@ -12,22 +12,6 @@ module.exports = function(config) {
     frameworks: ['mocha'],
 
 
-    // list of files / patterns to load in the browser
-    files: [
-
-      {pattern: 'node_modules/expect.js/expect.js', watched: false},
-
-      {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
-
-      {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false},
-
-      {pattern: 'build/domino.js'},
-                   
-      {pattern: 'test/unit/**/*.js'},
-      
-    ],
-
-
     // list of files to exclude
     exclude: [
       

@@ -1,229 +1,302 @@
 'use strict';
 
-// DominoFiles
-var dominoFiles = [
-    'src/domino.js',
-    'src/core/object.js',
-    'src/core/observable.js',
-    'src/core/scheduler.js',
-    'src/device/abstract.js',
-    'src/device/mouse.js'
-];
+module.exports = function(grunt) {
 
-var karmaFiles = [
+    // import package.json
+    var pkg = grunt.file.readJSON('package.json');
 
-  {pattern: 'test/vendor/*.js' },
+    // DominoFiles
+    var dominoFiles = [
+        'src/domino.js',
+        'src/core/object.js',
+        'src/core/observable.js',
+        'src/core/scheduler.js',
+        'src/device/abstract.js',
+        'src/device/mouse.js'
+    ];
 
-  {pattern: 'test/fixtures/**/*.html', included: false},
 
-  {pattern: 'node_modules/expect.js/expect.js', watched: false},
+    // GENERATE FILES CONFIGURATION FOR KARMA (DEV AND CI MODE)
 
-  {pattern: 'node_modules/sinon/pkg/sinon.js', watched: false},
+    // Shared files loaded by karma test runner
+    var sharedTestFiles = [
 
-  {pattern: 'node_modules/sinon/pkg/sinon-ie.js', watched: false}
+        {
+            pattern: 'test/vendor/*.js',
+            watched: false
+        },
 
-];
+        {
+            pattern: 'node_modules/expect.js/expect.js',
+            watched: false
+        },
 
-dominoFiles.forEach(function(dominoFile) {
-  karmaFiles.push({pattern: dominoFile});
-});
+        {
+            pattern: 'node_modules/sinon/pkg/sinon.js',
+            watched: false
+        },
 
-karmaFiles.push({pattern: 'test/unit/**/*.js'});
+        {
+            pattern: 'node_modules/sinon/pkg/sinon-ie.js',
+            watched: false
+        },
 
-module.exports = function (grunt) {
+        {
+            pattern: 'test/fixtures/**/*.html',
+            included: false
+        },
 
-  grunt.initConfig({
-    
-    pkg: grunt.file.readJSON('package.json'),
+        {
+            pattern: 'test/helper/**/*.js'
+        }
 
-    jshint: {
-        
-      files: [
-          
-        'Gruntfile.js',
-        'src/**/*.js',
-        'package.json',
-        '.jshintrc',
-        'test/**/*.js'
-        
-      ],
-      
-      options: {
+    ];
 
-        jshintrc: '.jshintrc',
+    // Files loaded by karma test runner for development
+    var testFilesDev = [];
 
-        ignores: [ 'test/vendor/jquery-1.10.2.js']
+    // Files loaded by karma test runner for continuous integration (build)
+    var testFilesBuild = [];
 
-      }
-      
-    },
-    
-    jsdoc: {
-        
-        dist : {
-            src: ['src/**/*.js'],
-            
+    // add shared files
+    sharedTestFiles.forEach(function(shared) {
+        testFilesDev.push(shared);
+        testFilesBuild.push(shared);
+    });
+
+    // Add all dominos sources for development
+    dominoFiles.forEach(function(dominoFile) {
+        testFilesDev.push({
+            pattern: dominoFile
+        });
+    });
+
+    // Add freshly build domino
+    testFilesBuild.push({
+        pattern: 'build/' + pkg.name + '-' + pkg.version + '.js'
+    });
+
+
+    // test specs
+    var specs = [{
+        pattern: 'test/unit/**/*.js'
+    }, {
+        pattern: 'test/integration/**/*.js'
+    }];
+
+    // add specs to both mode
+    specs.forEach(function(spec) {
+        testFilesDev.push(spec);
+        testFilesBuild.push(spec);
+    });
+
+    // GRUNT CONFIGURATION
+    grunt.initConfig({
+
+        pkg: pkg,
+
+        jshint: {
+
+            files: [
+
+                'Gruntfile.js',
+                'src/**/*.js',
+                'package.json',
+                '.jshintrc',
+                'test/**/*.js'
+
+            ],
+
             options: {
-                destination: 'docs'
+
+                jshintrc: '.jshintrc',
+
+                ignores: ['test/vendor/jquery-1.10.2.js']
+
+            }
+
+        },
+
+        jsdoc: {
+
+            dist: {
+                src: ['src/**/*.js'],
+
+                options: {
+                    destination: 'docs'
+                }
+            }
+
+        },
+
+        karma: {
+
+            unit: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesDev,
+
+                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
+
+            },
+
+            watch: {
+
+                configFile: 'karma.conf.js',
+
+                singleRun: false,
+
+                autoWatch: true,
+
+                files: testFilesDev,
+
+                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
+
+            },
+
+            quickwatch: {
+
+                configFile: 'karma.conf.js',
+
+                singleRun: false,
+
+                autoWatch: true,
+
+                files: testFilesDev,
+
+                browsers: ['PhantomJS']
+
+            },
+
+            quick: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesDev,
+
+                browsers: ['PhantomJS']
+
+            },
+
+            coverage: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesDev,
+
+                browsers: ['PhantomJS'],
+
+                reporters: ['coverage']
+
+            },
+
+            phantomjsci: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesBuild,
+
+                browsers: ['PhantomJS']
+
+            },
+
+            chromeci: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesBuild,
+
+                browsers: ['SL_Chrome']
+
+            },
+
+            firefoxci: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesBuild,
+
+                browsers: ['SL_Firefox']
+
+            },
+
+            safarici: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesBuild,
+
+                browsers: ['SL_Safari']
+
+            },
+
+            ie8ci: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesBuild,
+
+                browsers: ['SL_IE8']
+
+            },
+
+            ie9ci: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesBuild,
+
+                browsers: ['SL_IE9']
+
+            },
+
+            ie10ci: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesBuild,
+
+                browsers: ['SL_IE10']
+
+            }
+        },
+
+        concat: {
+
+            options: {
+
+                stripBanners: true,
+
+                banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n' + '\'use strict\';\n',
+
+                process: function(src, filepath) {
+                    return '\n// Source: ' + filepath + '\n' +
+                        src.replace(/'use strict';\n/gm, '');
+                },
+            },
+
+            dist: {
+
+                src: dominoFiles,
+
+                dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js'
+
             }
         }
-        
-    },
 
-    karma: {
-        
-        unit: {
+    });
 
-            configFile: 'karma.conf.js',
-            
-            files: karmaFiles,
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-contrib-concat');
 
-            browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
-
-        },
-
-        watch: {
-
-            configFile: 'karma.conf.js',
-            
-            singleRun: false,
-            
-            autoWatch: true,
-            
-            files: karmaFiles,
-
-            browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
-
-        },
-
-        quickwatch: {
-            
-            configFile: 'karma.conf.js',
-
-            singleRun: false,
-
-            autoWatch: true,
-
-            files: karmaFiles,
-
-            browsers: ['PhantomJS']
-
-        },
-
-        quick: {
-            
-            configFile: 'karma.conf.js',
-
-            files: karmaFiles,
-
-            browsers: ['PhantomJS']
-
-        },
-
-        coverage: {
-            configFile: 'karma.conf.js',
-
-            files: karmaFiles,
-
-            browsers: ['PhantomJS'],
-
-            reporters: ['coverage']
-
-        },
-
-        phantomjsci: {
-
-            configFile: 'karma.conf.js',
-
-            browsers: ['PhantomJS']
-
-        },
-        
-        chromeci: {
-
-            configFile: 'karma.conf.js',
-
-            browsers: ['SL_Chrome']
-
-        },
-
-        firefoxci: {
-
-            configFile: 'karma.conf.js',
-
-            browsers: ['SL_Firefox']
-
-        },
-
-        safarici: {
-
-            configFile: 'karma.conf.js',
-
-            browsers: ['SL_Safari']
-
-        },
-        
-        ie8ci: {
-
-            configFile: 'karma.conf.js',
-
-            browsers: ['SL_IE8']
-
-        },
-
-        ie9ci: {
-
-            configFile: 'karma.conf.js',
-
-            browsers: ['SL_IE9']
-
-        },
-
-        ie10ci: {
-
-            configFile: 'karma.conf.js',
-
-            browsers: ['SL_IE10']
-
-        }
-    },
-
-    concat: {
-
-        options: {
-
-            stripBanners: true,
-
-            banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - <%= grunt.template.today("yyyy-mm-dd") %> */\n' +
-                    '\'use strict\';\n',
-
-            process: function(src, filepath) {
-                return '\n// Source: ' + filepath + '\n' +
-                        src.replace(/'use strict';\n/gm, '');
-            },
-        },
-
-        dist: {
-
-          src: dominoFiles,
-
-          dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js'
-
-        }
-    }
-    
-  });
-
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-karma');
-  grunt.loadNpmTasks('grunt-jsdoc');
-  grunt.loadNpmTasks('grunt-contrib-concat');
-
-  grunt.registerTask('lint', ['jshint']);
-  grunt.registerTask('watchtest', ['karma:watch']);
-  grunt.registerTask('quicktest', ['karma:quick']);
-  grunt.registerTask('quickwatchtest', ['karma:quick']);
-  grunt.registerTask('cov', ['karma:coverage']);
-  grunt.registerTask('build', ['concat:dist']);
+    grunt.registerTask('lint', ['jshint']);
+    grunt.registerTask('watchtest', ['karma:watch']);
+    grunt.registerTask('quicktest', ['karma:quick']);
+    grunt.registerTask('quickwatchtest', ['karma:quick']);
+    grunt.registerTask('cov', ['karma:coverage']);
+    grunt.registerTask('build', ['concat:dist']);
 
 };
