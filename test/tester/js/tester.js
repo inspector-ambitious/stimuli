@@ -4,7 +4,7 @@ function TesterCtrl($scope, $http, $location) {
     $http.get('resources/fixtures.json')
     .then(function(res){
         $scope.fixtures = res.data;
-        $scope.fixture = $scope.fixtures[0];              
+        $scope.fixture = $scope.fixtures[0];
     });
 
     // Retrieve fixtures url
