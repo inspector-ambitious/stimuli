@@ -299,4 +299,34 @@ module.exports = function(grunt) {
     grunt.registerTask('cov', ['karma:coverage']);
     grunt.registerTask('build', ['concat:dist']);
 
+    grunt.registerTask('build-tester-fixture', 'Build fixtures list for manual tester', function() {
+
+        var fs = require('fs');
+
+        grunt.log.writeln('Generating fixtures.json...');
+
+        var files = fs.readdirSync('test/fixtures');
+
+        var list = [];
+
+        files.forEach(function(file) {
+            var fileContent = fs.readFileSync('test/fixtures/' + file, 'utf8');
+            var description = fileContent.split('\n')[0].replace(/<h2>|<\/h2>/g, '');
+            
+            list.push({
+
+                url: file,
+
+                description: description
+
+            });
+
+        });
+
+        fs.writeFileSync('test/tester/resources/fixtures.json', JSON.stringify(list));
+
+        grunt.log.writeln('All done!');
+
+        return true;
+    });
 };

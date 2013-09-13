@@ -1,0 +1,54 @@
+<!doctype html>
+<html ng-app>
+
+    <head>
+        <link rel="stylesheet" href="resources/tester.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.8/angular.min.js"></script>
+        <script src="js/tester.js"></script>
+    </head>
+
+    <body ng-controller="TesterCtrl">
+
+        <div class="t-menu">
+            <div class="t-menu-wrapper">
+
+                <h1>DOM Events Tester</h1>
+
+                <select ng-model="fixture" ng-options="f.url for f in fixtures">
+                   <option value="">Select a fixture</option>
+                </select>
+
+                <div>
+                    <input class="t-console-checkbox" type="checkbox" ng-model="console">
+                    <span class="t-input-field">Enable browser logging</span>
+                </div>
+
+                <div>
+                    <div class="t-input-field">HTML elements selector (jQuery style)</div>
+                    <input class="t-selector-input" type="text" ng-model="selector"></input>
+                </div>
+
+                <div class="t-checkbox-group">
+                    <div class="t-input-field">Observed DOM events</div>
+                    <div class="t-domevents-checkbox" ng-repeat="domEvent in domEvents">
+                            <input type="checkbox" ng-model="domEvent.observed">
+                            <span class="t-input-field">{{domEvent.name}}</span>
+                    </div>
+                </div>
+
+                <button class="t-observe-button" ng-click="toggleObserve()">{{observe_button_text}}</button>
+
+            </div>
+        </div>
+
+        <div class="t-fixture-container">
+            <div class="t-fixtures-wrapper" ng-include="getFixtureUrl()"></div> 
+        </div>
+
+        <div class="t-event-container">
+            <h1>DOM events List</h1>
+        </div>
+
+    </body>
+
+</html>
