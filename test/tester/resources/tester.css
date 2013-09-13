@@ -1,0 +1,85 @@
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { 
+    height: 100%; 
+}
+
+
+body {
+    /*position: relative;*/
+    font-family:  Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    height: 100%; 
+}
+
+a {
+    color: #39c;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+
+.t-menu {
+    float: left;
+    width: 29%;
+    border-right: 1px solid #e5e5e5;
+    height: 100%;
+}
+
+.t-fixture-container {
+    float: left;
+    width: 71%;
+    height: 50%;
+    overflow: auto;
+}
+
+.t-event-container {
+    float: left;
+    width: 71%;
+    height: 50%;
+    border-top: 1px solid #e5e5e5;
+}
+
+.t-menu > *, .t-event-container > *, .t-fixture-container > * { 
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.t-observe-button {
+    height: 26px;
+}
+
+.t-menu-wrapper > * {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 20px;
+    font-weight: normal;
+    color: #49c;
+    font-style: italic;
+}
+
+h2 {
+    font-size: 16px;
+}
+
+.t-selector-input, .t-fixture-select {
+    width: 100%;
+}
+
+.t-input-field {
+    font-size: 12px;
+    padding-bottom: 3px;
+}
+
+.t-domevents-checkbox {
+    width: 100px;
+    display: inline-block;
+}

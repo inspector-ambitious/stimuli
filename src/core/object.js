@@ -3,14 +3,14 @@
 /**
  * Various utilities to work with Objects.
  * @namespace Object
- * @memberof Domino.utils
+ * @memberof Domino.core
  */
 
-Domino.utils.Object = {
-    /** @lends Domino.utils.Object */
-    
+Domino.core.Object = {
+    /** @lends Domino.core.Object */
+
     /**
-     * Merge objects properties.     
+     * Merge objects properties.
      * @param {Object} dest The destination object
      * @param {Object} src The source object
      * @returns {Object} dest

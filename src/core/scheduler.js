@@ -1,31 +1,31 @@
 'use strict';
 
 (function() {
-        
+
     /**
      * This class allows to schedule events.
      * @constructor
-     * @mixes Domino.mixins.Observable
-     * @memberof Domino.utils
+     * @mixes Domino.core.Observable
+     * @memberof Domino.core
      * @param {Object} options
      * @returns {Scheduler}
      */
 
-    Domino.utils.Scheduler = function(options) {
+    Domino.core.Scheduler = function(options) {
         this.options = options;
         this.queue = [];
         this.locked = false;
     };
-    
+
     // Applies Observable mixin
-    Domino.utils.Object.merge(Domino.utils.Scheduler.prototype, Domino.mixins.Observable);
+    Domino.core.Object.merge(Domino.core.Scheduler.prototype, Domino.core.Observable);
 
     /**
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
 
-    Domino.utils.Scheduler.prototype.receive = function(data) {
+    Domino.core.Scheduler.prototype.receive = function(data) {
 
         var me = this;
 
@@ -34,9 +34,10 @@
         emit(me);
 
     };
-    
-    
+
+
     // Schedules emission of received data   
+
     function emit(me) {
 
         if (me.locked || me.queue.length === 0) {
@@ -47,9 +48,9 @@
 
         var data = me.queue.shift(),
             fn = data.callback || function() {};
-    
+
         delete data.callback;
-        
+
         var callback = function() {
             var args = Array.prototype.slice.call(arguments, 0);
 
@@ -63,7 +64,7 @@
                 });
 
                 fn.apply(me, args);
-            // synchronous action callback
+                // synchronous action callback
             } else {
                 fn.apply(me, args);
                 me.locked = false;
@@ -71,11 +72,11 @@
             }
 
         };
-        
+
         setTimeout(function() {
             me.publish('emit', data, callback);
         }, me.options.speed * me.options.interval);
-        
+
     }
- 
+
 })();
