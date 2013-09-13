@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Source: domino.js</title>
+    <title>JSDoc: Namespace: device</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,50 +17,89 @@
 
 <div id="main">
     
-    <h1 class="page-title">Source: domino.js</h1>
+    <h1 class="page-title">Namespace: device</h1>
     
     
 
 
+
+<section>
     
-    <section>
-        <article>
-            <pre class="prettyprint source"><code>'use strict';
+<header>
+    <h2>
+        <span class="ancestors"><a href="Domino.html">Domino</a>.</span>
+    
+    device
+    </h2>
+    
+</header>  
 
-/**
- * Creates an instance of Domino
- * @constructor
- * @param {Object} options
- * @return {Domino} Fresh Domino instance
- */
+<article>
+    <div class="container-overview">
+    
+    
+    
+        
+        
+        
+<dl class="details">
+    
+        
+    
+    
+    
 
-var Domino = function(options) {
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="domino.js.html">domino.js</a>, <a href="domino.js.html#line30">line 30</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
 
-    this.devices = {};
+        
+        
+    
+    </div>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+</article>
 
-    if (typeof Domino.device.Mouse !== 'undefined') {
-        this.devices.mouse = new Domino.device.Mouse();
-    }
-
-};
-
-Domino.prototype.getMouse = function() {
-    return this.devices.mouse;
-};
-
-/**
- * @namespace Domino.core
- */
-
-Domino.core = {};
-
-/**
- * @namespace Domino.device
- */
-
-Domino.device = {};</code></pre>
-        </article>
-    </section>
+</section>  
 
 
 

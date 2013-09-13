@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Domino</title>
+    <title>JSDoc: Class: Scheduler</title>
     
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Class: Domino</h1>
+    <h1 class="page-title">Class: Scheduler</h1>
     
     
 
@@ -27,7 +27,9 @@
     
 <header>
     <h2>
-    Domino
+        <span class="ancestors"><a href="Domino.html">Domino</a><a href="Domino.core.html">.core</a>.</span>
+    
+    Scheduler
     </h2>
     
 </header>  
@@ -39,7 +41,7 @@
     
         
 <dt>
-    <h4 class="name" id="Domino"><span class="type-signature"></span>new Domino<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="Domino.html">Domino</a>}</span></h4>
+    <h4 class="name" id="Scheduler"><span class="type-signature"></span>new Scheduler<span class="signature">(options)</span><span class="type-signature"> &rarr; {Scheduler}</span></h4>
     
     
 </dt>
@@ -47,7 +49,7 @@
     
     
     <div class="description">
-        Creates an instance of Domino
+        This class allows to schedule events.
     </div>
     
 
@@ -128,7 +130,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="domino.js.html">domino.js</a>, <a href="domino.js.html#line10">line 10</a>
+        <a href="scheduler.js.html">core/scheduler.js</a>, <a href="scheduler.js.html#line14">line 14</a>
     </li></ul></dd>
     
     
@@ -152,10 +154,6 @@
     <h5>Returns:</h5>
     
             
-<div class="param-desc">
-    Fresh Domino instance
-</div>
-
 
 
 <dl>
@@ -164,7 +162,7 @@
 	</dt>
 	<dd>
 		
-<span class="param-type"><a href="Domino.html">Domino</a></span>
+<span class="param-type">Scheduler</span>
 
 
 	</dd>
@@ -181,25 +179,142 @@
     
     
     
+        <h3 class="subsection-title">Mixes In</h3>
+        
+        <ul>
+            <li><a href="Domino.core.Observable.html">Domino.core.Observable</a></li>
+        </ul>
     
     
     
     
     
     
-        <h3 class="subsection-title">Namespaces</h3>
+    
+    
+    
+    
+    
+        <h3 class="subsection-title">Methods</h3>
         
         <dl>
-            <dt><a href="namespaces.html#Domino.core"><a href="Domino.core.html">core</a></a></dt>
-            <dd></dd>
+            
+<dt>
+    <h4 class="name" id="receive"><span class="type-signature"></span>receive<span class="signature">(data)</span><span class="type-signature"></span></h4>
+    
+    
+</dt>
+<dd>
+    
+    
+    <div class="description">
+        Receives data to emit.
+    </div>
+    
+
+    
+    
+    
+    
+    
+        <h5>Parameters:</h5>
         
-            <dt><a href="namespaces.html#Domino.device"><a href="Domino.device.html">device</a></a></dt>
-            <dd></dd>
+
+<table class="params">
+    <thead>
+	<tr>
+		
+		<th>Name</th>
+		
+		
+		<th>Type</th>
+		
+		
+		
+		
+		
+		<th class="last">Description</th>
+	</tr>
+	</thead>
+	
+	<tbody>
+	
+	
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+            
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+            
+            
+            
+            
+            
+            <td class="description last">The data to emit.</td>
+        </tr>
+	
+	
+	</tbody>
+</table>
+    
+    
+    
+<dl class="details">
+    
+        
+    
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="scheduler.js.html">core/scheduler.js</a>, <a href="scheduler.js.html#line28">line 28</a>
+    </li></ul></dd>
+    
+    
+    
+    
+    
+    
+    
+</dl>
+
+    
+    
+
+    
+
+    
+    
+    
+    
+    
+    
+    
+</dd>
+
         </dl>
-    
-    
-    
-    
     
     
     

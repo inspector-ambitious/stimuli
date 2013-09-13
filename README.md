@@ -26,7 +26,7 @@ Install all required node modules:
 
     npm install
 
-Build domino in build/domino.js:
+Build domino in build/:
 
     grunt build
 
@@ -42,26 +42,30 @@ To test IE with [ievms](https://github.com/xdissent/ievms):
 
     curl -s https://raw.github.com/xdissent/ievms/master/ievms.sh | env IEVMS_VERSIONS="8 9 10" bash
 
-To execute all the tests:
+To quickly execute the test once with PhantomJS:
 
-    grunt test
+    grunt quicktest
+
+To continuously run the tests on all browsers:
+
+    grunt watchtest
 
 To lint all the js files:
 
-    grunt jshint
+    grunt lint
 
-To generate test coverage report in coverage/ folder:
+To generate lcov test coverage report in coverage/ folder:
 
-    grunt testcoverage
+    grunt cov
 
 
 Contributors Tips
 ------------------
 
-* Send a pull request to the development branch
+* Send pull requests to the development branch.
 
-* Unit test everything (and try to avoid mocking)
+* Unit test all the fucking time.
 
-* Design matters [SOLID Javascript](http://aspiringcraftsman.com/series/solid-javascript/)
+* Design matters [SOLID Javascript](http://aspiringcraftsman.com/series/solid-javascript/).
 
 
