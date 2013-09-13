@@ -14,9 +14,10 @@
 
                 <h1>DOM Events Tester</h1>
 
-                <select ng-model="fixture" ng-options="f.url for f in fixtures">
-                   <option value="">Select a fixture</option>
-                </select>
+                <div>
+                    <div class="t-input-field">Select a fixture</div>
+                    <select class="t-fixture-select" ng-model="fixture" ng-options="f.url for f in fixtures"></select>
+                </div>
 
                 <div>
                     <input class="t-console-checkbox" type="checkbox" ng-model="console">
