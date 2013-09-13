@@ -1,0 +1,130 @@
+<!doctype html>
+<html ng-app="DominoEventsTester">
+
+    <head>
+        <link rel="stylesheet" href="resources/style.css">
+        <script src="../vendor/angular-1.0.8.js"></script>
+        <script src="../vendor/jquery-1.10.2.js"></script>
+
+        <script src="../../src/domino.js"></script>
+        <script src="../../src/core/support.js"></script>
+        <script src="../../src/core/element.js"></script>
+
+        <script src="js/app.js"></script>
+        <script src="js/directives/autoscroll.js"></script>
+        <script src="js/controllers/main.js"></script>
+    </head>
+
+    <body ng-controller="MainCtrl">
+
+        <div class="t-menu">
+            <div class="t-menu-wrapper">
+
+                <h1>
+                    {{package.name}}
+                    <span class="t-header-legend">(Version {{package.version}})</span>
+                </h1>
+
+                <div>
+                    <div class="t-input-field">Select a template</div>
+                    <select class="t-template-select" 
+                            ng-model="template"
+                            ng-selected="resetCapture('tpl select')"
+                            ng-options="f.description for f in templates">
+                    </select>
+                </div>
+
+                <div>
+                    <input class="t-console-checkbox" type="checkbox" ng-model="console">
+                    <span class="t-input-field">
+                        Enable browser logging
+                    </span>
+                </div>
+
+                <div>
+                    <div class="t-input-field">
+                        Elements selector (jQuery style)
+                    </div>
+                    <input class="t-selector-input" type="text" ng-model="selector" ng-change="resetCapture('selector')"></input>
+                </div>
+
+                <div class="t-checkbox-group">
+                    <div class="t-input-field">
+                        Select DOM events
+                    </div>
+                    <div class="t-domevents-checkbox" ng-repeat="domEvent in domEvents">
+                        <input type="checkbox" ng-model="domEvent.watch" ng-change="resetCapture('cbox')">
+                        <span class="t-input-field">
+                            {{domEvent.name}}
+                        </span>
+                    </div>
+                </div>
+
+                <button class="t-watch-button" ng-click="toggleCapture()">
+                    <span ng-switch on="watch">
+                        <span ng-switch-when="true">
+                            Stop Capture
+                        </span>
+                        <span ng-switch-default>
+                            Start Capture
+                        </span>
+                    </span>
+                </button>
+
+            </div>
+        </div>
+
+        <div class="t-template-container">
+            <div class="t-templates-wrapper" ng-include="getTemplateUrl()" onload="resetCapture()"></div> 
+        </div>
+
+        <div class="t-event-container">
+
+            <h1>
+                Events Console
+            </h1>
+
+            <div t-auto-scroll class="t-event-list">
+                    <div class="t-event-row" 
+                         ng-class="{'t-event-row-last': $last}"
+                         ng-class-odd="'t-event-row-odd'" 
+                         ng-class-even="'t-event-row-even'" 
+                         ng-repeat="event in watchedEvents">
+                        
+                        <a  href="" 
+                            ng-click="event.hideDetails = !event.hideDetails">
+                        
+                        <span 
+                            class="t-event-arrow"
+                            ng-class="{true:'t-event-collapsed-arrow', false: 't-event-expanded-arrow' }[event.hideDetails]">
+                        </span>
+
+                        <span class="t-event-type">
+                            {{event.type}}
+                        </span>
+                        <span>
+                            on
+                        </span>
+                        <span class="t-event-target-tag">
+                            {{event.targetTag}}
+                        </span>
+                        <span class="t-event-target-id">
+                            {{event.targetId}}
+                        </span>
+                        <span class="t-event-target-cls">
+                            {{event.targetCls}}
+                        </span>
+
+                        </a>
+                        <div class="t-event-details" ng-hide="event.hideDetails" ng-repeat="(property, value) in filterWatchedEvent(event)">
+                            <span class="t-event-detail-property">{{property}}: </span>
+                            <span class="t-event-detail-value">{{value}}</span>
+                        </div>
+
+                    </div>
+            </div>
+        </div>
+
+    </body>
+
+</html>

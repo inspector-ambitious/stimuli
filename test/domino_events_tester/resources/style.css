@@ -1,0 +1,165 @@
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { 
+    height: 100%; 
+}
+
+
+body {
+    /*position: relative;*/
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    height: 100%; 
+}
+
+a {
+    color: #39c;
+    font-weight: 400;
+    text-decoration: none;
+}
+
+
+.t-menu {
+    float: left;
+    width: 29%;
+    border-right: 1px solid #e5e5e5;
+    height: 100%;
+}
+
+.t-template-container {
+    float: left;
+    width: 71%;
+    height: 50%;
+    overflow: auto;
+}
+
+.t-event-container {
+    float: left;
+    width: 71%;
+    height: 50%;
+    border-top: 1px solid #e5e5e5;
+}
+
+.t-menu > *, .t-event-container > *, .t-template-container > * { 
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.t-watch-button {
+    height: 26px;
+}
+
+.t-header-legend {
+    /*font-style: italic;*/
+    font-size: 12px;
+    font-weight: normal;
+}
+
+.t-menu-wrapper > * {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+h1 {
+    font-size: 26px;
+    font-weight: 500;
+    /*color: #49c;*/
+    /*font-style: italic;*/
+}
+
+h2 {
+    font-size: 16px;
+}
+
+.t-selector-input, .t-template-select {
+    width: 100%;
+}
+
+.t-input-field {
+    font-size: 12px;
+    padding-bottom: 3px;
+}
+
+.t-domevents-checkbox {
+    width: 33%;
+    display: inline-block;
+}
+
+.t-event-container {
+    position: relative;
+}
+
+.t-event-list {
+    border: 1px solid #e5e5e5;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    bottom: 10px;
+    right: 0;
+    overflow: auto;
+}
+
+.t-event-row {
+    border-bottom: 1px solid #e5e5e5;
+    font-style: italic;
+    padding: 5px;
+}
+
+.t-event-row-last {
+    border-bottom: none;
+}
+
+.t-event-type {
+    color: green;
+}
+
+.t-event-target-tag {
+    color: grey;
+}
+.t-event-target-id {
+    color: blue;
+}
+.t-event-target-cls {
+    color: red;
+}
+
+.t-event-row-odd {
+    background-color: #f7f7f9;
+}
+
+.t-event-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+}
+
+.t-event-collapsed-arrow {
+    border-left: 5px solid grey;
+}
+
+.t-event-row a {
+    color: #000;
+}
+
+.t-event-expanded-arrow {
+    border-top: 5px solid grey;
+}
+
+.t-event-details {
+    padding-left: 25px;
+    font-style: normal;
+}
+
+.t-event-detail-property {
+    color: purple;
+}
+
+.t-event-detail-value {
+    color: blue;
+}

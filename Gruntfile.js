@@ -8,6 +8,8 @@ module.exports = function(grunt) {
     // DominoFiles
     var dominoFiles = [
         'src/domino.js',
+        'src/core/support.js',
+        'src/core/element.js',
         'src/core/object.js',
         'src/core/observable.js',
         'src/core/scheduler.js',
@@ -299,19 +301,19 @@ module.exports = function(grunt) {
     grunt.registerTask('cov', ['karma:coverage']);
     grunt.registerTask('build', ['concat:dist']);
 
-    grunt.registerTask('build-tester-fixture', 'Build fixtures list for manual tester', function() {
+    grunt.registerTask('build-tester-templates', 'Build templates list for manual tester', function() {
 
         var fs = require('fs');
 
-        grunt.log.writeln('Generating fixtures.json...');
+        grunt.log.writeln('Generating templates.json...');
 
-        var files = fs.readdirSync('test/fixtures');
+        var files = fs.readdirSync('test/templates');
 
         var list = [];
 
         files.forEach(function(file) {
-            var fileContent = fs.readFileSync('test/fixtures/' + file, 'utf8');
-            var description = fileContent.split('\n')[0].replace(/<h2>|<\/h2>/g, '');
+            var fileContent = fs.readFileSync('test/templates/' + file, 'utf8');
+            var description = fileContent.split('\n')[0].replace(/<h1>|<\/h1>/g, '');
             
             list.push({
 
@@ -323,7 +325,7 @@ module.exports = function(grunt) {
 
         });
 
-        fs.writeFileSync('test/tester/resources/fixtures.json', JSON.stringify(list));
+        fs.writeFileSync('test/domino_event_tester/resources/fixtures.json', JSON.stringify(list));
 
         grunt.log.writeln('All done!');
 
