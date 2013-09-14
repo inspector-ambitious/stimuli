@@ -105,8 +105,11 @@ module.exports = function(grunt) {
                 'src/**/*.js',
                 'package.json',
                 '.jshintrc',
-                'test/**/*.js'
-
+                'test/domino_event_tester/**/*.js',
+                'test/helper/**/*.js',
+                'test/integration/**/*.js',
+                'test/templates/**/*.js',
+                'test/unit/**/*.js'
             ],
 
             options: {

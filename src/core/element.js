@@ -57,10 +57,12 @@ Domino.core.Element.prototype.removeAllListeners = function() {
         i;
 
     for (type in this.listeners) {
-        listeners = this.listeners[type];
-        length = listeners.length;
-        for (i = 0; i < length; i++) {
-            this.removeListener(listeners[i].type, listeners[i].listener);
+        if (this.listeners.hasOwnProperty(type)) {
+            listeners = this.listeners[type];
+            length = listeners.length;
+            for (i = 0; i < length; i++) {
+                this.removeListener(listeners[i].type, listeners[i].listener);
+            }
         }
     }
 };
