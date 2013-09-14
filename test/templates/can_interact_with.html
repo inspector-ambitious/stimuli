@@ -1,4 +1,44 @@
 <h1>Reachable and not reachable elements</h1>
 
-#elementwithnosize
-<div class="testme" id="elementwithnosize"></div>
+<p>
+    #element_visible
+    <div class="testme" id="element_visible"
+        style="background-color: blue; width: 50px; height: 50px;">
+    </div>
+
+    #element_with_visibility_hidden
+    <div class="testme" id="element_with_visibility_hidden" 
+        style="background-color: blue; width: 50px; height: 50px; visibility:hidden;">
+    </div>
+
+    #element_with_display_none
+    <div class="testme" id="element_with_display_none" 
+        style="background-color: blue; width: 50px; height: 50px; display:none;">
+    </div>
+
+    #element_with_no_size
+    <div class="testme" id="element_with_no_size">
+    </div>
+
+    #element_outside_of_viewport    
+    <div class="testme" id="element_outside_of_viewport"
+        style="background-color: blue; width: 50px; height: 50px; position:absolute; top: -1000px">
+    </div>
+
+
+    #element_fully_covered_by_another_one    
+    <div class="testme" id="element_fully_covered_by_another_one"
+        style="background-color: blue; width: 50px; height: 50px;">
+        <div class="testme" id="covering_element_1"
+            style="background-color: yellow; width: 50px; height: 50px;">
+        </div>
+    </div>
+
+    #element_partially_covered_by_another_one    
+    <div class="testme" id="element_partially_covered_by_another_one"
+        style="background-color: blue; width: 50px; height: 50px;">
+        <div class="testme" id="covering_element_2"
+            style="background-color: yellow; width: 25px; height: 25px;">
+        </div>
+    </div>
+</p>  

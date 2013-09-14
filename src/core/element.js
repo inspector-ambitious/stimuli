@@ -67,4 +67,33 @@ Domino.core.Element.prototype.removeAllListeners = function() {
     }
 };
 
+Domino.core.Element.prototype.canInteractWith = function() {
+    var dom = this.dom,
+        x = 0,
+        y = 0,
+        el;
+
+
+    while(true) {
+        el = document.elementFromPoint(x, y);
+        
+        if (!el) {
+            break;
+        }
+
+        while(el) {
+            if (el === dom) {
+                return true;
+            }
+            y++;
+            el = document.elementFromPoint(x, y);
+        }
+        x++;
+        y = 0;
+    }
+
+    return false;
+};
+
+
 

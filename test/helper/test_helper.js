@@ -1,16 +1,15 @@
 var TestHelper = {};
 
 // Load a html fixture in the body
-TestHelper.loadFixture = function(url, callback) {
+TestHelper.loadTemplate = function(url, callback) {
 
-    if (!$('#fixtures')) {
-        $('body').append('<div id="fixtures"></div>');
+    if ($('#template').length === 0) {
+        $('body').append('<div id="template"></div>');
     }
-
-    $('#fixtures').load(url, callback);
+    $('#template').load(url, callback);
 };
 
 // 
-TestHelper.unloadFixture = function() {
-    $('#fixtures').remove();
+TestHelper.removeTemplate = function() {
+    $('#template').remove();
 };
