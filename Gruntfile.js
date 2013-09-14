@@ -44,7 +44,7 @@ module.exports = function(grunt) {
         },
 
         {
-            pattern: 'test/fixtures/**/*.html',
+            pattern: 'test/templates/**/*.*',
             included: false
         },
 
@@ -292,18 +292,6 @@ module.exports = function(grunt) {
 
     });
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-jsdoc');
-    grunt.loadNpmTasks('grunt-contrib-concat');
-
-    grunt.registerTask('lint', ['jshint']);
-    grunt.registerTask('watchtest', ['karma:watch']);
-    grunt.registerTask('quicktest', ['karma:quick']);
-    grunt.registerTask('quickwatchtest', ['karma:quick']);
-    grunt.registerTask('cov', ['karma:coverage']);
-    grunt.registerTask('build', ['concat:dist']);
-
     grunt.registerTask('build-tester-templates', 'Build templates list for manual tester', function() {
 
         var fs = require('fs');
@@ -334,4 +322,17 @@ module.exports = function(grunt) {
 
         return true;
     });
+
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-karma');
+    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+
+    grunt.registerTask('lint', ['jshint']);
+    grunt.registerTask('watchtest', ['karma:watch']);
+    grunt.registerTask('quicktest', ['karma:quick']);
+    grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
+    grunt.registerTask('cov', ['karma:coverage']);
+    grunt.registerTask('build', ['concat:dist']);
+
 };
