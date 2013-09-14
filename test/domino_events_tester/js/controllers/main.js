@@ -1,4 +1,4 @@
-function MainCtrl($scope, $http, $location) {
+function MainCtrl($scope, $http, $location, $templateCache) {
 
     // Load Package
     $http.get('package.json')
@@ -24,40 +24,60 @@ function MainCtrl($scope, $http, $location) {
     };
 
     $scope.domEvents = [
-        { name: 'blur', watch: true },
-        { name: 'change', watch: true },
-        { name: 'click', watch: true },
-        { name: 'contextmenu', watch: true },
-        { name: 'copy', watch: true },
-        { name: 'cut', watch: true },
-        { name: 'dblclick', watch: true },
-        { name: 'error', watch: true },
-        { name: 'focus', watch: true },
-        { name: 'focusin', watch: true },
-        { name: 'focusout', watch: true },
-        { name: 'hashchange', watch: true },
-        { name: 'keydown', watch: true },
-        { name: 'keypress', watch: true },
-        { name: 'keyup', watch: true },
-        { name: 'load', watch: true },
-        { name: 'mousedown', watch: true },
-        { name: 'mouseenter', watch: true },
-        { name: 'mouseleave', watch: true },
-        { name: 'mousemove', watch: true },
-        { name: 'mouseout', watch: true },
-        { name: 'mouseover', watch: true },
-        { name: 'mouseup', watch: true },
-        { name: 'mousewheel', watch: true },
-        { name: 'paste', watch: true },
-        { name: 'reset', watch: true },
-        { name: 'resize', watch: true },
-        { name: 'scroll', watch: true },
-        { name: 'select', watch: true },
-        { name: 'submit', watch: true },
-        { name: 'textinput', watch: true },
-        { name: 'unload', watch: true },
-        { name: 'wheel', watch: true }
+        { name: 'blur', capture: true },
+        { name: 'change', capture: true },
+        { name: 'click', capture: true },
+        { name: 'contextmenu', capture: true },
+        { name: 'copy', capture: true },
+        { name: 'cut', capture: true },
+        { name: 'dblclick', capture: true },
+        { name: 'error', capture: true },
+        { name: 'focus', capture: true },
+        { name: 'focusin', capture: true },
+        { name: 'focusout', capture: true },
+        { name: 'hashchange', capture: true },
+        { name: 'keydown', capture: true },
+        { name: 'keypress', capture: true },
+        { name: 'keyup', capture: true },
+        { name: 'load', capture: true },
+        { name: 'mousedown', capture: true },
+        { name: 'mouseenter', capture: true },
+        { name: 'mouseleave', capture: true },
+        { name: 'mousemove', capture: true },
+        { name: 'mouseout', capture: true },
+        { name: 'mouseover', capture: true },
+        { name: 'mouseup', capture: true },
+        { name: 'mousewheel', capture: true },
+        { name: 'paste', capture: true },
+        { name: 'reset', capture: true },
+        { name: 'resize', capture: true },
+        { name: 'scroll', capture: true },
+        { name: 'select', capture: true },
+        { name: 'submit', capture: true },
+        { name: 'textinput', capture: true },
+        { name: 'unload', capture: true },
+        { name: 'wheel', capture: true }
     ];
+
+    $scope.selectAllDomEvents = function() {
+       var domEvents = $scope.domEvents,
+            length  = domEvents.length,
+            i = 0;
+
+        for (; i < length; i++) {
+            domEvents[i].capture = true;
+        }
+    };
+
+    $scope.deselectAllDomEvents = function() {
+        var domEvents = $scope.domEvents,
+            length  = domEvents.length,
+            i = 0;
+
+        for (; i < length; i++) {
+            domEvents[i].capture = false;
+        }
+    };
 
     // Browser logging
     $scope.console = false;
@@ -65,11 +85,11 @@ function MainCtrl($scope, $http, $location) {
     // Selector
     $scope.selector = '.testme';
 
-    $scope.watch = false;
+    $scope.capture = false;
 
-    var watchedElements = [];
+    var capturedElements = [];
 
-    $scope.watchedEvents = [];
+    $scope.capturedEvents = [];
 
     function updateEventsList(event) {
 
@@ -104,7 +124,7 @@ function MainCtrl($scope, $http, $location) {
             formattedEvent.targetCls = '.' + event.target.className.replace(/\s/g, '.');
         }
 
-        $scope.watchedEvents.push(formattedEvent);
+        $scope.capturedEvents.push(formattedEvent);
         $scope.$apply();
 
         if ($scope.console) {
@@ -114,9 +134,9 @@ function MainCtrl($scope, $http, $location) {
 
 
     $scope.startCapture = function() {
-        if ($scope.watch) {
+        if ($scope.capture) {
             
-            if (watchedElements.length > 0) {
+            if (capturedElements.length > 0) {
                 console.log('uh');
             }
 
@@ -127,11 +147,11 @@ function MainCtrl($scope, $http, $location) {
                     domEvent;
 
                 dominoElement = new Domino.core.Element(el);
-                watchedElements.push(dominoElement);
+                capturedElements.push(dominoElement);
 
                 for (; i < length; i++) {
                     domEvent = domEvents[i];
-                    if (domEvent.watch) {
+                    if (domEvent.capture) {
                         dominoElement.addListener(domEvent.name, updateEventsList);
                     }
                 }
@@ -140,15 +160,20 @@ function MainCtrl($scope, $http, $location) {
         }
     }
 
+    $scope.clearCapturedEvents = function() {
+        $scope.capturedEvents = [];
+        // $scope.$apply();
+    };
+
     $scope.stopCapture = function() {
-        var length = watchedElements.length,
+        var length = capturedElements.length,
             i = 0;
 
         for(; i < length; i++) {
-            watchedElements[i].removeAllListeners();
+            capturedElements[i].removeAllListeners();
         }
 
-        watchedElements = [];
+        capturedElements = [];
     }
 
     $scope.resetCapture = function(force) {
@@ -158,12 +183,12 @@ function MainCtrl($scope, $http, $location) {
 
 
     $scope.toggleCapture = function() {
-        var watch = !$scope.watch;
-        $scope.watch = watch;
-        watch ? $scope.startCapture() : $scope.stopCapture();
+        var capture = !$scope.capture;
+        $scope.capture = capture;
+        capture ? $scope.startCapture() : $scope.stopCapture();
     };
 
-    $scope.filterWatchedEvent = function(event) {
+    $scope.filterCapturedEvent = function(event) {
         var filteredEvent = {};
 
         for (var prop in event) {
@@ -175,6 +200,27 @@ function MainCtrl($scope, $http, $location) {
             
         }
         return filteredEvent;
+    }
+
+    $scope.reloadTemplate = function() {
+
+        var templates = $scope.templates,
+            length = templates.length,
+            i = 0;
+        
+        for (; i < 0; i++) {
+            if ($scope.template === templates[i]) {
+                break;
+            }
+        }
+        $templateCache.remove($scope.getTemplateUrl());
+        $scope.template = null;
+
+        setTimeout(function() {
+            $scope.template = $scope.templates[i];
+            $scope.$apply();
+        }, 1);
+
     }
 
 }

@@ -3,6 +3,7 @@
 
     <head>
         <link rel="stylesheet" href="resources/style.css">
+        <link rel="stylesheet" href="../vendor/font-awesome/css/font-awesome.css">
         <script src="../vendor/angular-1.0.8.js"></script>
         <script src="../vendor/jquery-1.10.2.js"></script>
 
@@ -22,63 +23,80 @@
 
                 <h1>
                     {{package.name}}
-                    <span class="t-header-legend">(Version {{package.version}})</span>
+                    <span class="t-header-legend">Version {{package.version}}</span>
                 </h1>
 
                 <div>
-                    <div class="t-input-field">Select a template</div>
+                    <div class="t-input-header">
+                        Template Selection
+                    </div>
                     <select class="t-template-select" 
                             ng-model="template"
                             ng-selected="resetCapture('tpl select')"
                             ng-options="f.description for f in templates">
                     </select>
                 </div>
-
+                <div class="t-separator"></div>
                 <div>
+                    
+                    <div class="t-input-header">
+                        Browser Console Logging
+                    </div>
                     <input class="t-console-checkbox" type="checkbox" ng-model="console">
-                    <span class="t-input-field">
-                        Enable browser logging
+                    <span class="t-input-field" ng-switch on="console"> 
+                            <span ng-switch-when="true">
+                                enabled
+                            </span>
+                            <span ng-switch-default>
+                                disabled
+                            </span>
                     </span>
-                </div>
 
+
+                </div>
+                <div class="t-separator"></div>
                 <div>
-                    <div class="t-input-field">
-                        Elements selector (jQuery style)
+                    <div class="t-input-header">
+                        Captured Elements Selector
                     </div>
                     <input class="t-selector-input" type="text" ng-model="selector" ng-change="resetCapture('selector')"></input>
                 </div>
-
+                <div class="t-separator"></div>
                 <div class="t-checkbox-group">
-                    <div class="t-input-field">
-                        Select DOM events
+                    <div class="t-input-header">
+                        Captured Events
                     </div>
+                  
                     <div class="t-domevents-checkbox" ng-repeat="domEvent in domEvents">
-                        <input type="checkbox" ng-model="domEvent.watch" ng-change="resetCapture('cbox')">
+                        <input type="checkbox" ng-model="domEvent.capture" ng-change="resetCapture('cbox')">
                         <span class="t-input-field">
                             {{domEvent.name}}
                         </span>
                     </div>
+                      <div class="t-checkbox-toolbar">
+                        <a href="" ng-click="selectAllDomEvents()"><i class="icon-check"></i> Select all</a> 
+                        <a href="" ng-click="deselectAllDomEvents()"><i class="icon-check-empty"></i> Deselect all</a>
+                    </div>
                 </div>
 
-                <button class="t-watch-button" ng-click="toggleCapture()">
-                    <span ng-switch on="watch">
-                        <span ng-switch-when="true">
-                            Stop Capture
-                        </span>
-                        <span ng-switch-default>
-                            Start Capture
-                        </span>
-                    </span>
-                </button>
+                <div class="t-separator"></div>
 
+                <div class="t-capture-link-wrapper">
+                    <a href="" class="t-link-button t-capture-link" ng-click="toggleCapture()">
+                        <span ng-switch on="capture">
+                            <span ng-switch-when="true">
+                                <i class="icon-power-off"></i> Stop Capture
+                            </span>
+                            <span ng-switch-default>
+                                <i class="icon-power-off"></i> Start Capture
+                            </span>
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
 
-        <div class="t-template-container">
-            <div class="t-templates-wrapper" ng-include="getTemplateUrl()" onload="resetCapture()"></div> 
-        </div>
-
-        <div class="t-event-container">
+        <div class="t-event-console">
 
             <h1>
                 Events Console
@@ -89,15 +107,15 @@
                          ng-class="{'t-event-row-last': $last}"
                          ng-class-odd="'t-event-row-odd'" 
                          ng-class-even="'t-event-row-even'" 
-                         ng-repeat="event in watchedEvents">
+                         ng-repeat="event in capturedEvents">
                         
                         <a  href="" 
                             ng-click="event.hideDetails = !event.hideDetails">
                         
-                        <span 
-                            class="t-event-arrow"
-                            ng-class="{true:'t-event-collapsed-arrow', false: 't-event-expanded-arrow' }[event.hideDetails]">
-                        </span>
+                        <i 
+                            class="t-icon"
+                            ng-class="{true:'icon-expand', false: 'icon-collapse' }[event.hideDetails]">
+                        </i>
 
                         <span class="t-event-type">
                             {{event.type}}
@@ -116,14 +134,37 @@
                         </span>
 
                         </a>
-                        <div class="t-event-details" ng-hide="event.hideDetails" ng-repeat="(property, value) in filterWatchedEvent(event)">
+                        <div class="t-event-details" ng-hide="event.hideDetails" ng-repeat="(property, value) in filterCapturedEvent(event)">
                             <span class="t-event-detail-property">{{property}}: </span>
                             <span class="t-event-detail-value">{{value}}</span>
                         </div>
 
                     </div>
             </div>
+
+            <div class="t-event-console-toolbar">
+                   <a href="" class="t-link-button t-clear-link" ng-click="clearCapturedEvents()">
+                    <i class="icon-ban-circle"> Clear</i>
+                    </a>
+            </div>
         </div>
+
+        <div class="t-template-container">
+            <h1>
+                Template
+            </h1>
+
+            <div class="t-template-wrapper" ng-include="getTemplateUrl()" onload="resetCapture()"></div> 
+
+            <div class="t-template-toolbar">
+
+                <a href="" class="t-link-button t-template-reload-link" ng-click="reloadTemplate()">
+                <i class="icon-repeat"> Reload</i>
+                </a>
+            </div>
+        </div>
+
+
 
     </body>
 

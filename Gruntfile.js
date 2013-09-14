@@ -328,7 +328,7 @@ module.exports = function(grunt) {
 
         });
 
-        fs.writeFileSync('test/domino_event_tester/resources/fixtures.json', JSON.stringify(list));
+        fs.writeFileSync('test/domino_events_tester/resources/templates.json', JSON.stringify(list));
 
         grunt.log.writeln('All done!');
 
