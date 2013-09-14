@@ -208,11 +208,12 @@ function MainCtrl($scope, $http, $location, $templateCache) {
             length = templates.length,
             i = 0;
         
-        for (; i < 0; i++) {
+        for (; i < length; i++) {
             if ($scope.template === templates[i]) {
                 break;
             }
         }
+
         $templateCache.remove($scope.getTemplateUrl());
         $scope.template = null;
 
