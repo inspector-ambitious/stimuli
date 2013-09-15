@@ -52,8 +52,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
                         name: 'mousedown',
                         button: 0,
                         view: window,
-                        target: document.body,
-                        cancelable: true
+                        target: document.body
                     });
 
                     expect(ret.canceled).to.be(true);
@@ -70,8 +69,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
                         name: 'mousedown',
                         button: 0,
                         view: window,
-                        target: document.body,
-                        cancelable: true
+                        target: document.body
                     });
 
                     expect(ret.canceled).to.be(false);
@@ -93,12 +91,11 @@ describe('Domino.event.synthetizer.Mouse', function() {
                         name: 'mousemove',
                         button: 0,
                         view: window,
-                        target: document.body,
-                        cancelable: false
+                        target: document.body
                     });
 
                     expect(ret.canceled).to.be(false);
-                    $('body').off('mousedown');
+                    $('body').off('mousemove');
 
                 });
 
@@ -111,12 +108,11 @@ describe('Domino.event.synthetizer.Mouse', function() {
                         name: 'mousemove',
                         button: 0,
                         view: window,
-                        target: document.body,
-                        cancelable: false
+                        target: document.body
                     });
 
                     expect(ret.canceled).to.be(false);
-                    $('body').off('mousedown');
+                    $('body').off('mousemove');
 
                 });
 

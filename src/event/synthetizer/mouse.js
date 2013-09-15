@@ -6,6 +6,16 @@
 
     ns.Mouse = {
  
+        isCancelable: function(name) {
+            return {
+                click: true,
+                dblclick: true,
+                mousedown: true,
+                mouseup: true,
+            }[name] || false;
+        },
+
+
         inject: function(data) {
             var event,
                 canceled;
@@ -17,7 +27,7 @@
                 event.initMouseEvent(
                     data.name,
                     data.bubbles,
-                    data.cancelable,
+                    this.isCancelable(data.name), // not required with fireEvent
                     data.view,
                     data.detail,
                     data.screenX,
@@ -39,7 +49,6 @@
                 event = data.view.document.createEventObject();
 
                 event.bubbles = data.bubbles;
-                event.cancelable = data.cancelable;
                 event.detail = data.detail;
                 event.screenX = data.screenX;
                 event.screenY = data.screenY;
@@ -52,7 +61,9 @@
                 event.button = data.button;
                 event.relatedTarget = data.relatedTarget;
      
-                canceled = !data.target.fireEvent('on'+ data.name, event);
+                data.target.fireEvent('on'+ data.name, event);
+
+                canceled = event.returnValue === false;
             
             }
             

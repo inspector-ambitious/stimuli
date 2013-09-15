@@ -36,10 +36,6 @@
         getBubbles: function() {
             return isBoolean(this.options.bubbles) ? this.options.bubbles : true;
         },
-
-        getView: function() {
-            return this.viewport.getView();
-        },
         
         getAltKey: function() {
             return this.options.altKey || false;
@@ -71,6 +67,8 @@
                     cb(null, event, canceled);
                 }
             };
+            
+            data.view = this.viewport.getView();
 
             this.publish('event', data, callback);
         }

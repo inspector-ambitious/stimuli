@@ -6,8 +6,7 @@
 
     ns.down = ns.Abstract.ctor;
 
-    ns.down.prototype.execute = function() {
-
+    ns.down.prototype.execute = function(detail) {
         var me = this,
             target = me.getTarget(),
             position = me.calculatePosition(target, me.options.offset);
@@ -20,11 +19,7 @@
             
             name: 'mousedown',
 
-            view: me.view(),
-
             button: me.getButton(),
-
-            cancelable: true,
 
             bubbles: me.getBubbles(),
 
@@ -36,7 +31,7 @@
 
             metaKey: me.getMetaKey(),
 
-            detail: 1,
+            detail: detail || 1,
 
             target: target,
 
