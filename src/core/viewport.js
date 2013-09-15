@@ -1,36 +1,49 @@
-Domino.core.Viewport = function(view) {
+'use strict';
 
-    this.view = view || window;
+(function() {
+    var ns = Domino.core;
 
-};
+    ns.Viewport = function(view) {
 
-Domino.core.Viewport.prototype.traverse = function(fn) {
-    var doc = this.view.document,
-        x = 0,
-        y = 0,
-        el;
-    // Scan the entire viewport pixel by pixel
-    while(true) {
-        el = doc.elementFromPoint(x, y);
-        
-        if (!el) {
-            break;
-        }
+        this.view = view || window;
 
-        while(el) {
-            fn(el, x, y);
-            y++;
+    };
+
+    var Viewport = ns.Viewport;
+
+    Viewport.prototype.traverse = function(fn) {
+        var doc = this.view.document,
+            x = 0,
+            y = 0,
+            el;
+        // Scan the entire viewport pixel by pixel
+        while(true) {
             el = doc.elementFromPoint(x, y);
+            
+            if (!el) {
+                break;
+            }
+
+            while(el) {
+                fn(el, x, y);
+                y++;
+                el = doc.elementFromPoint(x, y);
+            }
+            x++;
+            y = 0;
         }
-        x++;
-        y = 0;
-    }
-};
+    };
 
-Domino.core.Viewport.prototype.getScreenX = function() {
-    return window.screenX || window.screenLeft;
-};
+    Viewport.prototype.getScreenX = function() {
+        return this.view.screenX || this.view.screenLeft;
+    };
 
-Domino.core.Viewport.prototype.getScreenY = function() {
-    return window.screenY || window.screenTop;
-};
+    Viewport.prototype.getScreenY = function() {
+        return this.view.screenY || this.view.screenTop;
+    };
+
+    Viewport.prototype.getElementAt = function(x, y) {
+        return this.view.document.elementFromPoint(x, y);
+    };
+
+})();
