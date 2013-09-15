@@ -2,8 +2,11 @@
 
 (function() {
 
-    Domino.device.mouse.BoundingRectangleOffset = function(options, width, height) {
+    Domino.device.mouse.BoundingRectangleOffset = function(options, boundingRectangle) {
 
+        var width = boundingRectangle.getWidth(),
+            height = boundingRectangle.getHeight();
+            
         this.origin = options.origin || 'center';
 
         options.x = options.x || 0;

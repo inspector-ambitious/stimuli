@@ -23,7 +23,7 @@
 
         boundingRectangle = new ns.BoundingRectangle(this.viewport, options.target);
  
-        boundingRectangleOffset = new ns.boundingRectangleOffset(options.offset, boundingRectangle.getWidth(), boundingRectangle.getHeight());
+        boundingRectangleOffset = new ns.boundingRectangleOffset(options.offset, boundingRectangle);
 
         target = new ns.Target(this.viewport, options.target, boundingRectangle, boundingRectangleOffset);
 

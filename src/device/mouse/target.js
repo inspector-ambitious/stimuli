@@ -11,9 +11,11 @@
             new ns.Exception('Unable to locate a visible target in the viewport.');
         }
 
+        
         me.boundingRectangle = boundingRectangle;
 
         me.boundingRectangleOffset = boundingRectangleOffset;
+
 
         me.element = element;
 
