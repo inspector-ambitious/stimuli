@@ -33,3 +33,19 @@ Domino.core = {};
  */
 
 Domino.device = {};
+
+/**
+ * @namespace Domino.interaction
+ */
+
+Domino.interaction = {
+    mouse: {}
+};
+
+/**
+ * @namespace Domino.event
+ */
+
+ Domino.event = {
+    synthetizer: {}
+ };

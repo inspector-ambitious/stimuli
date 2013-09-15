@@ -17,26 +17,31 @@ describe('Domino.device.Abstract', function() {
         dummy = null;
     });
 
-    it('should emit data in the correct format', function(done) {
+    describe('send', function() {
 
-        var options = {
-            test: 1
-        };
+        it('should send the data in the correct format', function(done) {
 
-        var cb = function() {
-            return 1;
-        };
+            var data = {
+                test: 1
+            };
 
-        dummy.subscribe('emit', function(event) {
-            expect(event.device).to.be('dummy');
-            expect(event.action).to.be('testaction');
-            expect(event.options).to.be(options);
-            expect(event.callback).to.be(cb);
-            done();
+            var cb = function() {
+                return 1;
+            };
+
+            dummy.subscribe('data', function(event) {
+                expect(event.device).to.be('dummy');
+                expect(event.type).to.be('test');
+                expect(event.data).to.be(data);
+                expect(event.callback).to.be(cb);
+                done();
+            });
+
+            dummy.send('test', data, cb);
+
         });
 
-        dummy.send('testaction', options, cb);
-
     });
+
 
 });

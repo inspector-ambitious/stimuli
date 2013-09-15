@@ -46,4 +46,8 @@
         return this.view.document.elementFromPoint(x, y);
     };
 
+    Viewport.prototype.getView = function() {
+        return this.view;
+    };
+    
 })();

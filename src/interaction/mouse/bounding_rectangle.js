@@ -2,7 +2,7 @@
 
 (function() {
 
-    var ns = Domino.device.mouse;
+    var ns = Domino.interaction.mouse;
 
     ns.BoundingRectangle = function(viewport, element) {
         var me = this;
@@ -17,6 +17,12 @@
         viewport.traverse(function(currentElement, x, y) {
             if (currentElement === element) { // element found
                 me.valid = true;
+                if (!me.firstElementPixel) {
+                    me.firstElementPixel = {
+                        x: x,
+                        y: y
+                    };
+                }
                 me.left = Math.min(me.left, x);
                 me.right = Math.max(me.right, x);
                 me.top = Math.min(me.top, y);
@@ -29,6 +35,15 @@
 
     BoundingRectangle.prototype.isValid = function() {
         return this.valid;
+    };
+
+    BoundingRectangle.prototype.getFirstElementOffset = function() {
+        var me = this;
+        return {
+            origin: 'tl',
+            x: me.firstElementPixel.x - me.left,
+            y: me.firstElementPixel.y - me.top
+        };
     };
 
     BoundingRectangle.prototype.getElement = function() {

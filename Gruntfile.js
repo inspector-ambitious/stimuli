@@ -10,19 +10,29 @@ module.exports = function(grunt) {
         'src/domino.js',
         'src/core/support.js',
         'src/core/object.js',
+        'src/core/type.js',
         'src/core/observable.js',
         'src/core/scheduler.js',
         'src/core/viewport.js',
 
         'src/device/abstract.js',
-
         'src/device/mouse.js',
-        'src/device/mouse/exception.js',
-        'src/device/mouse/bounding_rectangle.js',
-        'src/device/mouse/bounding_rectangle_offset.js',
-        'src/device/mouse/target.js',
-        'src/device/mouse/mouse.js'
 
+        'src/event/emitter.js',
+        'src/event/synthetizer/mouse.js',
+
+        'src/interaction/abstract.js',
+        'src/interaction/mouse/bounding_rectangle.js',
+        'src/interaction/mouse/bounding_rectangle_offset.js',
+        'src/interaction/mouse/target.js',
+        'src/interaction/mouse/abstract.js',
+        'src/interaction/mouse/down.js',
+        'src/interaction/mouse/up.js',
+        'src/interaction/mouse/click.js',
+        'src/interaction/mouse/dblclick.js',
+        'src/interaction/mouse/move.js',
+        'src/interaction/mouse/drag.js'
+        
     ];
 
 

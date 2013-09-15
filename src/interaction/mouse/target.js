@@ -2,20 +2,14 @@
 
 (function() {
 
-    var ns = Domino.device.mouse;
+    var ns = Domino.interaction.mouse;
 
     ns.Target = function(viewport, element, boundingRectangle, boundingRectangleOffset) {
         var me = this;
 
-        if (!boundingRectangle.isValid()) {
-            new ns.Exception('Unable to locate a visible target in the viewport.');
-        }
-
-        
         me.boundingRectangle = boundingRectangle;
 
         me.boundingRectangleOffset = boundingRectangleOffset;
-
 
         me.element = element;
 

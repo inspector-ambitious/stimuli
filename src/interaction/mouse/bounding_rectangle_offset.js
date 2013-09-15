@@ -2,7 +2,9 @@
 
 (function() {
 
-    Domino.device.mouse.BoundingRectangleOffset = function(options, boundingRectangle) {
+    var ns = Domino.interaction.mouse;
+
+    ns.BoundingRectangleOffset = function(options, boundingRectangle) {
 
         var width = boundingRectangle.getWidth(),
             height = boundingRectangle.getHeight();
@@ -36,7 +38,7 @@
 
     };
 
-    var BoundingRectangleOffset = Domino.device.mouse.BoundingRectangleOffset;
+    var BoundingRectangleOffset = ns.BoundingRectangleOffset;
 
     BoundingRectangleOffset.prototype.getX = function() {
         return this.x;
