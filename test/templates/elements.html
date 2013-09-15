@@ -1,4 +1,4 @@
-<h1>Reachable and not reachable elements</h1>
+<h1>Div with various configurations</h1>
 
 <p>
     #element_visible
@@ -36,9 +36,12 @@
 
     #element_partially_covered_by_another_one    
     <div class="testme" id="element_partially_covered_by_another_one"
-        style="background-color: blue; width: 50px; height: 50px;">
+        style="background-color: blue; width: 50px; height: 50px; position: relative;">
         <div class="testme" id="covering_element_2"
-            style="background-color: yellow; width: 25px; height: 25px;">
+            style="background-color: yellow; left:10px; width: 25px; height: 50px; position: absolute;">
+        </div>
+        <div class="testme" id="covering_element_3"
+            style="background-color: orange; top:10px; width: 50px; height: 25px; position: absolute;">
         </div>
     </div>
 </p>  

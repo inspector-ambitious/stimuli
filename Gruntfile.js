@@ -9,12 +9,20 @@ module.exports = function(grunt) {
     var dominoFiles = [
         'src/domino.js',
         'src/core/support.js',
-        'src/core/element.js',
         'src/core/object.js',
         'src/core/observable.js',
         'src/core/scheduler.js',
+        'src/core/viewport.js',
+
         'src/device/abstract.js',
-        'src/device/mouse.js'
+
+        'src/device/mouse.js',
+        'src/device/mouse/exception.js',
+        'src/device/mouse/bounding_rectangle.js',
+        'src/device/mouse/bounding_rectangle_offset.js',
+        'src/device/mouse/target.js',
+        'src/device/mouse/mouse.js'
+
     ];
 
 

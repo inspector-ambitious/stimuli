@@ -1,9 +1,13 @@
-describe('Domino.device.Mouse', function() {
+xdescribe('Domino.device.Mouse', function() {
 
-    var mouse;
+    var viewport,
+        mouse;
 
     beforeEach(function() {
-        mouse = new Domino.device.Mouse();
+        var viewport = new Domino.core.Viewport();
+        mouse = new Domino.device.Mouse({
+            viewport: viewport
+        });
     });
 
     afterEach(function() {

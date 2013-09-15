@@ -8,11 +8,12 @@
  */
 
 var Domino = function(options) {
-
+    options = options || {};
     this.devices = {};
 
+    this.viewport = new Domino.core.Viewport(options.view);
     if (typeof Domino.device.Mouse !== 'undefined') {
-        this.devices.mouse = new Domino.device.Mouse();
+        this.devices.mouse = new Domino.device.Mouse(this.viewport);
     }
 
 };

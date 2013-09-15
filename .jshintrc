@@ -10,11 +10,16 @@
     "Domino": true,
     "define": true,
     "describe": true,
+    "xdescribe": true,
     "beforeEach": true,
     "afterEach": true,
     "it": true,
+    "xit": true,
     "expect": true,
-    "sinon": true
+    "sinon": true,
+    "before": true,
+    "TestHelper": true,
+    "after": true
   },
   "debug": false,
   "strict": false,

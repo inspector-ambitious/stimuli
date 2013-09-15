@@ -136,23 +136,20 @@ function MainCtrl($scope, $http, $location, $templateCache) {
     $scope.startCapture = function() {
         if ($scope.capture) {
             
-            if (capturedElements.length > 0) {
-                console.log('uh');
-            }
-
             $($scope.selector).each(function(idx, el) {
                 var domEvents = $scope.domEvents,
                     length  = domEvents.length,
                     i = 0,
+                    domListener,
                     domEvent;
 
-                dominoElement = new Domino.core.Element(el);
-                capturedElements.push(dominoElement);
+                domListener = new DomListener(el);
+                capturedElements.push(domListener);
 
                 for (; i < length; i++) {
                     domEvent = domEvents[i];
                     if (domEvent.capture) {
-                        dominoElement.addListener(domEvent.name, updateEventsList);
+                        domListener.add(domEvent.name, updateEventsList);
                     }
                 }
 
@@ -170,7 +167,7 @@ function MainCtrl($scope, $http, $location, $templateCache) {
             i = 0;
 
         for(; i < length; i++) {
-            capturedElements[i].removeAllListeners();
+            capturedElements[i].removeAll();
         }
 
         capturedElements = [];

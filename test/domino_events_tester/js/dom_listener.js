@@ -1,11 +1,9 @@
-'use strict';
-
-Domino.core.Element = function(dom) {
+var DomListener = function(dom) {
     this.dom = dom;
     this.listeners = {};
 };
-
-Domino.core.Element.prototype.addListener = function(type, listener, scope) {
+    
+DomListener.prototype.add = function(type, listener, scope) {
     scope = scope || this;
 
     function wrappedListener() {
@@ -29,7 +27,7 @@ Domino.core.Element.prototype.addListener = function(type, listener, scope) {
     });
 };
 
-Domino.core.Element.prototype.removeListener = function(type, listener) {
+DomListener.prototype.remove = function(type, listener) {
     var listeners = this.listeners[type],
         length = listeners.length,
         i = 0,
@@ -50,7 +48,7 @@ Domino.core.Element.prototype.removeListener = function(type, listener) {
     }
 };
 
-Domino.core.Element.prototype.removeAllListeners = function() {
+DomListener.prototype.removeAll = function() {
     var type,
         listeners,
         length,
@@ -61,39 +59,8 @@ Domino.core.Element.prototype.removeAllListeners = function() {
             listeners = this.listeners[type];
             length = listeners.length;
             for (i = 0; i < length; i++) {
-                this.removeListener(listeners[i].type, listeners[i].listener);
+                this.remove(listeners[i].type, listeners[i].listener);
             }
         }
     }
 };
-
-Domino.core.Element.prototype.canInteractWith = function() {
-    var dom = this.dom,
-        x = 0,
-        y = 0,
-        el;
-
-
-    while(true) {
-        el = document.elementFromPoint(x, y);
-        
-        if (!el) {
-            break;
-        }
-
-        while(el) {
-            if (el === dom) {
-                return true;
-            }
-            y++;
-            el = document.elementFromPoint(x, y);
-        }
-        x++;
-        y = 0;
-    }
-
-    return false;
-};
-
-
-
