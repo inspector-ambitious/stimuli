@@ -37,6 +37,7 @@ describe('Domino.event.Emitter', function() {
                 view: window,
                 target: document.body
             }, function(event, canceled) {
+
                 expect(typeof event === 'object').to.be(true);
                 expect(typeof canceled === 'boolean').to.be(true);
             });

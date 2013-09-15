@@ -41,9 +41,7 @@
 
             screenX: position.getScreenX(),
 
-            screenY: position.getScreenY(),
-
-            relatedTarget: null
+            screenY: position.getScreenY()
            
         });
 

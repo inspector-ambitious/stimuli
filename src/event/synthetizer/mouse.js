@@ -39,7 +39,7 @@
                     data.shiftKey,
                     data.metaKey,
                     data.button,
-                    data.relatedTarget
+                    data.relatedTarget || null //IE 9 throw and Invalid argument if this one is undefined so just in case
                 );
 
                 canceled = !data.target.dispatchEvent(event);
