@@ -9,36 +9,12 @@
     ns.down.prototype.execute = function() {
 
         var me = this,
-            options = me.options,
-            element,
-            boundingRectangle,
-            offset,
-            boundingRectangleOffset,
-            target;
+            target = me.getTarget(),
+            position = me.calculatePosition(target, me.options.offset);
 
-        if (options.target === 'function') {
-            element = options.target();
-        } else {
-            element = options.target || me.viewport.getElementAt(options.x, options.y);
-        }
-
-        if (!element) {
-            me.fail('Unable to find target.');
+        if (position === null) {
             return;
         }
-
-        boundingRectangle = me.getBoundingRectangle(element);
-
-        if (!boundingRectangle.isValid()) {
-            me.fail('The target exists but is not visible in the viewport.');
-            return;
-        }
-
-        offset = options.offset || boundingRectangle.getFirstElementOffset();
-        
-        boundingRectangleOffset = me.getBoundingRectangleOffset(offset, boundingRectangle);
-
-        target =  me.getTarget(element, boundingRectangle, boundingRectangleOffset);
 
         me.send({
             
@@ -48,29 +24,29 @@
 
             button: me.getButton(),
 
-            cancelable: me.cancelable(),
+            cancelable: true,
 
-            bubbles: me.bubbles(),
+            bubbles: me.getBubbles(),
 
-            altKey: me.altKey(),
+            altKey: me.getAltKey(),
 
-            ctrlKey: me.ctrlKey(),
+            ctrlKey: me.getCtrlKey(),
 
-            shiftKey: me.shiftKey(),
+            shiftKey: me.getShiftKey(),
 
-            metaKey: me.metaKey(),
+            metaKey: me.getMetaKey(),
 
             detail: 1,
 
-            target: target.getElement(),
+            target: target,
 
-            clientX: target.getClientX(),
+            clientX: position.getClientX(),
             
-            clientY: target.getClientY(),
+            clientY: position.getClientY(),
 
-            screenX: target.getScreenX(),
+            screenX: position.getScreenX(),
 
-            screenY: target.getScreenY(),
+            screenY: position.getScreenY(),
 
             relatedTarget: null
            

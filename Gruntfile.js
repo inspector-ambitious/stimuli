@@ -24,7 +24,7 @@ module.exports = function(grunt) {
         'src/interaction/abstract.js',
         'src/interaction/mouse/bounding_rectangle.js',
         'src/interaction/mouse/bounding_rectangle_offset.js',
-        'src/interaction/mouse/target.js',
+        'src/interaction/mouse/position.js',
         'src/interaction/mouse/abstract.js',
         'src/interaction/mouse/down.js',
         'src/interaction/mouse/up.js',

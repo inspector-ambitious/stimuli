@@ -17,8 +17,8 @@
         viewport.traverse(function(currentElement, x, y) {
             if (currentElement === element) { // element found
                 me.valid = true;
-                if (!me.firstElementPixel) {
-                    me.firstElementPixel = {
+                if (!me.targetEdge) {
+                    me.targetEdge = {
                         x: x,
                         y: y
                     };
@@ -37,12 +37,11 @@
         return this.valid;
     };
 
-    BoundingRectangle.prototype.getFirstElementOffset = function() {
+    BoundingRectangle.prototype.getTargetEdge = function() {
         var me = this;
         return {
-            origin: 'tl',
-            x: me.firstElementPixel.x - me.left,
-            y: me.firstElementPixel.y - me.top
+            x: me.targetEdge.x - me.left,
+            y: me.targetEdge.y - me.top
         };
     };
 
@@ -58,12 +57,13 @@
         return this.left;
     };
 
-    BoundingRectangle.prototype.getWidth = function() {
-        return this.right - this.left + 1;
+    BoundingRectangle.prototype.getBottom = function() {
+        return this.bottom;
     };
 
-    BoundingRectangle.prototype.getHeight = function() {
-        return this.bottom - this.top + 1;
+    BoundingRectangle.prototype.getRight = function() {
+        return this.right;
     };
+
 
 })();

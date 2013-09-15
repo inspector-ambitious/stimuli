@@ -4,10 +4,7 @@
 
     var ns = Domino.interaction.mouse;
 
-    ns.BoundingRectangleOffset = function(options, boundingRectangle) {
-
-        var width = boundingRectangle.getWidth(),
-            height = boundingRectangle.getHeight();
+    ns.BoundingRectangleOffset = function(options, xLimit, yLimit) {
             
         this.origin = options.origin || 'center';
 
@@ -15,25 +12,25 @@
         options.y = options.y || 0;
 
         switch(this.origin) {
-            case 'tl':
-                this.x = options.x;
-                this.y = options.y;
+            case 'center':
+                this.x = options.x + xLimit/2;
+                this.y = options.y + yLimit/2;
                 break;
             case 'bl':
                 this.x = options.x;
-                this.y = height - options.y;
+                this.y = yLimit - options.y;
                 break;
             case 'tr':
-                this.x = width - options.x;
+                this.x = xLimit - options.x;
                 this.y = options.y;
                 break;
             case 'br':
-                this.x = width - options.x;
-                this.y = height - options.y;
+                this.x = xLimit - options.x;
+                this.y = yLimit - options.y;
                 break;
-            default: // 'center'
-                this.x = options.x + width/2;
-                this.y = options.y + height/2;
+            default: // 'tl'
+                this.x = options.x;
+                this.y = options.y;
         }
 
     };

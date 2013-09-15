@@ -4,41 +4,41 @@
 
     var ns = Domino.interaction.mouse;
 
-    ns.Target = function(viewport, element, boundingRectangle, boundingRectangleOffset) {
+    ns.Position = function(viewport, element, boundingRectangle, boundingRectangleOffset) {
+        
         var me = this;
 
         me.boundingRectangle = boundingRectangle;
 
         me.boundingRectangleOffset = boundingRectangleOffset;
 
+        me.viewport = viewport;
+
         me.element = element;
 
     };
 
-    var Target = ns.Target;
+    var Position = ns.Position;
 
-    Target.prototype.isValid = function() {
-        return this.visible;
+    Position.prototype.isValid = function() {
+        var me = this;
+        return me.viewport.getElementAt(me.getClientX(), me.getClientY()) === me.element;
     };
 
-    Target.prototype.getClientX = function() {
+    Position.prototype.getClientX = function() {
         return this.boundingRectangle.getLeft() + this.offset.getX();
     };
 
-    Target.prototype.getClientY = function() {
+    Position.prototype.getClientY = function() {
         return this.boundingRectangle.getTop() + this.offset.getY();
     };
 
-    Target.prototype.getScreenX = function() {
+    Position.prototype.getScreenX = function() {
         return this.viewport.getScreenX() + this.getClientX();
     };
 
-    Target.prototype.getScreenY = function() {
+    Position.prototype.getScreenY = function() {
         return this.viewport.getScreenY() + this.getClientY();
-    };
-
-    Target.prototype.getElement = function() {
-        return this.element;
     };
     
 })();

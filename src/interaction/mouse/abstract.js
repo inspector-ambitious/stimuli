@@ -25,8 +25,36 @@
                 return new ns.boundingRectangleOffset(offset, boundingRectangle);
             },
 
-            getTarget: function(element, boundingRectangle, boundingRectangleOffset) {
-                return new ns.Target(this.viewport, element, boundingRectangle, boundingRectangleOffset);
+            getPosition: function(target, offset) {
+                var me = this,
+                    boundingRectangle,
+                    boundingRectangleOffset,
+                    position;
+                
+                if (!target) {
+                    me.fail('Invalid target: not found.');
+                    return null;
+                }
+
+                boundingRectangle = me.getBoundingRectangle(target);
+
+                if (!boundingRectangle.isValid()) {
+                    me.fail('Invalid target: found but not visible in the viewport.');
+                    return null;
+                }
+
+                offset = offset || boundingRectangle.getTargetEdge();
+        
+                boundingRectangleOffset = me.getBoundingRectangleOffset(offset, boundingRectangle.getXLimit(), boundingRectangle.getYLimit());
+
+                position = new ns.Position(this.viewport, target, boundingRectangle, boundingRectangleOffset);
+
+                if (!position.isValid()) {
+                    me.fail('Invalid offset: outside target.');
+                    return null;
+                }
+
+                return position;
             },
 
             getButton: function() {

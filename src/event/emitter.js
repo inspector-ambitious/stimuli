@@ -21,7 +21,7 @@
             }[name] || false;
         },
 
-        send: function(data, callback) {
+        emit: function(data, callback) {
             var result;
 
             if (this.isMouseEvent(data.name)) {

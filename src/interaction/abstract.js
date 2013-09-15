@@ -15,31 +15,45 @@
             this.options.callback(message);
         },
 
-        cancelable: function() {
+        getTarget: function() {
+            
+            var options = this.options,
+                target = null;
+
+            if (options.target === 'function') {
+                target = options.target();
+            } else {
+                target = options.target || this.viewport.getElementAt(options.x, options.y);
+            }
+
+            return target;
+        },
+
+        getCancelable: function() {
             return isBoolean(this.options.cancelable) ? this.options.cancelable : true;
         },
 
-        bubbles: function() {
+        getBubbles: function() {
             return isBoolean(this.options.bubbles) ? this.options.bubbles : true;
         },
 
-        view: function() {
+        getView: function() {
             return this.viewport.getView();
         },
         
-        altKey: function() {
+        getAltKey: function() {
             return this.options.altKey || false;
         },
 
-        metaKey: function() {
+        getMetaKey: function() {
             return this.options.metaKey || false;
         },
 
-        ctrlKey: function() {
+        getCtrlKey: function() {
             return this.options.ctrlKey || false;
         },
 
-        shiftKey: function() {
+        getShiftKey: function() {
             return this.options.shiftKey || false;
         },
 
