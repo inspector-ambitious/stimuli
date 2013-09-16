@@ -3,11 +3,11 @@
 /**
  * Various utilities to work with Objects.
  * @namespace Object
- * @memberof Domino.core
+ * @memberof Stimuli.core
  */
 
-Domino.core.Object = {
-    /** @lends Domino.core.Object */
+Stimuli.core.Object = {
+    /** @lends Stimuli.core.Object */
 
     /**
      * Merge objects properties.

@@ -37,7 +37,7 @@ module.exports = function(config) {
                  
         startConnect: false,
         
-        testName: 'Domino Unit Tests',
+        testName: 'Stimuli Unit Tests',
         
         tunnelIdentifier: process.env.TRAVIS_JOB_NUMBER
         

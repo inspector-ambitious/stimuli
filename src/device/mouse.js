@@ -2,30 +2,41 @@
 
 (function() {
 
-    var Mouse = Domino.device.Mouse = function(options) {
+    var ns = Stimuli.device;
+
+    ns.Mouse = function(options) {
 
         this.name = 'mouse';
 
     };
+    
+    var Mouse = ns.Mouse;
 
-
-    Mouse.prototype.leftClick = function(options, callback) {
-        return this.send('leftClick', options, callback);
+    Mouse.prototype.click = function(options, callback) {
+        return this.send('click', options, callback);
     };
 
-    Mouse.prototype.click = Mouse.prototype.leftClick;
-
-    Mouse.prototype.rightClick = function(options, callback) {
-        return this.send('rightClick', options, callback);
+    Mouse.prototype.dblclick = function(options, callback) {
+        return this.send('dblclick', options, callback);
     };
 
-    Mouse.prototype.context = Mouse.prototype.rightClick;
-
-    Mouse.prototype.middleClick = function(options, callback) {
-        return this.send('middleClick', options, callback);
+    Mouse.prototype.move = function(options, callback) {
+        return this.send('move', options, callback);
     };
 
-    // Extends Domino.Device.Abstract
-    Domino.core.Object.merge(Mouse.prototype, Domino.device.Abstract);
+    Mouse.prototype.drag = function(options, callback) {
+        return this.send('drag', options, callback);
+    };
+
+    Mouse.prototype.up = function(options, callback) {
+        return this.send('up', options, callback);
+    };
+
+    Mouse.prototype.down = function(options, callback) {
+        return this.send('down', options, callback);
+    };
+
+    // Extends Stimuli.Device.Abstract
+    Stimuli.core.Object.merge(Mouse.prototype, Stimuli.device.Abstract);
 
 })();

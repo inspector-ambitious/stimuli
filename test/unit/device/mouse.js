@@ -1,55 +1,58 @@
-describe('Domino.device.Mouse', function() {
+describe('Stimuli.device.Mouse', function() {
 
     var mouse;
 
     beforeEach(function() {
-        mouse = new Domino.device.Mouse();
+        mouse = new Stimuli.device.Mouse();
     });
 
     afterEach(function() {
         mouse = null;
     });
 
-    it('should emit a leftClick', function(done) {
+    describe('send', function() {
 
-        mouse.subscribe('emit', function(event) {
-            expect(event.device).to.be('mouse');
-            expect(event.action).to.be('leftClick');
-            event.callback();
-        });
+        it('should an event data with the option device: "mouse"', function(done) {
 
-        mouse.leftClick({}, function() {
-            done();
-        });
+            mouse.subscribe('data', function(event) {
+                expect(event.device).to.be('mouse');
+                done();
+            });
 
-    });
-
-    it('should emit a rightClick', function(done) {
-
-        mouse.subscribe('emit', function(event) {
-            expect(event.device).to.be('mouse');
-            expect(event.action).to.be('rightClick');
-            event.callback();
-        });
-
-        mouse.rightClick({}, function() {
-            done();
+            mouse.send('test');
         });
 
     });
 
-    it('should emit a middleClick', function(done) {
+    describe('interactions', function() {
 
-        mouse.subscribe('emit', function(event) {
-            expect(event.device).to.be('mouse');
-            expect(event.action).to.be('middleClick');
-            event.callback();
-        });
+        var interactions = [
+            'click',
+            'dblclick',
+            'down',
+            'drag',
+            'move',
+            'up'
+        ];
 
-        mouse.middleClick({}, function() {
-            done();
-        });
+        var interaction;
 
+        for (var i = 0; i < interactions.length; i++) {
+            interaction = interactions[i];
+            /*jshint loopfunc: true */
+            describe(interaction, function() {
+
+                it('should an event data with the option device: "' + interaction + '"', function(done) {
+                    mouse.subscribe('data', function(event) {
+                        expect(event.type).to.be(interaction);
+                        done();
+                    });
+
+                    mouse[interaction]();
+                });
+
+            });
+        }
     });
 
 });
