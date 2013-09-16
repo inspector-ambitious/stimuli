@@ -118,8 +118,7 @@ module.exports = function(grunt) {
 
                 'Gruntfile.js',
                 'src/**/*.js',
-                'package.json',
-                'bower.json',
+                '*.json',
                 '.jshintrc',
                 'test/**/*.js'
             ],
@@ -321,6 +320,25 @@ module.exports = function(grunt) {
               tasks: ['jshint', 'build:templates']
 
             }
+        },
+
+        jsduck: {
+
+            main: {
+                // source paths with your code
+                src: [
+                    'src'
+                ],
+
+                // docs output dir
+                dest: 'docs',
+
+                // extra options
+                options: {
+                    'builtin-classes': true,
+                    'title': "Stimuli <%= pkg.version %> Documentation"
+                }
+            }
         }
 
     });
@@ -328,7 +346,7 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-hub');

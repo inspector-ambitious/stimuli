@@ -15,6 +15,7 @@ before_install:
   - npm config set loglevel error
 
 before_script:
+  - gem install jsduck
   - npm install -g grunt-cli
   - npm -g install bower
   - bower install --dev
@@ -31,6 +32,6 @@ script:
     grunt karma:ie8ci && 
     grunt karma:ie9ci && 
     grunt karma:ie10ci && 
-    grunt jsdoc && 
+    grunt jsduck && 
     grunt cov && 
     .travis/ghpages-deploy.sh
