@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+(function() {
+
+    var ns = Stimuli.interaction.mouse;
+
+    ns.BoundingRectangleOffset = function(options, xLimit, yLimit) {
+            
+        this.origin = options.origin || 'center';
+
+        options.x = options.x || 0;
+        options.y = options.y || 0;
+
+        switch(this.origin) {
+            case 'center':
+                this.x = options.x + xLimit/2;
+                this.y = options.y + yLimit/2;
+                break;
+            case 'bl':
+                this.x = options.x;
+                this.y = yLimit - options.y;
+                break;
+            case 'tr':
+                this.x = xLimit - options.x;
+                this.y = options.y;
+                break;
+            case 'br':
+                this.x = xLimit - options.x;
+                this.y = yLimit - options.y;
+                break;
+            default: // 'tl'
+                this.x = options.x;
+                this.y = options.y;
+        }
+
+    };
+
+    var BoundingRectangleOffset = ns.BoundingRectangleOffset;
+
+    BoundingRectangleOffset.prototype.getX = function() {
+        return this.x;
+    };
+
+    BoundingRectangleOffset.prototype.getY = function() {
+        return this.y;
+    };
+
+})();</pre>
+</body>
+</html>

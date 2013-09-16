@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+(function() {
+    var ns = Stimuli.event,
+        synthetizer = ns.synthetizer;
+
+    ns.Emitter = {
+
+        isMouseEvent: function(name) {
+            return {
+                click: true,
+                mousedown: true,
+                mouseup: true,
+                dblclick: true,
+                mouseover: true,
+                mousemove: true,
+                mouseout: true,
+                mouseleave: true,
+                mouseenter: true,
+                contextmenu: true
+            }[name] || false;
+        },
+
+        emit: function(data, callback) {
+            var result;
+
+            if (this.isMouseEvent(data.name)) {
+                result = synthetizer.Mouse.inject(data);
+            }
+
+            callback(result.event, result.canceled);
+        }
+
+    };
+
+
+})();</pre>
+</body>
+</html>

@@ -21,16 +21,18 @@
     },
           
     "devDependencies": {
-        
-        "grunt": "~0.4",
-        
+                
         "grunt-contrib-jshint": "~0.6",
         
         "grunt-karma": "~0.6",
         
-        "grunt-jsdoc": "~0.4",
+        "grunt-jsduck": "~0.1",
 
         "grunt-contrib-concat": "~0.3",
+
+        "grunt-bower-task": "~0.3",
+
+        "grunt-hub": "~0.5",
 
         "expect.js" : "~0.2",
 

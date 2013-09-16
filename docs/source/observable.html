@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-core-Observable'>/**
+</span> * This mixin allows Objects to subscribe and publish events.
+ * @mixin
+ * @memberof Stimuli.core
+ */
+
+Stimuli.core.Observable = {
+
+<span id='Stimuli-core-Observable-method-publish'>    /**
+</span>     * Publishes an event.
+     * @param {String} eventName The event name.
+     * @param {...Misc=} data the data to be emitted.
+     * @param {Object=} options Options
+     */
+    publish: function(eventName) {
+        var me = this;
+        if (!me.listeners || !me.listeners[eventName]) {
+            return;
+        }
+
+        var args = Array.prototype.slice.call(arguments, 1),
+            listeners = me.listeners[eventName],
+            length = listeners.length,
+            i = 0,
+            listener;
+
+        for (; i &lt; length; i++) {
+            listener = listeners[i];
+            listener.fn.apply(listener.scope, args);
+        }
+
+    },
+
+<span id='Stimuli-core-Observable-method-subscribe'>    /**
+</span>     * Subscribes to an event.
+     * @param {String} eventName The event name.
+     * @param {Function} fn The listener to bind to the event.
+     * @param {Object=} scope The listener execution scope.
+     */
+    subscribe: function(eventName, fn, scope) {
+        var me = this;
+
+        scope = scope || me;
+
+        me.listeners = me.listeners || {};
+
+        me.listeners[eventName] = me.listeners[eventName] || [];
+
+        me.listeners[eventName].push({
+
+            fn: fn,
+
+            scope: scope
+
+        });
+
+    },
+
+<span id='Stimuli-core-Observable-method-unsubscribe'>    /**
+</span>     * Subscribes to an event.
+     * @param {String} eventName The event name.
+     * @param {Function} fn The listener to bind to the event.
+     * @param {Object=} scope The listener execution scope.
+     */
+    unsubscribe: function(eventName, fn) {
+        var listeners = this.listeners[eventName],
+            length = listeners.length,
+            i = 0,
+            listener;
+
+        for (; i &lt; length; i++) {
+            listener = listeners[i];
+            if (listeners[i].fn === fn) {
+                break;
+            }
+        }
+        this.listeners = listeners.slice(0, i - 1).concat(listeners.slice(i + 1));
+
+    }
+};</pre>
+</body>
+</html>

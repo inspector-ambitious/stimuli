@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-method-constructor'><span id='Stimuli'>/**
+</span></span> * Creates an instance of Stimuli
+ * @constructor
+ * @param {Object} options
+ * @return {Stimuli} Fresh Stimuli instance
+ */
+
+var Stimuli = function(options) {
+    options = options || {};
+    this.devices = {};
+
+    this.viewport = new Stimuli.core.Viewport(options.view);
+    if (typeof Stimuli.device.Mouse !== 'undefined') {
+        this.devices.mouse = new Stimuli.device.Mouse(this.viewport);
+    }
+
+};
+
+Stimuli.prototype.getMouse = function() {
+    return this.devices.mouse;
+};
+
+<span id='Stimuli-property-core'>/**
+</span> * @namespace Stimuli.core
+ */
+
+Stimuli.core = {};
+
+<span id='Stimuli-property-device'>/**
+</span> * @namespace Stimuli.device
+ */
+
+Stimuli.device = {};
+
+<span id='Stimuli-property-interaction'>/**
+</span> * @namespace Stimuli.interaction
+ */
+
+Stimuli.interaction = {
+    mouse: {}
+};
+
+<span id='Stimuli-property-event'>/**
+</span> * @namespace Stimuli.event
+ */
+
+ Stimuli.event = {
+    synthetizer: {}
+ };
+
+ Stimuli.$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector)[0];
+ };
+
+Stimuli.$$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector);
+ };
+</pre>
+</body>
+</html>
