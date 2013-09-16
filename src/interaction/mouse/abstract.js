@@ -2,7 +2,7 @@
 
 (function() {
 
-    var ns = Domino.interaction.mouse;
+    var ns = Stimuli.interaction.mouse;
 
 
     ns.Abstract = {
@@ -11,7 +11,7 @@
 
             this.options = {};
             
-            Domino.core.Object.merge(this.options, options);
+            Stimuli.core.Object.merge(this.options, options);
 
         },
 
@@ -58,7 +58,7 @@
             },
 
             getButton: function() {
-                var isModern = Domino.core.Support.isModern,
+                var isModern = Stimuli.core.Support.isModern,
                     buttonsMap = {
                     left: isModern ? 0 : 1,
                     middle: isModern ? 1 : 4,

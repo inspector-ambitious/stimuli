@@ -139,14 +139,14 @@ function MainCtrl($scope, $http, $location, $templateCache) {
 
         if ($scope.capture) {
             
-            var elements = Domino.$$($scope.selector),
+            var elements = Stimuli.$$($scope.selector),
                 elementsLength = elements.length,
                 domEvents = $scope.domEvents,
                 domEventslength  = domEvents.length,
                 i, j, domListener, domEvent;
 
             for (i = 0; i < elementsLength; i++) {
-                domListener = new Domino.event.Binder(elements[i]);
+                domListener = new Stimuli.event.Binder(elements[i]);
                 capturedElements.push(domListener);
                 for (j = 0; j < domEventslength; j++) {
                     domEvent = domEvents[j];

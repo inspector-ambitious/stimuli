@@ -1,9 +1,9 @@
-describe('Domino.device.Mouse', function() {
+describe('Stimuli.device.Mouse', function() {
 
     var mouse;
 
     beforeEach(function() {
-        mouse = new Domino.device.Mouse();
+        mouse = new Stimuli.device.Mouse();
     });
 
     afterEach(function() {

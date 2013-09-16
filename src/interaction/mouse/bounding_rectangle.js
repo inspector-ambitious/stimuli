@@ -2,7 +2,7 @@
 
 (function() {
 
-    var ns = Domino.interaction.mouse;
+    var ns = Stimuli.interaction.mouse;
 
     ns.BoundingRectangle = function(viewport, element) {
         var me = this;

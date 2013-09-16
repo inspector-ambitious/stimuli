@@ -2,7 +2,7 @@
 
 (function() {
 
-    var ns = Domino.device;
+    var ns = Stimuli.device;
 
     ns.Mouse = function(options) {
 
@@ -36,7 +36,7 @@
         return this.send('down', options, callback);
     };
 
-    // Extends Domino.Device.Abstract
-    Domino.core.Object.merge(Mouse.prototype, Domino.device.Abstract);
+    // Extends Stimuli.Device.Abstract
+    Stimuli.core.Object.merge(Mouse.prototype, Stimuli.device.Abstract);
 
 })();

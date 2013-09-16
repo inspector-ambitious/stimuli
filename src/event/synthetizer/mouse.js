@@ -2,7 +2,7 @@
 
 (function() {
    
-    var ns = Domino.event.synthetizer;
+    var ns = Stimuli.event.synthetizer;
 
     ns.Mouse = {
  
@@ -21,7 +21,7 @@
                 event,
                 canceled;
 
-            if (Domino.core.Support.isModern) {
+            if (Stimuli.core.Support.isModern) {
                 
                 event = data.view.document.createEvent('MouseEvents');
 

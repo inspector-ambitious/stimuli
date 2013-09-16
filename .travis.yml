@@ -23,8 +23,7 @@ before_script:
   - .travis/sauce_connect_setup.sh
 
 script:
-  - grunt jshint && 
-    grunt build && 
+  - grunt build && 
     grunt karma:phantomjsci && 
     grunt karma:chromeci && 
     grunt karma:firefoxci && 

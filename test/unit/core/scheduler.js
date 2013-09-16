@@ -1,10 +1,10 @@
-describe('Domino.core.Scheduler', function() {
+describe('Stimuli.core.Scheduler', function() {
 
     var clock, scheduler, speed = 2.0;
 
     beforeEach(function() {
 
-        scheduler = new Domino.core.Scheduler({
+        scheduler = new Stimuli.core.Scheduler({
 
             speed: speed,
 

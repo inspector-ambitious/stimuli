@@ -2,11 +2,11 @@
 
 (function() {
 
-    var ns = Domino.event;
+    var ns = Stimuli.event;
 
     ns.Binder = function(element) {
         if (typeof element === 'string') {
-            element = Domino.$(element);
+            element = Stimuli.$(element);
         }
 
         this.element = element;
@@ -23,7 +23,7 @@
             listener.apply(scope, arguments);
         }
 
-        if (Domino.core.Support.isModern) {
+        if (Stimuli.core.Support.isModern) {
             me.element.addEventListener(type, wrappedListener, false);
         } else {
             me.element.attachEvent('on' + type, wrappedListener);
@@ -55,7 +55,7 @@
             }
         }
 
-        if (Domino.core.Support.isModern) {
+        if (Stimuli.core.Support.isModern) {
             me.element.removeEventListener(type, wrappedListener, false);
         } else {
             me.element.detachEvent('on' + type, wrappedListener);

@@ -8,9 +8,9 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     echo "Deploying jsdocumentation on gh-pages"
     
-    git clone https://$GITHUB_LOGIN:$GITHUB_PASSWORD@github.com/yhwh/domino.git
+    git clone https://$GITHUB_LOGIN:$GITHUB_PASSWORD@github.com/yhwh/stimuli.git
 
-    cd domino
+    cd stimuli
 
     git config --global user.name "$GIT_USERNAME"
 

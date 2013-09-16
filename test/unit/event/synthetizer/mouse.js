@@ -1,14 +1,14 @@
-describe('Domino.event.synthetizer.Mouse', function() {
+describe('Stimuli.event.synthetizer.Mouse', function() {
 
     var body,
         bodyBinder;
 
     before(function() {
-        body = Domino.$('body');
+        body = Stimuli.$('body');
     });
 
     beforeEach(function() {
-        bodyBinder = new Domino.event.Binder(body);
+        bodyBinder = new Stimuli.event.Binder(body);
 
     });
 
@@ -25,7 +25,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
                i++;
             });
 
-            Domino.event.synthetizer.Mouse.inject({
+            Stimuli.event.synthetizer.Mouse.inject({
                 name: 'mousedown',
                 button: 0,
                 view: window,
@@ -42,7 +42,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
                 receivedEvent = e;
             });
 
-            var ret = Domino.event.synthetizer.Mouse.inject({
+            var ret = Stimuli.event.synthetizer.Mouse.inject({
                 name: 'mousedown',
                 button: 0,
                 view: window,
@@ -67,7 +67,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
                         }
                     });
 
-                    var ret = Domino.event.synthetizer.Mouse.inject({
+                    var ret = Stimuli.event.synthetizer.Mouse.inject({
                         name: 'click',
                         view: window,
                         target: document.body
@@ -80,7 +80,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
 
                 it('should return canceled: false if the event is not defaultPrevented in the listener', function() {
 
-                    var ret = Domino.event.synthetizer.Mouse.inject({
+                    var ret = Stimuli.event.synthetizer.Mouse.inject({
                         name: 'click',
                         view: window,
                         target: document.body
@@ -104,7 +104,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
                         }
                     });
 
-                    var ret = Domino.event.synthetizer.Mouse.inject({
+                    var ret = Stimuli.event.synthetizer.Mouse.inject({
                         name: 'mousemove',
                         view: window,
                         target: document.body
@@ -118,7 +118,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
                 it('should return canceled: false if the event is not defaultPrevented in the listener', function() {
 
 
-                    var ret = Domino.event.synthetizer.Mouse.inject({
+                    var ret = Stimuli.event.synthetizer.Mouse.inject({
                         name: 'mousemove',
                         view: window,
                         target: document.body

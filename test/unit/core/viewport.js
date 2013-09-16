@@ -1,9 +1,9 @@
-describe('Domino.core.Viewport', function() {
+describe('Stimuli.core.Viewport', function() {
 
     var viewport;
 
     before(function() {
-        viewport = new Domino.core.Viewport();
+        viewport = new Stimuli.core.Viewport();
     });
 
     after(function() {

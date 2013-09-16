@@ -1,6 +1,6 @@
-describe('Domino.event.Emitter', function() {
+describe('Stimuli.event.Emitter', function() {
 
-    var Emitter = Domino.event.Emitter;
+    var Emitter = Stimuli.event.Emitter;
 
     describe('isMouseEvent', function() {
 

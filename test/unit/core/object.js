@@ -1,9 +1,9 @@
-describe('Domino.core.Object', function() {
+describe('Stimuli.core.Object', function() {
 
     var Obj;
 
     beforeEach(function() {
-        Obj = Domino.core.Object;
+        Obj = Stimuli.core.Object;
     });
 
     afterEach(function() {

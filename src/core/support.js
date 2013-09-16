@@ -1,6 +1,6 @@
 'use strict';
 
-Domino.core.Support = {
+Stimuli.core.Support = {
 
     isModern: typeof document.createEvent !== 'undefined'
 

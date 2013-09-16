@@ -2,7 +2,7 @@
 
 (function() {
 
-    var ns = Domino.device;
+    var ns = Stimuli.device;
 
     ns.Abstract = {
 
@@ -29,6 +29,6 @@
 
     };
 
-    Domino.core.Object.merge(ns.Abstract, Domino.core.Observable);
+    Stimuli.core.Object.merge(ns.Abstract, Stimuli.core.Observable);
 
 })();

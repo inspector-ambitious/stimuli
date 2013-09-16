@@ -5,10 +5,10 @@ module.exports = function(grunt) {
     // import package.json
     var pkg = grunt.file.readJSON('package.json');
 
-    // DominoFiles
-    var dominoFiles = [
+    // StimuliFiles
+    var stimuliFiles = [
         'lib/sizzle/sizzle.js',
-        'src/domino.js',
+        'src/stimuli.js',
         'src/core/support.js',
         'src/core/object.js',
         'src/core/type.js',
@@ -81,14 +81,14 @@ module.exports = function(grunt) {
         testFilesBuild.push(shared);
     });
 
-    // Add all dominos sources for development
-    dominoFiles.forEach(function(dominoFile) {
+    // Add all stimulis sources for development
+    stimuliFiles.forEach(function(stimuliFile) {
         testFilesDev.push({
-            pattern: dominoFile
+            pattern: stimuliFile
         });
     });
 
-    // Add freshly build domino
+    // Add freshly build stimuli
     testFilesBuild.push({
         pattern: 'build/' + pkg.name + '-' + pkg.version + '.js'
     });
@@ -305,7 +305,7 @@ module.exports = function(grunt) {
 
             dist: {
 
-                src: dominoFiles,
+                src: stimuliFiles,
 
                 dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js'
 
@@ -337,6 +337,6 @@ module.exports = function(grunt) {
     grunt.registerTask('quicktest', ['karma:quick']);
     grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
     grunt.registerTask('cov', ['karma:coverage']);
-    grunt.registerTask('build', ['bower:install', 'concat:dist']);
+    grunt.registerTask('build', ['jshint', 'bower:install', 'concat:dist']);
 
 };

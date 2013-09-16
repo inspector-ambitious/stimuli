@@ -1,7 +1,7 @@
 'use strict';
 
 (function() {
-    var ns = Domino.core;
+    var ns = Stimuli.core;
 
     ns.Viewport = function(view) {
 

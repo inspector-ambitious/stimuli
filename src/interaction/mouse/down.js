@@ -2,7 +2,7 @@
 
 (function() {
 
-    var ns = Domino.interaction.mouse;
+    var ns = Stimuli.interaction.mouse;
 
     ns.down = ns.Abstract.ctor;
 
@@ -47,6 +47,6 @@
 
     };
 
-    Domino.core.Object.merge(ns.down.prototype, ns.Abstract.proto);
+    Stimuli.core.Object.merge(ns.down.prototype, ns.Abstract.proto);
 
 })();

@@ -2,8 +2,8 @@
 
 (function() {
     
-    var ns = Domino.interaction,
-        isBoolean = Domino.core.Type.isBoolean;
+    var ns = Stimuli.interaction,
+        isBoolean = Stimuli.core.Type.isBoolean;
 
     ns.Interaction = {
 
@@ -74,6 +74,6 @@
      
     };
 
-    Domino.core.Object.merge(ns.Interaction, Domino.core.Observable);
+    Stimuli.core.Object.merge(ns.Interaction, Stimuli.core.Observable);
 
 })();

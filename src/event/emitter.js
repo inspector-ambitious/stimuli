@@ -1,7 +1,7 @@
 'use strict';
 
 (function() {
-    var ns = Domino.event,
+    var ns = Stimuli.event,
         synthetizer = ns.synthetizer;
 
     ns.Emitter = {

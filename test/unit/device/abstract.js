@@ -1,4 +1,4 @@
-describe('Domino.device.Abstract', function() {
+describe('Stimuli.device.Abstract', function() {
 
     var dummy;
 
@@ -8,7 +8,7 @@ describe('Domino.device.Abstract', function() {
             this.name = 'dummy';
         };
 
-        Domino.core.Object.merge(DummyDevice.prototype, Domino.device.Abstract);
+        Stimuli.core.Object.merge(DummyDevice.prototype, Stimuli.device.Abstract);
 
         dummy = new DummyDevice();
     });

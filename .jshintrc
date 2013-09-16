@@ -8,7 +8,7 @@
   "devel": true,
   "globals": {
     "angular": true,
-    "Domino": true,
+    "Stimuli": true,
     "define": true,
     "describe": true,
     "xdescribe": true,

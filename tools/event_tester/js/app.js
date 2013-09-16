@@ -1,2 +1,2 @@
 'use strict';
-var App = angular.module('DominoEventsTester', []);
+var App = angular.module('StimuliEventsTester', []);

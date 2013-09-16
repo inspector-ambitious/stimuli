@@ -1,8 +1,8 @@
-describe('Domino.core.Type', function() {
+describe('Stimuli.core.Type', function() {
 
     describe('isBoolean', function() {
 
-        var isBoolean = Domino.core.Type.isBoolean;
+        var isBoolean = Stimuli.core.Type.isBoolean;
         
         it('should return true if a boolean is passed', function() {
             expect(isBoolean(true)).to.be(true);
