@@ -17,7 +17,8 @@
 
 
         inject: function(data) {
-            var event,
+            var cancelable = this.isCancelable(data.name),
+                event,
                 canceled;
 
             if (Domino.core.Support.isModern) {
@@ -27,7 +28,7 @@
                 event.initMouseEvent(
                     data.name,
                     data.bubbles,
-                    this.isCancelable(data.name), // not required with fireEvent
+                    cancelable, 
                     data.view,
                     data.detail,
                     data.screenX,
@@ -61,10 +62,11 @@
                 event.button = data.button;
                 event.relatedTarget = data.relatedTarget;
      
-                data.target.fireEvent('on'+ data.name, event);
+                canceled = !data.target.fireEvent('on'+ data.name, event);
 
-                canceled = event.returnValue === false;
-            
+                // IE8 can cancel mousedown, mouseup, mouseover seriously....
+                canceled = cancelable ? canceled : false;
+
             }
             
             return {

@@ -29,7 +29,7 @@ module.exports = function(grunt) {
 
             options: {
 
-                jshintrc: '.jshintrc'
+                jshintrc: './../../.jshintrc'
 
             }
 
@@ -68,8 +68,8 @@ module.exports = function(grunt) {
 
     });
 
-    grunt.loadNpmTasks('grunt-bower-task');
+    grunt.loadTasks('./../../node_modules/grunt-bower-task/tasks');
 
-    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadTasks('./../../node_modules/grunt-contrib-jshint/tasks');
 
 };

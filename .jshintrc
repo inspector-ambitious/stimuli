@@ -21,7 +21,8 @@
     "before": true,
     "TestHelper": true,
     "after": true,
-    "Sizzle": true
+    "Sizzle": true,
+    "App": true
   },
   "debug": false,
   "strict": false,

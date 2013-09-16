@@ -65,19 +65,17 @@
     ns.Binder.prototype.allOff = function() {
         var me = this,
             type,
-            listeners,
-            length,
-            i;
+            listeners;
 
         for (type in me.listeners) {
             if (me.listeners.hasOwnProperty(type)) {
                 listeners = me.listeners[type];
-                length = listeners.length;
-                for (i = 0; i < length; i++) {
-                    me.off(listeners[i].type, listeners[i].listener);
+                while (listeners[0]) {
+                    me.off(type, listeners[0].listener);
                 }
             }
         }
+
     };
 
 })();

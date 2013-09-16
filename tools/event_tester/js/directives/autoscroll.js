@@ -24,8 +24,8 @@ App.directive('tAutoScroll', function() {
                 var length = $elements.length,
                     i = 0;
                 for (; i < length; i++) {
-                    autoScroll($elements[i])
-                }    
+                    autoScroll($elements[i]);
+                }
                 
             });
         }
