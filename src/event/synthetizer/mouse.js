@@ -28,7 +28,7 @@
                 event.initMouseEvent(
                     data.name,
                     data.bubbles,
-                    cancelable, 
+                    cancelable,
                     data.view,
                     data.detail,
                     data.screenX,
