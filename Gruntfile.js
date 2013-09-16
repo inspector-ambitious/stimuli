@@ -335,7 +335,6 @@ module.exports = function(grunt) {
 
                 // extra options
                 options: {
-                    'builtin-classes': true,
                     'title': "Stimuli <%= pkg.version %> Documentation"
                 }
             }

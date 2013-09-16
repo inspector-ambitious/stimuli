@@ -70,6 +70,8 @@
             data.view = this.viewport.getView();
 
             this.publish('event', data, callback);
+
+            return this;
         }
      
     };

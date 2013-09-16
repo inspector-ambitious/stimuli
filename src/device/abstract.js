@@ -1,34 +1,44 @@
 'use strict';
 
+/**
+ * @class Stimuli.device.Abstract
+ * This abstract class provides a standardized way for a device to emit a command.
+ * @mixins Stimuli.core.Observable
+ * @private
+ */
+
 (function() {
 
-    var ns = Stimuli.device;
+    Stimuli.device.Abstract= {
 
-    ns.Abstract = {
-
-        send: function(type, data, callback) {
+        /**
+         * @protected
+         * @param {String} type The emitted command name
+         * @param {Object} options The emitted command options
+         * @param {Function} callback The callback function
+         */
+        send: function(command, options, callback) {
 
             var me = this;
 
             callback = callback || function() {};
 
-            me.publish('data', {
+            me.publish('command', {
 
                 device: me.name,
 
-                type: type,
+                command: command,
 
-                data: data,
+                options: options,
 
                 callback: callback
 
             });
 
-            return this;
         }
 
     };
 
-    Stimuli.core.Object.merge(ns.Abstract, Stimuli.core.Observable);
+    Stimuli.core.Object.merge(Stimuli.device.Abstract, Stimuli.core.Observable);
 
 })();

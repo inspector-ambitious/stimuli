@@ -1,10 +1,13 @@
 'use strict';
 
+/**
+ * @class
+ * Allows to bind/unbind listeners to dom elements.
+ */
+
 (function() {
 
-    var ns = Stimuli.event;
-
-    ns.Binder = function(element) {
+    Stimuli.event.Binder = function(element) {
         if (typeof element === 'string') {
             element = Stimuli.$(element);
         }
@@ -14,7 +17,9 @@
         this.listeners = {};
     };
 
-    ns.Binder.prototype.on = function(type, listener, scope) {
+    var Binder = Stimuli.event.Binder;
+
+    Binder.prototype.on = function(type, listener, scope) {
         var me = this;
 
         scope = scope || me;
@@ -40,7 +45,7 @@
         });
     };
 
-    ns.Binder.prototype.off = function(type, listener) {
+    Binder.prototype.off = function(type, listener) {
         var me = this,
             listeners = me.listeners[type],
             length = listeners.length,
@@ -62,7 +67,7 @@
         }
     };
 
-    ns.Binder.prototype.allOff = function() {
+    Binder.prototype.allOff = function() {
         var me = this,
             type,
             listeners;
