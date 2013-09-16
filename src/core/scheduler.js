@@ -5,27 +5,27 @@
     /**
      * This class allows to schedule events.
      * @constructor
-     * @mixes Domino.core.Observable
-     * @memberof Domino.core
+     * @mixes Stimuli.core.Observable
+     * @memberof Stimuli.core
      * @param {Object} options
      * @returns {Scheduler}
      */
 
-    Domino.core.Scheduler = function(options) {
+    Stimuli.core.Scheduler = function(options) {
         this.options = options;
         this.queue = [];
         this.locked = false;
     };
 
     // Applies Observable mixin
-    Domino.core.Object.merge(Domino.core.Scheduler.prototype, Domino.core.Observable);
+    Stimuli.core.Object.merge(Stimuli.core.Scheduler.prototype, Stimuli.core.Observable);
 
     /**
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
 
-    Domino.core.Scheduler.prototype.receive = function(data) {
+    Stimuli.core.Scheduler.prototype.receive = function(data) {
 
         var me = this;
 

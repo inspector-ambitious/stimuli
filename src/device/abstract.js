@@ -2,29 +2,23 @@
 
 (function() {
 
-    Domino.device.Abstract = {
+    var ns = Stimuli.device;
 
-        send: function(action, options, callback) {
+    ns.Abstract = {
+
+        send: function(type, data, callback) {
 
             var me = this;
 
             callback = callback || function() {};
 
-            if (typeof options === "undefined") {
-                throw new Error(me.name + '.' + action + ' needs options as first argument.');
-            }
-
-            if (typeof callback === "undefined") {
-                throw new Error(me.name + '.' + action + ' needs callback as second argument.');
-            }
-
-            me.publish('emit', {
+            me.publish('data', {
 
                 device: me.name,
 
-                action: action,
+                type: type,
 
-                options: options,
+                data: data,
 
                 callback: callback
 
@@ -35,6 +29,6 @@
 
     };
 
-    Domino.core.Object.merge(Domino.device.Abstract, Domino.core.Observable);
+    Stimuli.core.Object.merge(ns.Abstract, Stimuli.core.Observable);
 
 })();

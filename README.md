@@ -26,7 +26,7 @@ Install all required node modules:
 
     npm install
 
-Build domino in build/:
+Build stimuli in build/:
 
     grunt build
 

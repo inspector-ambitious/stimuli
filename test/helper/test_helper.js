@@ -1,16 +1,18 @@
+'use strict';
+
 var TestHelper = {};
 
 // Load a html fixture in the body
-TestHelper.loadFixture = function(url, callback) {
+TestHelper.loadTemplate = function(url, callback) {
 
-    if (!$('#fixtures')) {
-        $('body').append('<div id="fixtures"></div>');
+    if (Stimuli.$('#template').length === 0) {
+        Stimuli.$('body').append('<div id="template"></div>');
     }
-
-    $('#fixtures').load(url, callback);
+    
+    Stimuli.$('#template').load(url, callback);
 };
 
 // 
-TestHelper.unloadFixture = function() {
-    $('#fixtures').remove();
+TestHelper.removeTemplate = function() {
+     Stimuli.$('#template').remove();
 };

@@ -1,0 +1,17 @@
+{
+
+    "name": "stimuli",
+
+    "version": "0.0.1",
+
+
+
+    "dependencies": {
+
+        "sizzle": "1.10.9"
+
+    },
+
+    "private": true
+
+}

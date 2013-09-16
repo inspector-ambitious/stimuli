@@ -5,14 +5,36 @@ module.exports = function(grunt) {
     // import package.json
     var pkg = grunt.file.readJSON('package.json');
 
-    // DominoFiles
-    var dominoFiles = [
-        'src/domino.js',
+    // StimuliFiles
+    var stimuliFiles = [
+        'lib/sizzle/sizzle.js',
+        'src/stimuli.js',
+        'src/core/support.js',
         'src/core/object.js',
+        'src/core/type.js',
         'src/core/observable.js',
         'src/core/scheduler.js',
+        'src/core/viewport.js',
+
         'src/device/abstract.js',
-        'src/device/mouse.js'
+        'src/device/mouse.js',
+
+        'src/event/emitter.js',
+        'src/event/binder.js',
+        'src/event/synthetizer/mouse.js',
+
+        'src/interaction/abstract.js',
+        'src/interaction/mouse/bounding_rectangle.js',
+        'src/interaction/mouse/bounding_rectangle_offset.js',
+        'src/interaction/mouse/position.js',
+        'src/interaction/mouse/abstract.js',
+        'src/interaction/mouse/down.js',
+        'src/interaction/mouse/up.js',
+        'src/interaction/mouse/click.js',
+        'src/interaction/mouse/dblclick.js',
+        'src/interaction/mouse/move.js',
+        'src/interaction/mouse/drag.js'
+        
     ];
 
 
@@ -20,11 +42,6 @@ module.exports = function(grunt) {
 
     // Shared files loaded by karma test runner
     var sharedTestFiles = [
-
-        {
-            pattern: 'test/vendor/*.js',
-            watched: false
-        },
 
         {
             pattern: 'node_modules/expect.js/expect.js',
@@ -42,7 +59,7 @@ module.exports = function(grunt) {
         },
 
         {
-            pattern: 'test/fixtures/**/*.html',
+            pattern: 'test/templates/**/*.*',
             included: false
         },
 
@@ -64,14 +81,14 @@ module.exports = function(grunt) {
         testFilesBuild.push(shared);
     });
 
-    // Add all dominos sources for development
-    dominoFiles.forEach(function(dominoFile) {
+    // Add all stimulis sources for development
+    stimuliFiles.forEach(function(stimuliFile) {
         testFilesDev.push({
-            pattern: dominoFile
+            pattern: stimuliFile
         });
     });
 
-    // Add freshly build domino
+    // Add freshly build stimuli
     testFilesBuild.push({
         pattern: 'build/' + pkg.name + '-' + pkg.version + '.js'
     });
@@ -101,17 +118,14 @@ module.exports = function(grunt) {
 
                 'Gruntfile.js',
                 'src/**/*.js',
-                'package.json',
+                '*.json',
                 '.jshintrc',
                 'test/**/*.js'
-
             ],
 
             options: {
 
-                jshintrc: '.jshintrc',
-
-                ignores: ['test/vendor/jquery-1.10.2.js']
+                jshintrc: '.jshintrc'
 
             }
 
@@ -120,6 +134,7 @@ module.exports = function(grunt) {
         jsdoc: {
 
             dist: {
+
                 src: ['src/**/*.js'],
 
                 options: {
@@ -262,6 +277,17 @@ module.exports = function(grunt) {
             }
         },
 
+        bower: {
+
+            install: {
+
+                options: {
+                    cleanBowerDir: true
+                }
+                
+            }
+        },
+
         concat: {
 
             options: {
@@ -278,55 +304,57 @@ module.exports = function(grunt) {
 
             dist: {
 
-                src: dominoFiles,
+                src: stimuliFiles,
 
                 dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js'
 
+            }
+        },
+
+         hub: {
+
+            event_tester: {
+
+              src: ['tools/event_tester/Gruntfile.js'],
+
+              tasks: ['jshint', 'build:templates']
+
+            }
+        },
+
+        jsduck: {
+
+            main: {
+                // source paths with your code
+                src: [
+                    'src'
+                ],
+
+                // docs output dir
+                dest: 'docs',
+
+                // extra options
+                options: {
+                    'builtin-classes': true,
+                    'title': "Stimuli <%= pkg.version %> Documentation"
+                }
             }
         }
 
     });
 
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-karma');
-    grunt.loadNpmTasks('grunt-jsdoc');
+    grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-bower-task');
+    grunt.loadNpmTasks('grunt-hub');
 
-    grunt.registerTask('lint', ['jshint']);
     grunt.registerTask('watchtest', ['karma:watch']);
     grunt.registerTask('quicktest', ['karma:quick']);
-    grunt.registerTask('quickwatchtest', ['karma:quick']);
+    grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
     grunt.registerTask('cov', ['karma:coverage']);
-    grunt.registerTask('build', ['concat:dist']);
+    grunt.registerTask('build', ['jshint', 'bower:install', 'concat:dist']);
 
-    grunt.registerTask('build-tester-fixture', 'Build fixtures list for manual tester', function() {
-
-        var fs = require('fs');
-
-        grunt.log.writeln('Generating fixtures.json...');
-
-        var files = fs.readdirSync('test/fixtures');
-
-        var list = [];
-
-        files.forEach(function(file) {
-            var fileContent = fs.readFileSync('test/fixtures/' + file, 'utf8');
-            var description = fileContent.split('\n')[0].replace(/<h2>|<\/h2>/g, '');
-            
-            list.push({
-
-                url: file,
-
-                description: description
-
-            });
-
-        });
-
-        fs.writeFileSync('test/tester/resources/fixtures.json', JSON.stringify(list));
-
-        grunt.log.writeln('All done!');
-
-        return true;
-    });
 };

@@ -1,0 +1,12 @@
+{
+    "name": "Stimuli Events Tester",
+
+    "version": "0.3.2",
+
+    "dependencies": {
+
+        "font-awesome": "3.2.1",
+
+        "angular": "1.0.8"
+    }
+}

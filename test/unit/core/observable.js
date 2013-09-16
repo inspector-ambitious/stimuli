@@ -1,4 +1,4 @@
-describe('Domino.core.Observable', function() {
+describe('Stimuli.core.Observable', function() {
 
     var observable;
 
@@ -6,7 +6,7 @@ describe('Domino.core.Observable', function() {
 
         var ObservableClass = function() {};
 
-        Domino.core.Object.merge(ObservableClass.prototype, Domino.core.Observable);
+        Stimuli.core.Object.merge(ObservableClass.prototype, Stimuli.core.Observable);
 
         observable = new ObservableClass();
 
