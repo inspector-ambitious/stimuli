@@ -1,10 +1,27 @@
 describe('Domino.event.synthetizer.Mouse', function() {
 
+    var body,
+        bodyBinder;
+
+    before(function() {
+        body = Domino.$('body');
+    });
+
+    beforeEach(function() {
+        bodyBinder = new Domino.event.Binder(body);
+
+    });
+
+    afterEach(function() {
+        bodyBinder.allOff();
+    });
+
     describe('inject', function() {
 
         it('should inject a mouse event', function() {
             var i = 0;
-            $('body').mousedown(function(e) {
+
+            bodyBinder.on('mousedown', function(e) {
                i++;
             });
 
@@ -16,14 +33,13 @@ describe('Domino.event.synthetizer.Mouse', function() {
             });
 
             expect(i).to.be(1);
-            $('body').off('mousedown');
 
         });
 
         it('should return the injected event', function() {
             var receivedEvent;
-            $('body').mousedown(function(e) {
-                receivedEvent = e.originalEvent;
+            bodyBinder.on('mousedown', function(e) {
+                receivedEvent = e;
             });
 
             var ret = Domino.event.synthetizer.Mouse.inject({
@@ -34,7 +50,6 @@ describe('Domino.event.synthetizer.Mouse', function() {
             });
 
             expect(ret.event).to.be(receivedEvent);
-            $('body').off('mousedown');
 
         });
 
@@ -44,7 +59,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
 
                 it('should return canceled: true if the event is defaultPrevented in the listener', function() {
 
-                    $('body').mousedown(function(e) {
+                    bodyBinder.on('mousedown', function(e) {
                         e.preventDefault();
                     });
 
@@ -56,14 +71,13 @@ describe('Domino.event.synthetizer.Mouse', function() {
                     });
 
                     expect(ret.canceled).to.be(true);
-                    $('body').off('mousedown');
-
+    
                 });
 
 
                 it('should return canceled: false if the event is not defaultPrevented in the listener', function() {
 
-                    $('body').mousedown(function(e) {});
+                    bodyBinder.on('mousedown', function(e) {});
 
                     var ret = Domino.event.synthetizer.Mouse.inject({
                         name: 'mousedown',
@@ -73,7 +87,6 @@ describe('Domino.event.synthetizer.Mouse', function() {
                     });
 
                     expect(ret.canceled).to.be(false);
-                    $('body').off('mousedown');
 
                 });
 
@@ -83,7 +96,7 @@ describe('Domino.event.synthetizer.Mouse', function() {
 
                 it('should return canceled: false if the event is defaultPrevented in the listener', function() {
 
-                    $('body').mousedown(function(e) {
+                    bodyBinder.on('mousemove', function(e) {
                         e.preventDefault();
                     });
 
@@ -95,14 +108,12 @@ describe('Domino.event.synthetizer.Mouse', function() {
                     });
 
                     expect(ret.canceled).to.be(false);
-                    $('body').off('mousemove');
 
                 });
 
 
                 it('should return canceled: false if the event is not defaultPrevented in the listener', function() {
 
-                    $('body').mousedown(function(e) {});
 
                     var ret = Domino.event.synthetizer.Mouse.inject({
                         name: 'mousemove',
@@ -112,7 +123,6 @@ describe('Domino.event.synthetizer.Mouse', function() {
                     });
 
                     expect(ret.canceled).to.be(false);
-                    $('body').off('mousemove');
 
                 });
 

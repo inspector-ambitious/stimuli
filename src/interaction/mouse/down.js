@@ -6,7 +6,7 @@
 
     ns.down = ns.Abstract.ctor;
 
-    ns.down.prototype.execute = function(detail) {
+    ns.down.prototype.execute = function() {
         var me = this,
             target = me.getTarget(),
             position = me.calculatePosition(target, me.options.offset);
@@ -31,7 +31,7 @@
 
             metaKey: me.getMetaKey(),
 
-            detail: detail || 1,
+            detail: 1,
 
             target: target,
 
@@ -43,7 +43,7 @@
 
             screenY: position.getScreenY()
            
-        });
+        }, me.options.callback);
 
     };
 

@@ -32,6 +32,10 @@
 
         "grunt-contrib-concat": "~0.3",
 
+        "grunt-bower-task": "~0.3",
+
+        "grunt-hub": "~0.5",
+
         "expect.js" : "~0.2",
 
         "sinon": "~1.7",

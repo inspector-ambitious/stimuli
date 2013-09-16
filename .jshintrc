@@ -7,6 +7,7 @@
   "jquery": true,
   "devel": true,
   "globals": {
+    "angular": true,
     "Domino": true,
     "define": true,
     "describe": true,
@@ -19,7 +20,8 @@
     "sinon": true,
     "before": true,
     "TestHelper": true,
-    "after": true
+    "after": true,
+    "Sizzle": true
   },
   "debug": false,
   "strict": false,

@@ -1,7 +1,9 @@
+'use strict';
+
 function MainCtrl($scope, $http, $location, $templateCache) {
 
-    // Load Package
-    $http.get('package.json')
+    // Load Package information
+    $http.get('bower.json')
     .then(function(res){
         $scope.package = res.data;
     });
@@ -17,7 +19,7 @@ function MainCtrl($scope, $http, $location, $templateCache) {
     $scope.getTemplateUrl = function() {
 
         if ($scope.template) {
-            return '../templates/' + $scope.template.url;
+            return 'templates/' + $scope.template.url;
         }
         return '';
 
@@ -93,7 +95,7 @@ function MainCtrl($scope, $http, $location, $templateCache) {
 
     function updateEventsList(event) {
 
-        formattedEvent = {
+        var formattedEvent = {
             hideDetails: true,
             type: event.type,
             targetTag: (event.target.tagName + '').toLowerCase(),
@@ -134,28 +136,28 @@ function MainCtrl($scope, $http, $location, $templateCache) {
 
 
     $scope.startCapture = function() {
+
         if ($scope.capture) {
             
-            $($scope.selector).each(function(idx, el) {
-                var domEvents = $scope.domEvents,
-                    length  = domEvents.length,
-                    i = 0,
-                    domListener,
-                    domEvent;
+            var elements = Domino.$$($scope.selector),
+                elementsLength = elements.length,
+                domEvents = $scope.domEvents,
+                domEventslength  = domEvents.length,
+                i, j, domListener, domEvent;
 
-                domListener = new DomListener(el);
+            for (i = 0; i < elementsLength; i++) {
+                domListener = new Domino.event.Binder(elements[i]);
                 capturedElements.push(domListener);
-
-                for (; i < length; i++) {
-                    domEvent = domEvents[i];
+                for (j = 0; j < domEventslength; j++) {
+                    domEvent = domEvents[j];
                     if (domEvent.capture) {
-                        domListener.add(domEvent.name, updateEventsList);
+                        domListener.on(domEvent.name, updateEventsList);
                     }
                 }
-
-            });
+            }
         }
-    }
+
+    };
 
     $scope.clearCapturedEvents = function() {
         $scope.capturedEvents = [];
@@ -167,37 +169,42 @@ function MainCtrl($scope, $http, $location, $templateCache) {
             i = 0;
 
         for(; i < length; i++) {
-            capturedElements[i].removeAll();
+            capturedElements[i].allOff();
         }
 
         capturedElements = [];
-    }
+    };
 
     $scope.resetCapture = function(force) {
         $scope.stopCapture();
         $scope.startCapture();
-    }
+    };
 
 
     $scope.toggleCapture = function() {
         var capture = !$scope.capture;
         $scope.capture = capture;
-        capture ? $scope.startCapture() : $scope.stopCapture();
+        
+        if (capture) {
+            $scope.startCapture();
+        } else {
+            $scope.stopCapture();
+        }
     };
 
     $scope.filterCapturedEvent = function(event) {
         var filteredEvent = {};
 
         for (var prop in event) {
-            if (event.hasOwnProperty(prop) && 
-                prop !== 'className' && 
+            if (event.hasOwnProperty(prop) &&
+                prop !== 'className' &&
                 prop !== 'hideDetails') {
                 filteredEvent[prop] = event[prop];
             }
             
         }
         return filteredEvent;
-    }
+    };
 
     $scope.reloadTemplate = function() {
 
@@ -219,6 +226,6 @@ function MainCtrl($scope, $http, $location, $templateCache) {
             $scope.$apply();
         }, 1);
 
-    }
+    };
 
 }

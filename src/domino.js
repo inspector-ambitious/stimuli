@@ -49,3 +49,13 @@ Domino.interaction = {
  Domino.event = {
     synthetizer: {}
  };
+
+ Domino.$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector)[0];
+ };
+
+Domino.$$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector);
+ };

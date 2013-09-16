@@ -53,9 +53,8 @@
             return this.options.shiftKey || false;
         },
 
-        send: function(data) {
+        send: function(data, cb) {
             var me = this,
-                cb = this.options.callback,
                 callback = function(event, canceled) {
                 
                 me.events.push({

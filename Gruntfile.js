@@ -7,6 +7,7 @@ module.exports = function(grunt) {
 
     // DominoFiles
     var dominoFiles = [
+        'lib/sizzle/sizzle.js',
         'src/domino.js',
         'src/core/support.js',
         'src/core/object.js',
@@ -19,6 +20,7 @@ module.exports = function(grunt) {
         'src/device/mouse.js',
 
         'src/event/emitter.js',
+        'src/event/binder.js',
         'src/event/synthetizer/mouse.js',
 
         'src/interaction/abstract.js',
@@ -40,11 +42,6 @@ module.exports = function(grunt) {
 
     // Shared files loaded by karma test runner
     var sharedTestFiles = [
-
-        {
-            pattern: 'test/vendor/*.js',
-            watched: false
-        },
 
         {
             pattern: 'node_modules/expect.js/expect.js',
@@ -122,19 +119,14 @@ module.exports = function(grunt) {
                 'Gruntfile.js',
                 'src/**/*.js',
                 'package.json',
+                'bower.json',
                 '.jshintrc',
-                'test/domino_event_tester/**/*.js',
-                'test/helper/**/*.js',
-                'test/integration/**/*.js',
-                'test/templates/**/*.js',
-                'test/unit/**/*.js'
+                'test/**/*.js'
             ],
 
             options: {
 
-                jshintrc: '.jshintrc',
-
-                ignores: ['test/vendor/jquery-1.10.2.js']
+                jshintrc: '.jshintrc'
 
             }
 
@@ -143,6 +135,7 @@ module.exports = function(grunt) {
         jsdoc: {
 
             dist: {
+
                 src: ['src/**/*.js'],
 
                 options: {
@@ -285,6 +278,17 @@ module.exports = function(grunt) {
             }
         },
 
+        bower: {
+
+            install: {
+
+                options: {
+                    cleanBowerDir: true
+                }
+                
+            }
+        },
+
         concat: {
 
             options: {
@@ -306,51 +310,33 @@ module.exports = function(grunt) {
                 dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js'
 
             }
+        },
+
+         hub: {
+
+            event_tester: {
+
+              src: ['tools/event_tester/Gruntfile.js'],
+
+              tasks: ['jshint', 'build:templates']
+
+            }
         }
 
     });
 
-    grunt.registerTask('build-tester-templates', 'Build templates list for manual tester', function() {
-
-        var fs = require('fs');
-
-        grunt.log.writeln('Generating templates.json...');
-
-        var files = fs.readdirSync('test/templates');
-
-        var list = [];
-
-        files.forEach(function(file) {
-            var fileContent = fs.readFileSync('test/templates/' + file, 'utf8');
-            var description = fileContent.split('\n')[0].replace(/<h1>|<\/h1>/g, '');
-            
-            list.push({
-
-                url: file,
-
-                description: description
-
-            });
-
-        });
-
-        fs.writeFileSync('test/domino_events_tester/resources/templates.json', JSON.stringify(list));
-
-        grunt.log.writeln('All done!');
-
-        return true;
-    });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-jsdoc');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-bower-task');
+    grunt.loadNpmTasks('grunt-hub');
 
-    grunt.registerTask('lint', ['jshint']);
     grunt.registerTask('watchtest', ['karma:watch']);
     grunt.registerTask('quicktest', ['karma:quick']);
     grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
     grunt.registerTask('cov', ['karma:coverage']);
-    grunt.registerTask('build', ['concat:dist']);
+    grunt.registerTask('build', ['bower:install', 'concat:dist']);
 
 };
