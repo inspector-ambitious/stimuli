@@ -1,3 +1,6 @@
 node_modules
-domino.sublime-project
-domino.sublime-workspace
+stimuli.sublime-project
+stimuli.sublime-workspace
+tools
+lib/
+.DS_Store

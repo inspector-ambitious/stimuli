@@ -1,12 +1,12 @@
 {
     
-    "name": "domino",
+    "name": "stimuli",
             
     "description": "DOM event injection library.",
 
     "private": true,
             
-    "main": "./src/domino",
+    "main": "./src/stimuli",
   
     "author": "Nicolas Ferrero <ferrero.nicolas@gmail.com>",
   
@@ -16,7 +16,7 @@
 
         "type": "git",
                 
-        "url": "https://github.com/yhwh/domino.git"
+        "url": "https://github.com/yhwh/stimuli.git"
 
     },
           
