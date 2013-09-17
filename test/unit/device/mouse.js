@@ -12,9 +12,9 @@ describe('Stimuli.device.Mouse', function() {
 
     describe('send', function() {
 
-        it('should an event data with the option device: "mouse"', function(done) {
+        it('should an event command with the option device: "mouse"', function(done) {
 
-            mouse.subscribe('data', function(event) {
+            mouse.subscribe('command', function(event) {
                 expect(event.device).to.be('mouse');
                 done();
             });
@@ -30,8 +30,6 @@ describe('Stimuli.device.Mouse', function() {
             'click',
             'dblclick',
             'down',
-            'drag',
-            'move',
             'up'
         ];
 
@@ -42,9 +40,9 @@ describe('Stimuli.device.Mouse', function() {
             /*jshint loopfunc: true */
             describe(interaction, function() {
 
-                it('should an event data with the option device: "' + interaction + '"', function(done) {
-                    mouse.subscribe('data', function(event) {
-                        expect(event.type).to.be(interaction);
+                it('should an event command with the option device: "' + interaction + '"', function(done) {
+                    mouse.subscribe('command', function(event) {
+                        expect(event.command).to.be(interaction);
                         done();
                     });
 

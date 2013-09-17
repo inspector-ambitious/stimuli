@@ -1,4 +1,4 @@
-describe('Stimuli.core.Observable', function() {
+describe('Stimuli.utils.Observable', function() {
 
     var observable;
 
@@ -6,7 +6,7 @@ describe('Stimuli.core.Observable', function() {
 
         var ObservableClass = function() {};
 
-        Stimuli.core.Object.merge(ObservableClass.prototype, Stimuli.core.Observable);
+        Stimuli.utils.Object.merge(ObservableClass.prototype, Stimuli.utils.Observable);
 
         observable = new ObservableClass();
 

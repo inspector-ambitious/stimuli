@@ -1,10 +1,10 @@
-describe('Stimuli.core.Scheduler', function() {
+describe('Stimuli.utils.Scheduler', function() {
 
     var clock, scheduler, speed = 2.0;
 
     beforeEach(function() {
 
-        scheduler = new Stimuli.core.Scheduler({
+        scheduler = new Stimuli.utils.Scheduler({
 
             speed: speed,
 

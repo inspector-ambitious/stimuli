@@ -1,9 +1,9 @@
-describe('Stimuli.core.Object', function() {
+describe('Stimuli.utils.Object', function() {
 
     var Obj;
 
     beforeEach(function() {
-        Obj = Stimuli.core.Object;
+        Obj = Stimuli.utils.Object;
     });
 
     afterEach(function() {
