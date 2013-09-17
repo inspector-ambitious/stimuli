@@ -17,8 +17,8 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-core-Viewport-method-constructor'><span id='Stimuli-core-Viewport-cfg-view'><span id='Stimuli-core-Viewport'>/**
-</span></span></span> * @class Stimuli.core.Viewport
+<span id='Stimuli-browser-Viewport-method-constructor'><span id='Stimuli-browser-Viewport-cfg-view'><span id='Stimuli-browser-Viewport'>/**
+</span></span></span> * @class Stimuli.browser.Viewport
  * Provides methods to deal with the window and the dom elements positioning.
  * @cfg {Window} view A window object 
  * @constructor
@@ -28,15 +28,15 @@
 
 (function() {
 
-    Stimuli.core.Viewport = function(view) {
+    Stimuli.browser.Viewport = function(view) {
 
         this.view = view || window;
 
     };
 
-    var Viewport = Stimuli.core.Viewport;
+    var Viewport = Stimuli.browser.Viewport;
 
-<span id='Stimuli-core-Viewport-method-traverse'>    /**
+<span id='Stimuli-browser-Viewport-method-traverse'>    /**
 </span>     * Iterates through all the document visible pixels.
      * @param {Function} fn The function to call for each visible pixel
      * @param {HTMLElement} el The element
@@ -67,7 +67,7 @@
         }
     };
 
-<span id='Stimuli-core-Viewport-method-getScreenX'>    /**
+<span id='Stimuli-browser-Viewport-method-getScreenX'>    /**
 </span>     * Returns the x coordinate of the window relative to the screen.
      * @return {Number}
      */
@@ -75,7 +75,7 @@
         return this.view.screenX || this.view.screenLeft;
     };
 
-<span id='Stimuli-core-Viewport-method-getScreenY'>    /**
+<span id='Stimuli-browser-Viewport-method-getScreenY'>    /**
 </span>     * Returns the y coordinate of window relative to the screen.
      * @return {Number}
      */
@@ -83,7 +83,7 @@
         return this.view.screenY || this.view.screenTop;
     };
 
-<span id='Stimuli-core-Viewport-method-getElementAt'>    /**
+<span id='Stimuli-browser-Viewport-method-getElementAt'>    /**
 </span>     * Returns the element from the document at the specified coordinates.
      * @param {Number} x The x coordinate
      * @param {Number} y The y coordinate
@@ -93,7 +93,7 @@
         return this.view.document.elementFromPoint(x, y);
     };
 
-<span id='Stimuli-core-Viewport-method-getView'>    /**
+<span id='Stimuli-browser-Viewport-method-getView'>    /**
 </span>     * Returns the current viewport window.
      * return {Window}
      */

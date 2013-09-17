@@ -2048,46 +2048,32 @@ Stimuli.$$ = function(selector) {
 };
 
 // Namespaces declaration
-Stimuli.core = {};
+Stimuli.browser = {};
 
 Stimuli.device = {};
-
-Stimuli.interaction = {
-    mouse: {}
-};
 
 Stimuli.event = {
     synthetizer: {}
 };
 
-// Source: src/core/support.js
-
-/**
- * @class Stimuli.core.Support
- * @singleton
- * This class detects supported browser features.
- */
-
-Stimuli.core.Support = {
-
-    /**
-     * @property {Boolean}
-     * Is it a modern browser ?
-     */
-    isModern: typeof document.createEvent !== 'undefined'
-
+Stimuli.interaction = {
+    mouse: {}
 };
 
-// Source: src/core/object.js
+Stimuli.utils = {};
+
+
+
+// Source: src/utils/object.js
 
 /**
- * @class Stimuli.core.Object
+ * @class Stimuli.utils.Object
  * @singleton
  * @private
  * A set of useful methods to deal with objects.
  */
 
-Stimuli.core.Object = {
+Stimuli.utils.Object = {
 
     /**
      * Merge objects properties.
@@ -2110,37 +2096,16 @@ Stimuli.core.Object = {
 
 };
 
-// Source: src/core/type.js
+// Source: src/utils/observable.js
 
 /**
- * @class Stimuli.core.Type
- * @singleton
- * @private
- * A set of useful methods to deal with objects types.
- */
-
-Stimuli.core.Type = {
-
-    /**
-     * @param {Mixed} value The value to test
-     * @return {Boolean} Returns true is the passed value is a boolean.
-     */
-    isBoolean: function(value) {
-        return typeof value === 'boolean';
-    }
-
-};
-
-// Source: src/core/observable.js
-
-/**
- * @class Stimuli.core.Observable
+ * @class Stimuli.utils.Observable
  * @singleton
  * @private
  * Base class that provides a common interface for publishing events.
  */
 
-Stimuli.core.Observable = {
+Stimuli.utils.Observable = {
 
     /**
      * @protected
@@ -2216,11 +2181,11 @@ Stimuli.core.Observable = {
     }
 };
 
-// Source: src/core/scheduler.js
+// Source: src/utils/scheduler.js
 
 /**
- * @class Stimuli.core.Scheduler
- * @mixins Stimuli.core.Observable
+ * @class Stimuli.utils.Scheduler
+ * @mixins Stimuli.utils.Observable
  * @private
  * Provides a convenient way to "buffer" the emission of data.
  * @cfg {Number} speed The emission speed
@@ -2232,20 +2197,20 @@ Stimuli.core.Observable = {
 
 (function() {
 
-    Stimuli.core.Scheduler = function(options) {
+    Stimuli.utils.Scheduler = function(options) {
         this.options = options;
         this.queue = [];
         this.locked = false;
     };
 
     // Applies Observable mixin
-    Stimuli.core.Object.merge(Stimuli.core.Scheduler.prototype, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(Stimuli.utils.Scheduler.prototype, Stimuli.utils.Observable);
 
     /**
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
-    Stimuli.core.Scheduler.prototype.receive = function(data) {
+    Stimuli.utils.Scheduler.prototype.receive = function(data) {
 
         var me = this;
 
@@ -2302,10 +2267,28 @@ Stimuli.core.Observable = {
 
 })();
 
-// Source: src/core/viewport.js
+// Source: src/browser/support.js
 
 /**
- * @class Stimuli.core.Viewport
+ * @class Stimuli.browser.Support
+ * @singleton
+ * This class detects supported browser features.
+ */
+
+Stimuli.browser.Support = {
+
+    /**
+     * @property {Boolean}
+     * Is it a modern browser ?
+     */
+    isModern: typeof document.createEvent !== 'undefined'
+
+};
+
+// Source: src/browser/viewport.js
+
+/**
+ * @class Stimuli.browser.Viewport
  * Provides methods to deal with the window and the dom elements positioning.
  * @cfg {Window} view A window object 
  * @constructor
@@ -2315,13 +2298,13 @@ Stimuli.core.Observable = {
 
 (function() {
 
-    Stimuli.core.Viewport = function(view) {
+    Stimuli.browser.Viewport = function(view) {
 
         this.view = view || window;
 
     };
 
-    var Viewport = Stimuli.core.Viewport;
+    var Viewport = Stimuli.browser.Viewport;
 
     /**
      * Iterates through all the document visible pixels.
@@ -2395,7 +2378,7 @@ Stimuli.core.Observable = {
 /**
  * @class Stimuli.device.Abstract
  * This abstract class provides a standardized way for a device to emit a command.
- * @mixins Stimuli.core.Observable
+ * @mixins Stimuli.utils.Observable
  * @private
  */
 
@@ -2431,7 +2414,7 @@ Stimuli.core.Observable = {
 
     };
 
-    Stimuli.core.Object.merge(Stimuli.device.Abstract, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(Stimuli.device.Abstract, Stimuli.utils.Observable);
 
 })();
 
@@ -2455,7 +2438,7 @@ Stimuli.core.Observable = {
 
         options.view = options.view || window;
 
-        this.viewport = new Stimuli.core.Viewport(options.view);
+        this.viewport = new Stimuli.browser.Viewport(options.view);
 
         this.name = 'mouse';
 
@@ -2496,7 +2479,7 @@ Stimuli.core.Observable = {
     };
 
     // Extends Stimuli.Device.Abstract
-    Stimuli.core.Object.merge(Mouse.prototype, Stimuli.device.Abstract);
+    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Abstract);
 
 })();
 
@@ -2572,7 +2555,7 @@ Stimuli.core.Observable = {
             listener.apply(scope, arguments);
         }
 
-        if (Stimuli.core.Support.isModern) {
+        if (Stimuli.browser.Support.isModern) {
             me.element.addEventListener(type, wrappedListener, false);
         } else {
             me.element.attachEvent('on' + type, wrappedListener);
@@ -2604,7 +2587,7 @@ Stimuli.core.Observable = {
             }
         }
 
-        if (Stimuli.core.Support.isModern) {
+        if (Stimuli.browser.Support.isModern) {
             me.element.removeEventListener(type, wrappedListener, false);
         } else {
             me.element.detachEvent('on' + type, wrappedListener);
@@ -2652,7 +2635,7 @@ Stimuli.core.Observable = {
                 event,
                 canceled;
 
-            if (Stimuli.core.Support.isModern) {
+            if (Stimuli.browser.Support.isModern) {
                 
                 event = data.view.document.createEvent('MouseEvents');
 
@@ -2714,8 +2697,7 @@ Stimuli.core.Observable = {
 
 (function() {
     
-    var ns = Stimuli.interaction,
-        isBoolean = Stimuli.core.Type.isBoolean;
+    var ns = Stimuli.interaction;
 
     ns.Interaction = {
 
@@ -2742,11 +2724,11 @@ Stimuli.core.Observable = {
         },
 
         getCancelable: function() {
-            return isBoolean(this.options.cancelable) ? this.options.cancelable : true;
+            return typeof this.options.cancelable === 'boolean' ? this.options.cancelable : true;
         },
 
         getBubbles: function() {
-            return isBoolean(this.options.bubbles) ? this.options.bubbles : true;
+            return typeof this.options.bubbles === 'boolean' ? this.options.bubbles : true;
         },
         
         getAltKey: function() {
@@ -2788,7 +2770,7 @@ Stimuli.core.Observable = {
      
     };
 
-    Stimuli.core.Object.merge(ns.Interaction, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(ns.Interaction, Stimuli.utils.Observable);
 
 })();
 
@@ -2970,7 +2952,7 @@ Stimuli.core.Observable = {
 
             this.options = {};
             
-            Stimuli.core.Object.merge(this.options, options);
+            Stimuli.utils.Object.merge(this.options, options);
 
         },
 
@@ -3017,7 +2999,7 @@ Stimuli.core.Observable = {
             },
 
             getButton: function() {
-                var isModern = Stimuli.core.Support.isModern,
+                var isModern = Stimuli.browser.Support.isModern,
                     buttonsMap = {
                     left: isModern ? 0 : 1,
                     middle: isModern ? 1 : 4,
@@ -3083,7 +3065,7 @@ Stimuli.core.Observable = {
 
     };
 
-    Stimuli.core.Object.merge(ns.down.prototype, ns.Abstract.proto);
+    Stimuli.utils.Object.merge(ns.down.prototype, ns.Abstract.proto);
 
 })();
 

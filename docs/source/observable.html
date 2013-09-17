@@ -17,16 +17,16 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-core-Observable'>/**
-</span> * @class Stimuli.core.Observable
+<span id='Stimuli-utils-Observable'>/**
+</span> * @class Stimuli.utils.Observable
  * @singleton
  * @private
  * Base class that provides a common interface for publishing events.
  */
 
-Stimuli.core.Observable = {
+Stimuli.utils.Observable = {
 
-<span id='Stimuli-core-Observable-method-publish'>    /**
+<span id='Stimuli-utils-Observable-method-publish'>    /**
 </span>     * @protected
      * Publishes an event.
      * @param {String} eventName The event name.
@@ -51,7 +51,7 @@ Stimuli.core.Observable = {
 
     },
 
-<span id='Stimuli-core-Observable-method-subscribe'>    /**
+<span id='Stimuli-utils-Observable-method-subscribe'>    /**
 </span>     * @protected
      * Subscribes to an event.
      * @param {String} eventName The event name.
@@ -77,7 +77,7 @@ Stimuli.core.Observable = {
 
     },
 
-<span id='Stimuli-core-Observable-method-unsubscribe'>    /**
+<span id='Stimuli-utils-Observable-method-unsubscribe'>    /**
 </span>     * @protected
      * Unsubscribes to an event.
      * @param {String} eventName The event name.

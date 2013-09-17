@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for src/interaction/mouse/position.js</title>
+    <title>Code coverage report for src/utils/object.js</title>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" href="../../../prettify.css">
+    <link rel="stylesheet" href="../../prettify.css">
 
     <style>
         body, html {
@@ -179,23 +179,23 @@
     </style>
 </head>
 <body>
-<div class="header low">
-    <h1>Code coverage report for <span class="entity">src/interaction/mouse/position.js</span></h1>
+<div class="header high">
+    <h1>Code coverage report for <span class="entity">src/utils/object.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">47.62% <small>(10 / 21)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">100% <small>(8 / 8)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">100% <small>(0 / 0)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">75% <small>(3 / 4)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">14.29% <small>(1 / 7)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">100% <small>(1 / 1)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">47.62% <small>(10 / 21)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">100% <small>(8 / 8)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
     </h2>
-    <div class="path"><a href="../../../index.html">All files</a> &#187; <a href="index.html">src/interaction/mouse/</a> &#187; position.js</div>
+    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/utils/</a> &#187; object.js</div>
 </div>
 <div class="body">
 <pre><table class="coverage">
@@ -229,106 +229,67 @@
 28
 29
 30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
+31</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10</span>
+<span class="cline-any cline-yes">31</span>
+<span class="cline-any cline-yes">31</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">10</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use strict';
 &nbsp;
-(function() {
+/**
+ * @class Stimuli.utils.Object
+ * @singleton
+ * @private
+ * A set of useful methods to deal with objects.
+ */
 &nbsp;
-    var ns = Stimuli.interaction.mouse;
+Stimuli.utils.Object = {
 &nbsp;
-    ns.Position = <span class="fstat-no" title="function not covered" >function(viewport, element, boundingRectangle, boundingRectangleOffset) {</span>
-        
-<span class="cstat-no" title="statement not covered" >        var me = this;</span>
+    /**
+     * Merge objects properties.
+     * @param {Object} dest The destination object
+     * @param {Object=} src The source object
+     * @return {Object} dest
+     */
+    merge: function(dest, src) {
+        if (!src) {
+            return dest;
+        }
+        for (var prop in src) {
+            <span class="missing-if-branch" title="else path not taken"" >E</span>if (src.hasOwnProperty(prop)) {
+                dest[prop] = src[prop];
+            }
+        }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        me.boundingRectangle = boundingRectangle;</span>
+        return dest;
+    }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        me.boundingRectangleOffset = boundingRectangleOffset;</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >        me.viewport = viewport;</span>
-&nbsp;
-<span class="cstat-no" title="statement not covered" >        me.element = element;</span>
-&nbsp;
-    };
-&nbsp;
-    var Position = ns.Position;
-&nbsp;
-    Position.prototype.isValid = <span class="fstat-no" title="function not covered" >function() {</span>
-<span class="cstat-no" title="statement not covered" >        var me = this;</span>
-<span class="cstat-no" title="statement not covered" >        return me.viewport.getElementAt(me.getClientX(), me.getClientY()) === me.element;</span>
-    };
-&nbsp;
-    Position.prototype.getClientX = <span class="fstat-no" title="function not covered" >function() {</span>
-<span class="cstat-no" title="statement not covered" >        return this.boundingRectangle.getLeft() + this.offset.getX();</span>
-    };
-&nbsp;
-    Position.prototype.getClientY = <span class="fstat-no" title="function not covered" >function() {</span>
-<span class="cstat-no" title="statement not covered" >        return this.boundingRectangle.getTop() + this.offset.getY();</span>
-    };
-&nbsp;
-    Position.prototype.getScreenX = <span class="fstat-no" title="function not covered" >function() {</span>
-<span class="cstat-no" title="statement not covered" >        return this.viewport.getScreenX() + this.getClientX();</span>
-    };
-&nbsp;
-    Position.prototype.getScreenY = <span class="fstat-no" title="function not covered" >function() {</span>
-<span class="cstat-no" title="statement not covered" >        return this.viewport.getScreenY() + this.getClientY();</span>
-    };
-    
-})();</pre></td></tr>
+};</pre></td></tr>
 </table></pre>
 
 </div>
@@ -336,7 +297,7 @@
     <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Sep 17 2013 01:12:59 GMT+0000 (UTC)</div>
 </div>
 
-<script src="../../../prettify.js"></script>
+<script src="../../prettify.js"></script>
 
 <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
 <script>

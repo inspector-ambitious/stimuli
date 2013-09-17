@@ -17,9 +17,9 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-core-Scheduler-method-constructor'><span id='Stimuli-core-Scheduler-cfg-interval'><span id='Stimuli-core-Scheduler-cfg-speed'><span id='Stimuli-core-Scheduler'>/**
-</span></span></span></span> * @class Stimuli.core.Scheduler
- * @mixins Stimuli.core.Observable
+<span id='Stimuli-utils-Scheduler-method-constructor'><span id='Stimuli-utils-Scheduler-cfg-interval'><span id='Stimuli-utils-Scheduler-cfg-speed'><span id='Stimuli-utils-Scheduler'>/**
+</span></span></span></span> * @class Stimuli.utils.Scheduler
+ * @mixins Stimuli.utils.Observable
  * @private
  * Provides a convenient way to &quot;buffer&quot; the emission of data.
  * @cfg {Number} speed The emission speed
@@ -31,20 +31,20 @@
 
 (function() {
 
-    Stimuli.core.Scheduler = function(options) {
+    Stimuli.utils.Scheduler = function(options) {
         this.options = options;
         this.queue = [];
         this.locked = false;
     };
 
     // Applies Observable mixin
-    Stimuli.core.Object.merge(Stimuli.core.Scheduler.prototype, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(Stimuli.utils.Scheduler.prototype, Stimuli.utils.Observable);
 
-<span id='Stimuli-core-Scheduler-method-receive'>    /**
+<span id='Stimuli-utils-Scheduler-method-receive'>    /**
 </span>     * Receives data to emit.
      * @param {Object} data The data to emit.
      */
-    Stimuli.core.Scheduler.prototype.receive = function(data) {
+    Stimuli.utils.Scheduler.prototype.receive = function(data) {
 
         var me = this;
 
@@ -54,7 +54,7 @@
 
     };
 
-<span id='Stimuli-core-Scheduler-method-emit'>    /**
+<span id='Stimuli-utils-Scheduler-method-emit'>    /**
 </span>     * @private
      * Schedules emission of received data   
      */
