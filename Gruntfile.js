@@ -16,14 +16,13 @@ module.exports = function(grunt) {
 
         'src/browser/support.js',
         'src/browser/viewport.js',
-
-        'src/device/abstract.js',
-        'src/device/mouse.js',
-
+        'src/device/generic.js',
         'src/event/emitter.js',
         'src/event/binder.js',
-        'src/event/synthetizer/mouse.js',
 
+
+        'src/device/mouse.js',
+        'src/event/synthetizer/mouse.js',
         'src/interaction/abstract.js',
         'src/interaction/mouse/bounding_rectangle.js',
         'src/interaction/mouse/bounding_rectangle_offset.js',
