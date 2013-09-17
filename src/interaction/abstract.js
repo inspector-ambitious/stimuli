@@ -2,8 +2,7 @@
 
 (function() {
     
-    var ns = Stimuli.interaction,
-        isBoolean = Stimuli.core.Type.isBoolean;
+    var ns = Stimuli.interaction;
 
     ns.Interaction = {
 
@@ -30,11 +29,11 @@
         },
 
         getCancelable: function() {
-            return isBoolean(this.options.cancelable) ? this.options.cancelable : true;
+            return typeof this.options.cancelable === 'boolean' ? this.options.cancelable : true;
         },
 
         getBubbles: function() {
-            return isBoolean(this.options.bubbles) ? this.options.bubbles : true;
+            return typeof this.options.bubbles === 'boolean' ? this.options.bubbles : true;
         },
         
         getAltKey: function() {
@@ -76,6 +75,6 @@
      
     };
 
-    Stimuli.core.Object.merge(ns.Interaction, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(ns.Interaction, Stimuli.utils.Observable);
 
 })();

@@ -8,7 +8,7 @@ describe('Stimuli.device.Abstract', function() {
             this.name = 'dummy';
         };
 
-        Stimuli.core.Object.merge(DummyDevice.prototype, Stimuli.device.Abstract);
+        Stimuli.utils.Object.merge(DummyDevice.prototype, Stimuli.device.Abstract);
 
         dummy = new DummyDevice();
     });

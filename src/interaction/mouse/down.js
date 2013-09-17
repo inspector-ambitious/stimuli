@@ -47,6 +47,6 @@
 
     };
 
-    Stimuli.core.Object.merge(ns.down.prototype, ns.Abstract.proto);
+    Stimuli.utils.Object.merge(ns.down.prototype, ns.Abstract.proto);
 
 })();

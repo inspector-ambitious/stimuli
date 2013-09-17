@@ -3,7 +3,7 @@
 /**
  * @class Stimuli.device.Abstract
  * This abstract class provides a standardized way for a device to emit a command.
- * @mixins Stimuli.core.Observable
+ * @mixins Stimuli.utils.Observable
  * @private
  */
 
@@ -39,6 +39,6 @@
 
     };
 
-    Stimuli.core.Object.merge(Stimuli.device.Abstract, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(Stimuli.device.Abstract, Stimuli.utils.Observable);
 
 })();

@@ -1,8 +1,8 @@
 'use strict';
 
 /**
- * @class Stimuli.core.Scheduler
- * @mixins Stimuli.core.Observable
+ * @class Stimuli.utils.Scheduler
+ * @mixins Stimuli.utils.Observable
  * @private
  * Provides a convenient way to "buffer" the emission of data.
  * @cfg {Number} speed The emission speed
@@ -14,20 +14,20 @@
 
 (function() {
 
-    Stimuli.core.Scheduler = function(options) {
+    Stimuli.utils.Scheduler = function(options) {
         this.options = options;
         this.queue = [];
         this.locked = false;
     };
 
     // Applies Observable mixin
-    Stimuli.core.Object.merge(Stimuli.core.Scheduler.prototype, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(Stimuli.utils.Scheduler.prototype, Stimuli.utils.Observable);
 
     /**
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
-    Stimuli.core.Scheduler.prototype.receive = function(data) {
+    Stimuli.utils.Scheduler.prototype.receive = function(data) {
 
         var me = this;
 

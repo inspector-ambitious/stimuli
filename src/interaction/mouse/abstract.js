@@ -11,7 +11,7 @@
 
             this.options = {};
             
-            Stimuli.core.Object.merge(this.options, options);
+            Stimuli.utils.Object.merge(this.options, options);
 
         },
 
@@ -58,7 +58,7 @@
             },
 
             getButton: function() {
-                var isModern = Stimuli.core.Support.isModern,
+                var isModern = Stimuli.browser.Support.isModern,
                     buttonsMap = {
                     left: isModern ? 0 : 1,
                     middle: isModern ? 1 : 4,

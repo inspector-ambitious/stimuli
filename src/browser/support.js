@@ -1,12 +1,12 @@
 'use strict';
 
 /**
- * @class Stimuli.core.Support
+ * @class Stimuli.browser.Support
  * @singleton
  * This class detects supported browser features.
  */
 
-Stimuli.core.Support = {
+Stimuli.browser.Support = {
 
     /**
      * @property {Boolean}

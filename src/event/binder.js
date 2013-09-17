@@ -28,7 +28,7 @@
             listener.apply(scope, arguments);
         }
 
-        if (Stimuli.core.Support.isModern) {
+        if (Stimuli.browser.Support.isModern) {
             me.element.addEventListener(type, wrappedListener, false);
         } else {
             me.element.attachEvent('on' + type, wrappedListener);
@@ -60,7 +60,7 @@
             }
         }
 
-        if (Stimuli.core.Support.isModern) {
+        if (Stimuli.browser.Support.isModern) {
             me.element.removeEventListener(type, wrappedListener, false);
         } else {
             me.element.detachEvent('on' + type, wrappedListener);

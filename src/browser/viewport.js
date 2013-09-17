@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @class Stimuli.core.Viewport
+ * @class Stimuli.browser.Viewport
  * Provides methods to deal with the window and the dom elements positioning.
  * @cfg {Window} view A window object 
  * @constructor
@@ -11,13 +11,13 @@
 
 (function() {
 
-    Stimuli.core.Viewport = function(view) {
+    Stimuli.browser.Viewport = function(view) {
 
         this.view = view || window;
 
     };
 
-    var Viewport = Stimuli.core.Viewport;
+    var Viewport = Stimuli.browser.Viewport;
 
     /**
      * Iterates through all the document visible pixels.

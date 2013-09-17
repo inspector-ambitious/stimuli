@@ -49,14 +49,17 @@ Stimuli.$$ = function(selector) {
 };
 
 // Namespaces declaration
-Stimuli.core = {};
+Stimuli.browser = {};
 
 Stimuli.device = {};
+
+Stimuli.event = {
+    synthetizer: {}
+};
 
 Stimuli.interaction = {
     mouse: {}
 };
 
-Stimuli.event = {
-    synthetizer: {}
-};
+Stimuli.utils = {};
+

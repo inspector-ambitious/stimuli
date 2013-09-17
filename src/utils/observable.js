@@ -1,13 +1,13 @@
 'use strict';
 
 /**
- * @class Stimuli.core.Observable
+ * @class Stimuli.utils.Observable
  * @singleton
  * @private
  * Base class that provides a common interface for publishing events.
  */
 
-Stimuli.core.Observable = {
+Stimuli.utils.Observable = {
 
     /**
      * @protected

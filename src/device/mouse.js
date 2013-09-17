@@ -18,7 +18,7 @@
 
         options.view = options.view || window;
 
-        this.viewport = new Stimuli.core.Viewport(options.view);
+        this.viewport = new Stimuli.browser.Viewport(options.view);
 
         this.name = 'mouse';
 
@@ -59,6 +59,6 @@
     };
 
     // Extends Stimuli.Device.Abstract
-    Stimuli.core.Object.merge(Mouse.prototype, Stimuli.device.Abstract);
+    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Abstract);
 
 })();

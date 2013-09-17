@@ -9,12 +9,13 @@ module.exports = function(grunt) {
     var stimuliFiles = [
         'lib/sizzle/sizzle.js',
         'src/stimuli.js',
-        'src/core/support.js',
-        'src/core/object.js',
-        'src/core/type.js',
-        'src/core/observable.js',
-        'src/core/scheduler.js',
-        'src/core/viewport.js',
+        
+        'src/utils/object.js',
+        'src/utils/observable.js',
+        'src/utils/scheduler.js',
+
+        'src/browser/support.js',
+        'src/browser/viewport.js',
 
         'src/device/abstract.js',
         'src/device/mouse.js',

@@ -1,13 +1,13 @@
 'use strict';
 
 /**
- * @class Stimuli.core.Object
+ * @class Stimuli.utils.Object
  * @singleton
  * @private
  * A set of useful methods to deal with objects.
  */
 
-Stimuli.core.Object = {
+Stimuli.utils.Object = {
 
     /**
      * Merge objects properties.
