@@ -33,6 +33,7 @@ module.exports = function(grunt) {
         'src/command/mouse/up.js',
         'src/command/mouse/click.js',
         'src/command/mouse/dblclick.js'
+
         
     ];
 
