@@ -17,11 +17,15 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-(function() {
-    var ns = Stimuli.event,
-        synthetizer = ns.synthetizer;
+<span id=''>/**
+</span> * @class
+ */
 
-    ns.Emitter = {
+(function() {
+    
+    var synthetizer = Stimuli.event.synthetizer;
+
+    Stimuli.event.Emitter = {
 
         isMouseEvent: function(name) {
             return {

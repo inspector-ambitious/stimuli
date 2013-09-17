@@ -17,8 +17,19 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
+<span id='Stimuli-core-Type'>/**
+</span> * @class Stimuli.core.Type
+ * @singleton
+ * @private
+ * A set of useful methods to deal with objects types.
+ */
+
 Stimuli.core.Type = {
 
+<span id='Stimuli-core-Type-method-isBoolean'>    /**
+</span>     * @param {Mixed} value The value to test
+     * @return {Boolean} Returns true is the passed value is a boolean.
+     */
     isBoolean: function(value) {
         return typeof value === 'boolean';
     }

@@ -183,7 +183,7 @@
     <h1>Code coverage report for <span class="entity">src/stimuli.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">94.12% <small>(16 / 17)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">93.33% <small>(14 / 15)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
         Branches: <span class="metric">75% <small>(3 / 4)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
@@ -192,7 +192,7 @@
         Functions: <span class="metric">75% <small>(3 / 4)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">94.12% <small>(16 / 17)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">93.33% <small>(14 / 15)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
     </h2>
     <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">src/</a> &#187; stimuli.js</div>
@@ -271,13 +271,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
@@ -288,19 +281,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -310,84 +295,99 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use strict';
 &nbsp;
 /**
- * Creates an instance of Stimuli
+ * @class Stimuli
+ * Creates a new stimuli
  * @constructor
  * @param {Object} options
- * @return {Stimuli} Fresh Stimuli instance
  */
 &nbsp;
 var Stimuli = function(options) {
     options = options || {};
-    this.devices = {};
 &nbsp;
-    this.viewport = new Stimuli.core.Viewport(options.view);
+&nbsp;
     <span class="missing-if-branch" title="else path not taken"" >E</span>if (typeof Stimuli.device.Mouse !== 'undefined') {
-        this.devices.mouse = new Stimuli.device.Mouse(this.viewport);
+        this.mouse = new Stimuli.device.Mouse(options);
     }
 &nbsp;
 };
 &nbsp;
+/**
+ * Returns a virtual mouse
+ * @return {Stimuli.device.Mouse}
+ */
 Stimuli.prototype.getMouse = function() {
-    return this.devices.mouse;
+    return this.mouse;
 };
 &nbsp;
 /**
- * @namespace Stimuli.core
+ * @static
+ * Returns the first dom element matching the css selector.
+ * @param {string} selector Css selector jquery styl
+ * @return {HTMLElement}
+ */
+Stimuli.$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector)[0];
+};
+&nbsp;
+/**
+ * @static
+ * Returns all dom elements matching the css selector.
+ * @param {string} selector Css selector jquery styl
+ * @return {HTMLElement[]}
  */
 &nbsp;
+Stimuli.$$ = <span class="fstat-no" title="function not covered" >function(selector) {</span>
+    /* jshint newcap: false */
+<span class="cstat-no" title="statement not covered" >    return Sizzle(selector);</span>
+};
+&nbsp;
+// Namespaces declaration
 Stimuli.core = {};
 &nbsp;
-/**
- * @namespace Stimuli.device
- */
-&nbsp;
 Stimuli.device = {};
-&nbsp;
-/**
- * @namespace Stimuli.interaction
- */
 &nbsp;
 Stimuli.interaction = {
     mouse: {}
 };
 &nbsp;
-/**
- * @namespace Stimuli.event
- */
-&nbsp;
- Stimuli.event = {
+Stimuli.event = {
     synthetizer: {}
- };
-&nbsp;
- Stimuli.$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector)[0];
- };
-&nbsp;
-Stimuli.$$ = <span class="fstat-no" title="function not covered" >function(selector) {</span>
-    /* jshint newcap: false */
-<span class="cstat-no" title="statement not covered" >    return Sizzle(selector);</span>
- };
-&nbsp;</pre></td></tr>
+};</pre></td></tr>
 </table></pre>
 
 </div>
 <div class="footer">
-    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Mon Sep 16 2013 20:20:51 GMT+0000 (UTC)</div>
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Sep 17 2013 00:44:36 GMT+0000 (UTC)</div>
 </div>
 
 <script src="../prettify.js"></script>

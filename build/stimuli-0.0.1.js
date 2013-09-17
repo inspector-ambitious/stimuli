@@ -1,4 +1,4 @@
-/*! stimuli - v0.0.1 - 2013-09-16 */
+/*! stimuli - v0.0.1 - 2013-09-17 */
 'use strict';
 
 // Source: lib/sizzle/sizzle.js
@@ -2000,70 +2000,80 @@ if ( typeof define === "function" && define.amd ) {
 // Source: src/stimuli.js
 
 /**
- * Creates an instance of Stimuli
+ * @class Stimuli
+ * Creates a new stimuli
  * @constructor
  * @param {Object} options
- * @return {Stimuli} Fresh Stimuli instance
  */
 
 var Stimuli = function(options) {
     options = options || {};
-    this.devices = {};
 
-    this.viewport = new Stimuli.core.Viewport(options.view);
+
     if (typeof Stimuli.device.Mouse !== 'undefined') {
-        this.devices.mouse = new Stimuli.device.Mouse(this.viewport);
+        this.mouse = new Stimuli.device.Mouse(options);
     }
 
 };
 
+/**
+ * Returns a virtual mouse
+ * @return {Stimuli.device.Mouse}
+ */
 Stimuli.prototype.getMouse = function() {
-    return this.devices.mouse;
+    return this.mouse;
 };
 
 /**
- * @namespace Stimuli.core
+ * @static
+ * Returns the first dom element matching the css selector.
+ * @param {string} selector Css selector jquery styl
+ * @return {HTMLElement}
+ */
+Stimuli.$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector)[0];
+};
+
+/**
+ * @static
+ * Returns all dom elements matching the css selector.
+ * @param {string} selector Css selector jquery styl
+ * @return {HTMLElement[]}
  */
 
+Stimuli.$$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector);
+};
+
+// Namespaces declaration
 Stimuli.core = {};
 
-/**
- * @namespace Stimuli.device
- */
-
 Stimuli.device = {};
-
-/**
- * @namespace Stimuli.interaction
- */
 
 Stimuli.interaction = {
     mouse: {}
 };
 
-/**
- * @namespace Stimuli.event
- */
-
- Stimuli.event = {
+Stimuli.event = {
     synthetizer: {}
- };
-
- Stimuli.$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector)[0];
- };
-
-Stimuli.$$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector);
- };
-
+};
 
 // Source: src/core/support.js
 
+/**
+ * @class Stimuli.core.Support
+ * @singleton
+ * This class detects supported browser features.
+ */
+
 Stimuli.core.Support = {
 
+    /**
+     * @property {Boolean}
+     * Is it a modern browser ?
+     */
     isModern: typeof document.createEvent !== 'undefined'
 
 };
@@ -2071,19 +2081,19 @@ Stimuli.core.Support = {
 // Source: src/core/object.js
 
 /**
- * Various utilities to work with Objects.
- * @namespace Object
- * @memberof Stimuli.core
+ * @class Stimuli.core.Object
+ * @singleton
+ * @private
+ * A set of useful methods to deal with objects.
  */
 
 Stimuli.core.Object = {
-    /** @lends Stimuli.core.Object */
 
     /**
      * Merge objects properties.
      * @param {Object} dest The destination object
-     * @param {Object} src The source object
-     * @returns {Object} dest
+     * @param {Object=} src The source object
+     * @return {Object} dest
      */
     merge: function(dest, src) {
         if (!src) {
@@ -2102,8 +2112,19 @@ Stimuli.core.Object = {
 
 // Source: src/core/type.js
 
+/**
+ * @class Stimuli.core.Type
+ * @singleton
+ * @private
+ * A set of useful methods to deal with objects types.
+ */
+
 Stimuli.core.Type = {
 
+    /**
+     * @param {Mixed} value The value to test
+     * @return {Boolean} Returns true is the passed value is a boolean.
+     */
     isBoolean: function(value) {
         return typeof value === 'boolean';
     }
@@ -2113,18 +2134,19 @@ Stimuli.core.Type = {
 // Source: src/core/observable.js
 
 /**
- * This mixin allows Objects to subscribe and publish events.
- * @mixin
- * @memberof Stimuli.core
+ * @class Stimuli.core.Observable
+ * @singleton
+ * @private
+ * Base class that provides a common interface for publishing events.
  */
 
 Stimuli.core.Observable = {
 
     /**
+     * @protected
      * Publishes an event.
      * @param {String} eventName The event name.
-     * @param {...Misc=} data the data to be emitted.
-     * @param {Object=} options Options
+     * @param {Mixed} [data] the data to be emitted.
      */
     publish: function(eventName) {
         var me = this;
@@ -2146,9 +2168,10 @@ Stimuli.core.Observable = {
     },
 
     /**
+     * @protected
      * Subscribes to an event.
      * @param {String} eventName The event name.
-     * @param {Function} fn The listener to bind to the event.
+     * @param {Function} fn The listener to bind.
      * @param {Object=} scope The listener execution scope.
      */
     subscribe: function(eventName, fn, scope) {
@@ -2171,10 +2194,10 @@ Stimuli.core.Observable = {
     },
 
     /**
-     * Subscribes to an event.
+     * @protected
+     * Unsubscribes to an event.
      * @param {String} eventName The event name.
-     * @param {Function} fn The listener to bind to the event.
-     * @param {Object=} scope The listener execution scope.
+     * @param {Function} fn The listener to unbind.
      */
     unsubscribe: function(eventName, fn) {
         var listeners = this.listeners[eventName],
@@ -2195,16 +2218,19 @@ Stimuli.core.Observable = {
 
 // Source: src/core/scheduler.js
 
-(function() {
+/**
+ * @class Stimuli.core.Scheduler
+ * @mixins Stimuli.core.Observable
+ * @private
+ * Provides a convenient way to "buffer" the emission of data.
+ * @cfg {Number} speed The emission speed
+ * @cfg {Number} interval The emission interval in ms
+ * @constructor
+ * Creates a new scheduler
+ * @param {Object} config The config object
+ */
 
-    /**
-     * This class allows to schedule events.
-     * @constructor
-     * @mixes Stimuli.core.Observable
-     * @memberof Stimuli.core
-     * @param {Object} options
-     * @returns {Scheduler}
-     */
+(function() {
 
     Stimuli.core.Scheduler = function(options) {
         this.options = options;
@@ -2219,7 +2245,6 @@ Stimuli.core.Observable = {
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
-
     Stimuli.core.Scheduler.prototype.receive = function(data) {
 
         var me = this;
@@ -2230,9 +2255,10 @@ Stimuli.core.Observable = {
 
     };
 
-
-    // Schedules emission of received data   
-
+    /**
+     * @private
+     * Schedules emission of received data   
+     */
     function emit(me) {
 
         if (me.locked || me.queue.length === 0) {
@@ -2278,22 +2304,38 @@ Stimuli.core.Observable = {
 
 // Source: src/core/viewport.js
 
-(function() {
-    var ns = Stimuli.core;
+/**
+ * @class Stimuli.core.Viewport
+ * Provides methods to deal with the window and the dom elements positioning.
+ * @cfg {Window} view A window object 
+ * @constructor
+ * Creates a new viewport
+ * @param {Object} config The config object
+ */
 
-    ns.Viewport = function(view) {
+(function() {
+
+    Stimuli.core.Viewport = function(view) {
 
         this.view = view || window;
 
     };
 
-    var Viewport = ns.Viewport;
+    var Viewport = Stimuli.core.Viewport;
 
+    /**
+     * Iterates through all the document visible pixels.
+     * @param {Function} fn The function to call for each visible pixel
+     * @param {HTMLElement} el The element
+     * @param {Number} x The pixel x coordinate
+     * @param {Number} y The pixel y coordinate
+     */
     Viewport.prototype.traverse = function(fn) {
         var doc = this.view.document,
             x = 0,
             y = 0,
             el;
+
         // Scan the entire viewport pixel by pixel
         while(true) {
             el = doc.elementFromPoint(x, y);
@@ -2312,18 +2354,36 @@ Stimuli.core.Observable = {
         }
     };
 
+    /**
+     * Returns the x coordinate of the window relative to the screen.
+     * @return {Number}
+     */
     Viewport.prototype.getScreenX = function() {
         return this.view.screenX || this.view.screenLeft;
     };
 
+    /**
+     * Returns the y coordinate of window relative to the screen.
+     * @return {Number}
+     */
     Viewport.prototype.getScreenY = function() {
         return this.view.screenY || this.view.screenTop;
     };
 
+    /**
+     * Returns the element from the document at the specified coordinates.
+     * @param {Number} x The x coordinate
+     * @param {Number} y The y coordinate
+     * @return {HTMLElement}
+     */
     Viewport.prototype.getElementAt = function(x, y) {
         return this.view.document.elementFromPoint(x, y);
     };
 
+    /**
+     * Returns the current viewport window.
+     * return {Window}
+     */
     Viewport.prototype.getView = function() {
         return this.view;
     };
@@ -2332,75 +2392,107 @@ Stimuli.core.Observable = {
 
 // Source: src/device/abstract.js
 
+/**
+ * @class Stimuli.device.Abstract
+ * This abstract class provides a standardized way for a device to emit a command.
+ * @mixins Stimuli.core.Observable
+ * @private
+ */
+
 (function() {
 
-    var ns = Stimuli.device;
+    Stimuli.device.Abstract= {
 
-    ns.Abstract = {
-
-        send: function(type, data, callback) {
+        /**
+         * @protected
+         * @param {String} type The emitted command name
+         * @param {Object} options The emitted command options
+         * @param {Function} callback The callback function
+         */
+        send: function(command, options, callback) {
 
             var me = this;
 
             callback = callback || function() {};
 
-            me.publish('data', {
+            me.publish('command', {
 
                 device: me.name,
 
-                type: type,
+                command: command,
 
-                data: data,
+                options: options,
 
                 callback: callback
 
             });
 
-            return this;
         }
 
     };
 
-    Stimuli.core.Object.merge(ns.Abstract, Stimuli.core.Observable);
+    Stimuli.core.Object.merge(Stimuli.device.Abstract, Stimuli.core.Observable);
 
 })();
 
 // Source: src/device/mouse.js
 
+/**
+ * @class Stimuli.device.Mouse
+ * @alternateClassName Stimuli.Mouse
+ * @mixins Stimuli.device.Abstract
+ * Your virtual mouse.
+ * @cfg {Window} [view=window] The target window where events will be injected
+ * @constructor
+ * @param {Object} The config object
+ */
+
 (function() {
 
-    var ns = Stimuli.device;
+    Stimuli.device.Mouse = function(options) {
+    
+        options = options = {};
 
-    ns.Mouse = function(options) {
+        options.view = options.view || window;
+
+        this.viewport = new Stimuli.core.Viewport(options.view);
 
         this.name = 'mouse';
 
     };
     
-    var Mouse = ns.Mouse;
+    var Mouse = Stimuli.device.Mouse;
 
+    /**
+     * Executes a simple click.
+     * @param {Object} options
+     */
     Mouse.prototype.click = function(options, callback) {
         return this.send('click', options, callback);
     };
 
+    /**
+     * Executes a double click.
+     * @param {Object} options
+     */
     Mouse.prototype.dblclick = function(options, callback) {
         return this.send('dblclick', options, callback);
     };
 
-    Mouse.prototype.move = function(options, callback) {
-        return this.send('move', options, callback);
-    };
-
-    Mouse.prototype.drag = function(options, callback) {
-        return this.send('drag', options, callback);
-    };
-
-    Mouse.prototype.up = function(options, callback) {
-        return this.send('up', options, callback);
-    };
-
+    /**
+     * Presses a button.
+     * @param {Object} options
+     */
     Mouse.prototype.down = function(options, callback) {
         return this.send('down', options, callback);
+    };
+
+    /**
+     * Releases a button.
+     * @param {Object} options
+     */
+    Mouse.prototype.up = function(options, callback) {
+        return this.send('up', options, callback);
     };
 
     // Extends Stimuli.Device.Abstract
@@ -2410,11 +2502,15 @@ Stimuli.core.Observable = {
 
 // Source: src/event/emitter.js
 
-(function() {
-    var ns = Stimuli.event,
-        synthetizer = ns.synthetizer;
+/**
+ * @class
+ */
 
-    ns.Emitter = {
+(function() {
+    
+    var synthetizer = Stimuli.event.synthetizer;
+
+    Stimuli.event.Emitter = {
 
         isMouseEvent: function(name) {
             return {
@@ -2448,11 +2544,14 @@ Stimuli.core.Observable = {
 
 // Source: src/event/binder.js
 
+/**
+ * @class
+ * Allows to bind/unbind listeners to dom elements.
+ */
+
 (function() {
 
-    var ns = Stimuli.event;
-
-    ns.Binder = function(element) {
+    Stimuli.event.Binder = function(element) {
         if (typeof element === 'string') {
             element = Stimuli.$(element);
         }
@@ -2462,7 +2561,9 @@ Stimuli.core.Observable = {
         this.listeners = {};
     };
 
-    ns.Binder.prototype.on = function(type, listener, scope) {
+    var Binder = Stimuli.event.Binder;
+
+    Binder.prototype.on = function(type, listener, scope) {
         var me = this;
 
         scope = scope || me;
@@ -2488,7 +2589,7 @@ Stimuli.core.Observable = {
         });
     };
 
-    ns.Binder.prototype.off = function(type, listener) {
+    Binder.prototype.off = function(type, listener) {
         var me = this,
             listeners = me.listeners[type],
             length = listeners.length,
@@ -2510,7 +2611,7 @@ Stimuli.core.Observable = {
         }
     };
 
-    ns.Binder.prototype.allOff = function() {
+    Binder.prototype.allOff = function() {
         var me = this,
             type,
             listeners;
@@ -2681,6 +2782,8 @@ Stimuli.core.Observable = {
             data.view = this.viewport.getView();
 
             this.publish('event', data, callback);
+
+            return this;
         }
      
     };
@@ -3000,21 +3103,6 @@ Stimuli.core.Observable = {
 })();
 
 // Source: src/interaction/mouse/dblclick.js
-
-(function() {
-
-
-
-})();
-
-// Source: src/interaction/mouse/move.js
-
-(function() {
-
-
-})();
-
-// Source: src/interaction/mouse/drag.js
 
 (function() {
 

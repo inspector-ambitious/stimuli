@@ -19,35 +19,77 @@
 
 (function() {
 
-    var ns = Stimuli.device;
+    var ns = Stimuli.interaction.mouse;
+
 
     ns.Abstract = {
+        
+        ctor: function(options) {
 
-        send: function(type, data, callback) {
+            this.options = {};
+            
+            Stimuli.core.Object.merge(this.options, options);
 
-            var me = this;
+        },
 
-            callback = callback || function() {};
+        proto: {
 
-            me.publish('data', {
+            getBoundingRectangle: function(element) {
+                return new ns.BoundingRectangle(this.viewport, element);
+            },
 
-                device: me.name,
+            getBoundingRectangleOffset: function(offset, boundingRectangle) {
+                return new ns.boundingRectangleOffset(offset, boundingRectangle);
+            },
 
-                type: type,
+            getPosition: function(target, offset) {
+                var me = this,
+                    boundingRectangle,
+                    boundingRectangleOffset,
+                    position;
+                
+                if (!target) {
+                    me.fail('Invalid target: not found.');
+                    return null;
+                }
 
-                data: data,
+                boundingRectangle = me.getBoundingRectangle(target);
 
-                callback: callback
+                if (!boundingRectangle.isValid()) {
+                    me.fail('Invalid target: found but not visible in the viewport.');
+                    return null;
+                }
 
-            });
+                offset = offset || boundingRectangle.getTargetEdge();
+        
+                boundingRectangleOffset = me.getBoundingRectangleOffset(offset, boundingRectangle.getXLimit(), boundingRectangle.getYLimit());
 
-            return this;
+                position = new ns.Position(this.viewport, target, boundingRectangle, boundingRectangleOffset);
+
+                if (!position.isValid()) {
+                    me.fail('Invalid offset: outside target.');
+                    return null;
+                }
+
+                return position;
+            },
+
+            getButton: function() {
+                var isModern = Stimuli.core.Support.isModern,
+                    buttonsMap = {
+                    left: isModern ? 0 : 1,
+                    middle: isModern ? 1 : 4,
+                    right: 2,
+                    none: undefined
+                };
+
+                return buttonsMap[this.options.button || 'left']; // Default left button
+            }
+
         }
-
     };
 
-    Stimuli.core.Object.merge(ns.Abstract, Stimuli.core.Observable);
-
-})();</pre>
+})();
+</pre>
 </body>
 </html>

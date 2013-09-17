@@ -17,19 +17,33 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-core-Support'>/**
-</span> * @class Stimuli.core.Support
+<span id='Stimuli-core-Object'>/**
+</span> * @class Stimuli.core.Object
  * @singleton
- * This class detects supported browser features.
+ * @private
+ * A set of useful methods to deal with objects.
  */
 
-Stimuli.core.Support = {
+Stimuli.core.Object = {
 
-<span id='Stimuli-core-Support-property-isModern'>    /**
-</span>     * @property {Boolean}
-     * Is it a modern browser ?
+<span id='Stimuli-core-Object-method-merge'>    /**
+</span>     * Merge objects properties.
+     * @param {Object} dest The destination object
+     * @param {Object=} src The source object
+     * @return {Object} dest
      */
-    isModern: typeof document.createEvent !== 'undefined'
+    merge: function(dest, src) {
+        if (!src) {
+            return dest;
+        }
+        for (var prop in src) {
+            if (src.hasOwnProperty(prop)) {
+                dest[prop] = src[prop];
+            }
+        }
+
+        return dest;
+    }
 
 };</pre>
 </body>

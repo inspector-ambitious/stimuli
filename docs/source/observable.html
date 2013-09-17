@@ -18,18 +18,19 @@
   <pre class="prettyprint lang-js">'use strict';
 
 <span id='Stimuli-core-Observable'>/**
-</span> * This mixin allows Objects to subscribe and publish events.
- * @mixin
- * @memberof Stimuli.core
+</span> * @class Stimuli.core.Observable
+ * @singleton
+ * @private
+ * Base class that provides a common interface for publishing events.
  */
 
 Stimuli.core.Observable = {
 
 <span id='Stimuli-core-Observable-method-publish'>    /**
-</span>     * Publishes an event.
+</span>     * @protected
+     * Publishes an event.
      * @param {String} eventName The event name.
-     * @param {...Misc=} data the data to be emitted.
-     * @param {Object=} options Options
+     * @param {Mixed} [data] the data to be emitted.
      */
     publish: function(eventName) {
         var me = this;
@@ -51,9 +52,10 @@ Stimuli.core.Observable = {
     },
 
 <span id='Stimuli-core-Observable-method-subscribe'>    /**
-</span>     * Subscribes to an event.
+</span>     * @protected
+     * Subscribes to an event.
      * @param {String} eventName The event name.
-     * @param {Function} fn The listener to bind to the event.
+     * @param {Function} fn The listener to bind.
      * @param {Object=} scope The listener execution scope.
      */
     subscribe: function(eventName, fn, scope) {
@@ -76,10 +78,10 @@ Stimuli.core.Observable = {
     },
 
 <span id='Stimuli-core-Observable-method-unsubscribe'>    /**
-</span>     * Subscribes to an event.
+</span>     * @protected
+     * Unsubscribes to an event.
      * @param {String} eventName The event name.
-     * @param {Function} fn The listener to bind to the event.
-     * @param {Object=} scope The listener execution scope.
+     * @param {Function} fn The listener to unbind.
      */
     unsubscribe: function(eventName, fn) {
         var listeners = this.listeners[eventName],
