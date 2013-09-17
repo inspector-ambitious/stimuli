@@ -2,10 +2,10 @@
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse;
 
 
-    ns.Abstract = {
+    ns.Generic = {
         
         ctor: function(options) {
 
@@ -58,6 +58,7 @@
             },
 
             getButton: function() {
+                
                 var isModern = Stimuli.browser.Support.isModern,
                     buttonsMap = {
                     left: isModern ? 0 : 1,

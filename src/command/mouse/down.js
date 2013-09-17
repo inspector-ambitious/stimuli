@@ -2,9 +2,9 @@
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse;
 
-    ns.down = ns.Abstract.ctor;
+    ns.down = ns.Generic.ctor;
 
     ns.down.prototype.execute = function() {
         var me = this,
@@ -47,6 +47,6 @@
 
     };
 
-    Stimuli.utils.Object.merge(ns.down.prototype, ns.Abstract.proto);
+    Stimuli.utils.Object.merge(ns.down.prototype, ns.Generic.proto);
 
 })();

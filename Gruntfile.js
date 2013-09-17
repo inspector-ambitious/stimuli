@@ -7,32 +7,32 @@ module.exports = function(grunt) {
 
     // StimuliFiles
     var stimuliFiles = [
+        // dependencies
         'lib/sizzle/sizzle.js',
+
+        // core
         'src/stimuli.js',
-        
         'src/utils/object.js',
         'src/utils/observable.js',
         'src/utils/scheduler.js',
-
         'src/browser/support.js',
         'src/browser/viewport.js',
         'src/device/generic.js',
         'src/event/emitter.js',
         'src/event/binder.js',
 
-
+        // mouse
         'src/device/mouse.js',
         'src/event/synthetizer/mouse.js',
-        
-        'src/interaction/abstract.js',
-        'src/interaction/mouse/bounding_rectangle.js',
-        'src/interaction/mouse/bounding_rectangle_offset.js',
-        'src/interaction/mouse/position.js',
-        'src/interaction/mouse/abstract.js',
-        'src/interaction/mouse/down.js',
-        'src/interaction/mouse/up.js',
-        'src/interaction/mouse/click.js',
-        'src/interaction/mouse/dblclick.js'
+        'src/command/generic.js',
+        'src/command/mouse/utils/bounding_rectangle.js',
+        'src/command/mouse/utils/bounding_rectangle_offset.js',
+        'src/command/mouse/utils/position.js',
+        'src/command/mouse/generic.js',
+        'src/command/mouse/down.js',
+        'src/command/mouse/up.js',
+        'src/command/mouse/click.js',
+        'src/command/mouse/dblclick.js'
         
     ];
 

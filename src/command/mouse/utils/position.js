@@ -2,7 +2,7 @@
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse.utils;
 
     ns.Position = function(viewport, element, boundingRectangle, boundingRectangleOffset) {
         

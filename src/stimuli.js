@@ -57,8 +57,10 @@ Stimuli.event = {
     synthetizer: {}
 };
 
-Stimuli.interaction = {
-    mouse: {}
+Stimuli.command = {
+    mouse: {
+        utils: {}
+    }
 };
 
 Stimuli.utils = {};

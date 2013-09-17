@@ -2,9 +2,7 @@
 
 (function() {
     
-    var ns = Stimuli.interaction;
-
-    ns.Interaction = {
+    Stimuli.command.Generic = {
 
         getEvents: function() {
             return this.events;
@@ -75,6 +73,6 @@
      
     };
 
-    Stimuli.utils.Object.merge(ns.Interaction, Stimuli.utils.Observable);
+    Stimuli.utils.Object.merge(Stimuli.command.Generic, Stimuli.utils.Observable);
 
 })();
