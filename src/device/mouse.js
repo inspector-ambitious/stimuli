@@ -3,7 +3,7 @@
 /**
  * @class Stimuli.device.Mouse
  * @alternateClassName Stimuli.Mouse
- * @mixins Stimuli.device.Abstract
+ * @mixins Stimuli.device.Generic
  * Your virtual mouse.
  * @cfg {Window} [view=window] The target window where events will be injected
  * @constructor
@@ -59,6 +59,6 @@
     };
 
     // Extends Stimuli.Device.Abstract
-    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Abstract);
+    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Generic);
 
 })();

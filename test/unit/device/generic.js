@@ -1,4 +1,4 @@
-describe('Stimuli.device.Abstract', function() {
+describe('Stimuli.device.Generic', function() {
 
     var dummy;
 
@@ -8,7 +8,7 @@ describe('Stimuli.device.Abstract', function() {
             this.name = 'dummy';
         };
 
-        Stimuli.utils.Object.merge(DummyDevice.prototype, Stimuli.device.Abstract);
+        Stimuli.utils.Object.merge(DummyDevice.prototype, Stimuli.device.Generic);
 
         dummy = new DummyDevice();
     });

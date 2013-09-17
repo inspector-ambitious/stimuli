@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @class Stimuli.device.Abstract
+ * @class Stimuli.device.Generic
  * This abstract class provides a standardized way for a device to emit a command.
  * @mixins Stimuli.utils.Observable
  * @private
@@ -9,7 +9,7 @@
 
 (function() {
 
-    Stimuli.device.Abstract= {
+    Stimuli.device.Generic = {
 
         /**
          * @protected
@@ -39,6 +39,6 @@
 
     };
 
-    Stimuli.utils.Object.merge(Stimuli.device.Abstract, Stimuli.utils.Observable);
+    Stimuli.utils.Object.merge(Stimuli.device.Generic, Stimuli.utils.Observable);
 
 })();

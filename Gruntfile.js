@@ -16,14 +16,14 @@ module.exports = function(grunt) {
 
         'src/browser/support.js',
         'src/browser/viewport.js',
-
-        'src/device/abstract.js',
-        'src/device/mouse.js',
-
+        'src/device/generic.js',
         'src/event/emitter.js',
         'src/event/binder.js',
-        'src/event/synthetizer/mouse.js',
 
+
+        'src/device/mouse.js',
+        'src/event/synthetizer/mouse.js',
+        
         'src/interaction/abstract.js',
         'src/interaction/mouse/bounding_rectangle.js',
         'src/interaction/mouse/bounding_rectangle_offset.js',
@@ -32,9 +32,7 @@ module.exports = function(grunt) {
         'src/interaction/mouse/down.js',
         'src/interaction/mouse/up.js',
         'src/interaction/mouse/click.js',
-        'src/interaction/mouse/dblclick.js',
-        'src/interaction/mouse/move.js',
-        'src/interaction/mouse/drag.js'
+        'src/interaction/mouse/dblclick.js'
         
     ];
 
@@ -57,11 +55,6 @@ module.exports = function(grunt) {
         {
             pattern: 'node_modules/sinon/pkg/sinon-ie.js',
             watched: false
-        },
-
-        {
-            pattern: 'test/templates/**/*.*',
-            included: false
         },
 
         {
