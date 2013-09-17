@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for src/event/binder.js</title>
+    <title>Code coverage report for src/command/mouse/click.js</title>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../../prettify.css">
 
     <style>
         body, html {
@@ -180,22 +180,22 @@
 </head>
 <body>
 <div class="header high">
-    <h1>Code coverage report for <span class="entity">src/event/binder.js</span></h1>
+    <h1>Code coverage report for <span class="entity">src/command/mouse/click.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">91.67% <small>(33 / 36)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">100% <small>(2 / 2)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">57.14% <small>(8 / 14)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">100% <small>(0 / 0)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">100% <small>(6 / 6)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">100% <small>(1 / 1)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">91.67% <small>(33 / 36)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">100% <small>(2 / 2)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
     </h2>
-    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/event/</a> &#187; binder.js</div>
+    <div class="path"><a href="../../../index.html">All files</a> &#187; <a href="index.html">src/command/mouse/</a> &#187; click.js</div>
 </div>
 <div class="body">
 <pre><table class="coverage">
@@ -204,255 +204,15 @@
 3
 4
 5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27
-28
-29
-30
-31
-32
-33
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+6</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use strict';
 &nbsp;
-/**
- * @class
- * Allows to bind/unbind listeners to dom elements.
- */
-&nbsp;
 (function() {
 &nbsp;
-    Stimuli.event.Binder = function(element) {
-        <span class="missing-if-branch" title="if path not taken"" >I</span>if (typeof element === 'string') {
-<span class="cstat-no" title="statement not covered" >            element = Stimuli.$(element);</span>
-        }
-&nbsp;
-        this.element = element;
-&nbsp;
-        this.listeners = {};
-    };
-&nbsp;
-    var Binder = Stimuli.event.Binder;
-&nbsp;
-    Binder.prototype.on = function(type, listener, scope) {
-        var me = this;
-&nbsp;
-        scope = scope || me;
-&nbsp;
-        function wrappedListener() {
-            listener.apply(scope, arguments);
-        }
-&nbsp;
-        <span class="missing-if-branch" title="else path not taken"" >E</span>if (Stimuli.browser.Support.isModern) {
-            me.element.addEventListener(type, wrappedListener, false);
-        } else {
-<span class="cstat-no" title="statement not covered" >            me.element.attachEvent('on' + type, wrappedListener);</span>
-        }
-&nbsp;
-        <span class="missing-if-branch" title="else path not taken"" >E</span>if (!me.listeners[type]) {
-            me.listeners[type] = [];
-        }
-&nbsp;
-        me.listeners[type].push({
-            type: type,
-            listener: listener,
-            wrappedListener: wrappedListener
-        });
-    };
-&nbsp;
-    Binder.prototype.off = function(type, listener) {
-        var me = this,
-            listeners = me.listeners[type],
-            length = listeners.length,
-            i = 0,
-            wrappedListener;
-&nbsp;
-        for (; i &lt; length; i++) {
-            <span class="missing-if-branch" title="else path not taken"" >E</span>if (listeners[i].listener === listener) {
-                wrappedListener = listeners[i].wrappedListener;
-                listeners.splice(i, 1);
-                break;
-            }
-        }
-&nbsp;
-        <span class="missing-if-branch" title="else path not taken"" >E</span>if (Stimuli.browser.Support.isModern) {
-            me.element.removeEventListener(type, wrappedListener, false);
-        } else {
-<span class="cstat-no" title="statement not covered" >            me.element.detachEvent('on' + type, wrappedListener);</span>
-        }
-    };
-&nbsp;
-    Binder.prototype.allOff = function() {
-        var me = this,
-            type,
-            listeners;
-&nbsp;
-        for (type in me.listeners) {
-            <span class="missing-if-branch" title="else path not taken"" >E</span>if (me.listeners.hasOwnProperty(type)) {
-                listeners = me.listeners[type];
-                while (listeners[0]) {
-                    me.off(type, listeners[0].listener);
-                }
-            }
-        }
-&nbsp;
-    };
 &nbsp;
 })();</pre></td></tr>
 </table></pre>
@@ -462,7 +222,7 @@
     <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Sep 17 2013 01:44:34 GMT+0000 (UTC)</div>
 </div>
 
-<script src="../../prettify.js"></script>
+<script src="../../../prettify.js"></script>
 
 <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
 <script>

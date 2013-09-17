@@ -2056,8 +2056,10 @@ Stimuli.event = {
     synthetizer: {}
 };
 
-Stimuli.interaction = {
-    mouse: {}
+Stimuli.command = {
+    mouse: {
+        utils: {}
+    }
 };
 
 Stimuli.utils = {};
@@ -2373,10 +2375,10 @@ Stimuli.browser.Support = {
     
 })();
 
-// Source: src/device/abstract.js
+// Source: src/device/generic.js
 
 /**
- * @class Stimuli.device.Abstract
+ * @class Stimuli.device.Generic
  * This abstract class provides a standardized way for a device to emit a command.
  * @mixins Stimuli.utils.Observable
  * @private
@@ -2384,7 +2386,7 @@ Stimuli.browser.Support = {
 
 (function() {
 
-    Stimuli.device.Abstract= {
+    Stimuli.device.Generic = {
 
         /**
          * @protected
@@ -2414,72 +2416,7 @@ Stimuli.browser.Support = {
 
     };
 
-    Stimuli.utils.Object.merge(Stimuli.device.Abstract, Stimuli.utils.Observable);
-
-})();
-
-// Source: src/device/mouse.js
-
-/**
- * @class Stimuli.device.Mouse
- * @alternateClassName Stimuli.Mouse
- * @mixins Stimuli.device.Abstract
- * Your virtual mouse.
- * @cfg {Window} [view=window] The target window where events will be injected
- * @constructor
- * @param {Object} The config object
- */
-
-(function() {
-
-    Stimuli.device.Mouse = function(options) {
-    
-        options = options = {};
-
-        options.view = options.view || window;
-
-        this.viewport = new Stimuli.browser.Viewport(options.view);
-
-        this.name = 'mouse';
-
-    };
-    
-    var Mouse = Stimuli.device.Mouse;
-
-    /**
-     * Executes a simple click.
-     * @param {Object} options
-     */
-    Mouse.prototype.click = function(options, callback) {
-        return this.send('click', options, callback);
-    };
-
-    /**
-     * Executes a double click.
-     * @param {Object} options
-     */
-    Mouse.prototype.dblclick = function(options, callback) {
-        return this.send('dblclick', options, callback);
-    };
-
-    /**
-     * Presses a button.
-     * @param {Object} options
-     */
-    Mouse.prototype.down = function(options, callback) {
-        return this.send('down', options, callback);
-    };
-
-    /**
-     * Releases a button.
-     * @param {Object} options
-     */
-    Mouse.prototype.up = function(options, callback) {
-        return this.send('up', options, callback);
-    };
-
-    // Extends Stimuli.Device.Abstract
-    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Abstract);
+    Stimuli.utils.Object.merge(Stimuli.device.Generic, Stimuli.utils.Observable);
 
 })();
 
@@ -2612,6 +2549,71 @@ Stimuli.browser.Support = {
 
 })();
 
+// Source: src/device/mouse.js
+
+/**
+ * @class Stimuli.device.Mouse
+ * @alternateClassName Stimuli.Mouse
+ * @mixins Stimuli.device.Generic
+ * Your virtual mouse.
+ * @cfg {Window} [view=window] The target window where events will be injected
+ * @constructor
+ * @param {Object} The config object
+ */
+
+(function() {
+
+    Stimuli.device.Mouse = function(options) {
+    
+        options = options = {};
+
+        options.view = options.view || window;
+
+        this.viewport = new Stimuli.browser.Viewport(options.view);
+
+        this.name = 'mouse';
+
+    };
+    
+    var Mouse = Stimuli.device.Mouse;
+
+    /**
+     * Executes a simple click.
+     * @param {Object} options
+     */
+    Mouse.prototype.click = function(options, callback) {
+        return this.send('click', options, callback);
+    };
+
+    /**
+     * Executes a double click.
+     * @param {Object} options
+     */
+    Mouse.prototype.dblclick = function(options, callback) {
+        return this.send('dblclick', options, callback);
+    };
+
+    /**
+     * Presses a button.
+     * @param {Object} options
+     */
+    Mouse.prototype.down = function(options, callback) {
+        return this.send('down', options, callback);
+    };
+
+    /**
+     * Releases a button.
+     * @param {Object} options
+     */
+    Mouse.prototype.up = function(options, callback) {
+        return this.send('up', options, callback);
+    };
+
+    // Extends Stimuli.Device.Abstract
+    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Generic);
+
+})();
+
 // Source: src/event/synthetizer/mouse.js
 
 (function() {
@@ -2693,13 +2695,11 @@ Stimuli.browser.Support = {
 })();
 
 
-// Source: src/interaction/abstract.js
+// Source: src/command/generic.js
 
 (function() {
     
-    var ns = Stimuli.interaction;
-
-    ns.Interaction = {
+    Stimuli.command.Generic = {
 
         getEvents: function() {
             return this.events;
@@ -2770,16 +2770,16 @@ Stimuli.browser.Support = {
      
     };
 
-    Stimuli.utils.Object.merge(ns.Interaction, Stimuli.utils.Observable);
+    Stimuli.utils.Object.merge(Stimuli.command.Generic, Stimuli.utils.Observable);
 
 })();
 
 
-// Source: src/interaction/mouse/bounding_rectangle.js
+// Source: src/command/mouse/utils/bounding_rectangle.js
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse.utils;
 
     ns.BoundingRectangle = function(viewport, element) {
         var me = this;
@@ -2845,11 +2845,11 @@ Stimuli.browser.Support = {
 
 })();
 
-// Source: src/interaction/mouse/bounding_rectangle_offset.js
+// Source: src/command/mouse/utils/bounding_rectangle_offset.js
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse.utils;
 
     ns.BoundingRectangleOffset = function(options, xLimit, yLimit) {
             
@@ -2894,11 +2894,11 @@ Stimuli.browser.Support = {
 
 })();
 
-// Source: src/interaction/mouse/position.js
+// Source: src/command/mouse/utils/position.js
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse.utils;
 
     ns.Position = function(viewport, element, boundingRectangle, boundingRectangleOffset) {
         
@@ -2939,14 +2939,14 @@ Stimuli.browser.Support = {
     
 })();
 
-// Source: src/interaction/mouse/abstract.js
+// Source: src/command/mouse/generic.js
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse;
 
 
-    ns.Abstract = {
+    ns.Generic = {
         
         ctor: function(options) {
 
@@ -2999,6 +2999,7 @@ Stimuli.browser.Support = {
             },
 
             getButton: function() {
+                
                 var isModern = Stimuli.browser.Support.isModern,
                     buttonsMap = {
                     left: isModern ? 0 : 1,
@@ -3016,13 +3017,13 @@ Stimuli.browser.Support = {
 })();
 
 
-// Source: src/interaction/mouse/down.js
+// Source: src/command/mouse/down.js
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse;
 
-    ns.down = ns.Abstract.ctor;
+    ns.down = ns.Generic.ctor;
 
     ns.down.prototype.execute = function() {
         var me = this,
@@ -3065,11 +3066,11 @@ Stimuli.browser.Support = {
 
     };
 
-    Stimuli.utils.Object.merge(ns.down.prototype, ns.Abstract.proto);
+    Stimuli.utils.Object.merge(ns.down.prototype, ns.Generic.proto);
 
 })();
 
-// Source: src/interaction/mouse/up.js
+// Source: src/command/mouse/up.js
 
 (function() {
 
@@ -3077,14 +3078,14 @@ Stimuli.browser.Support = {
 
 })();
 
-// Source: src/interaction/mouse/click.js
+// Source: src/command/mouse/click.js
 
 (function() {
 
 
 })();
 
-// Source: src/interaction/mouse/dblclick.js
+// Source: src/command/mouse/dblclick.js
 
 (function() {
 

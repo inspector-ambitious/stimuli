@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <title>Code coverage report for src/event/binder.js</title>
+    <title>Code coverage report for src/command/mouse/utils/position.js</title>
     <meta charset="utf-8">
 
-    <link rel="stylesheet" href="../../prettify.css">
+    <link rel="stylesheet" href="../../../../prettify.css">
 
     <style>
         body, html {
@@ -179,23 +179,23 @@
     </style>
 </head>
 <body>
-<div class="header high">
-    <h1>Code coverage report for <span class="entity">src/event/binder.js</span></h1>
+<div class="header low">
+    <h1>Code coverage report for <span class="entity">src/command/mouse/utils/position.js</span></h1>
     <h2>
         
-        Statements: <span class="metric">91.67% <small>(33 / 36)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Statements: <span class="metric">47.62% <small>(10 / 21)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Branches: <span class="metric">57.14% <small>(8 / 14)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Branches: <span class="metric">100% <small>(0 / 0)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Functions: <span class="metric">100% <small>(6 / 6)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Functions: <span class="metric">14.29% <small>(1 / 7)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
         
-        Lines: <span class="metric">91.67% <small>(33 / 36)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        Lines: <span class="metric">47.62% <small>(10 / 21)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
         
     </h2>
-    <div class="path"><a href="../../index.html">All files</a> &#187; <a href="index.html">src/event/</a> &#187; binder.js</div>
+    <div class="path"><a href="../../../../index.html">All files</a> &#187; <a href="index.html">src/command/mouse/utils/</a> &#187; position.js</div>
 </div>
 <div class="body">
 <pre><table class="coverage">
@@ -242,218 +242,92 @@
 41
 42
 43
-44
-45
-46
-47
-48
-49
-50
-51
-52
-53
-54
-55
-56
-57
-58
-59
-60
-61
-62
-63
-64
-65
-66
-67
-68
-69
-70
-71
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85
-86</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+44</td><td class="line-coverage"><span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1</span>
-<span class="cline-any cline-yes">6</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
-<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">'use strict';
 &nbsp;
-/**
- * @class
- * Allows to bind/unbind listeners to dom elements.
- */
-&nbsp;
 (function() {
 &nbsp;
-    Stimuli.event.Binder = function(element) {
-        <span class="missing-if-branch" title="if path not taken"" >I</span>if (typeof element === 'string') {
-<span class="cstat-no" title="statement not covered" >            element = Stimuli.$(element);</span>
-        }
+    var ns = Stimuli.command.mouse.utils;
 &nbsp;
-        this.element = element;
+    ns.Position = <span class="fstat-no" title="function not covered" >function(viewport, element, boundingRectangle, boundingRectangleOffset) {</span>
+        
+<span class="cstat-no" title="statement not covered" >        var me = this;</span>
 &nbsp;
-        this.listeners = {};
-    };
+<span class="cstat-no" title="statement not covered" >        me.boundingRectangle = boundingRectangle;</span>
 &nbsp;
-    var Binder = Stimuli.event.Binder;
+<span class="cstat-no" title="statement not covered" >        me.boundingRectangleOffset = boundingRectangleOffset;</span>
 &nbsp;
-    Binder.prototype.on = function(type, listener, scope) {
-        var me = this;
+<span class="cstat-no" title="statement not covered" >        me.viewport = viewport;</span>
 &nbsp;
-        scope = scope || me;
-&nbsp;
-        function wrappedListener() {
-            listener.apply(scope, arguments);
-        }
-&nbsp;
-        <span class="missing-if-branch" title="else path not taken"" >E</span>if (Stimuli.browser.Support.isModern) {
-            me.element.addEventListener(type, wrappedListener, false);
-        } else {
-<span class="cstat-no" title="statement not covered" >            me.element.attachEvent('on' + type, wrappedListener);</span>
-        }
-&nbsp;
-        <span class="missing-if-branch" title="else path not taken"" >E</span>if (!me.listeners[type]) {
-            me.listeners[type] = [];
-        }
-&nbsp;
-        me.listeners[type].push({
-            type: type,
-            listener: listener,
-            wrappedListener: wrappedListener
-        });
-    };
-&nbsp;
-    Binder.prototype.off = function(type, listener) {
-        var me = this,
-            listeners = me.listeners[type],
-            length = listeners.length,
-            i = 0,
-            wrappedListener;
-&nbsp;
-        for (; i &lt; length; i++) {
-            <span class="missing-if-branch" title="else path not taken"" >E</span>if (listeners[i].listener === listener) {
-                wrappedListener = listeners[i].wrappedListener;
-                listeners.splice(i, 1);
-                break;
-            }
-        }
-&nbsp;
-        <span class="missing-if-branch" title="else path not taken"" >E</span>if (Stimuli.browser.Support.isModern) {
-            me.element.removeEventListener(type, wrappedListener, false);
-        } else {
-<span class="cstat-no" title="statement not covered" >            me.element.detachEvent('on' + type, wrappedListener);</span>
-        }
-    };
-&nbsp;
-    Binder.prototype.allOff = function() {
-        var me = this,
-            type,
-            listeners;
-&nbsp;
-        for (type in me.listeners) {
-            <span class="missing-if-branch" title="else path not taken"" >E</span>if (me.listeners.hasOwnProperty(type)) {
-                listeners = me.listeners[type];
-                while (listeners[0]) {
-                    me.off(type, listeners[0].listener);
-                }
-            }
-        }
+<span class="cstat-no" title="statement not covered" >        me.element = element;</span>
 &nbsp;
     };
 &nbsp;
+    var Position = ns.Position;
+&nbsp;
+    Position.prototype.isValid = <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >        var me = this;</span>
+<span class="cstat-no" title="statement not covered" >        return me.viewport.getElementAt(me.getClientX(), me.getClientY()) === me.element;</span>
+    };
+&nbsp;
+    Position.prototype.getClientX = <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >        return this.boundingRectangle.getLeft() + this.offset.getX();</span>
+    };
+&nbsp;
+    Position.prototype.getClientY = <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >        return this.boundingRectangle.getTop() + this.offset.getY();</span>
+    };
+&nbsp;
+    Position.prototype.getScreenX = <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >        return this.viewport.getScreenX() + this.getClientX();</span>
+    };
+&nbsp;
+    Position.prototype.getScreenY = <span class="fstat-no" title="function not covered" >function() {</span>
+<span class="cstat-no" title="statement not covered" >        return this.viewport.getScreenY() + this.getClientY();</span>
+    };
+    
 })();</pre></td></tr>
 </table></pre>
 
@@ -462,7 +336,7 @@
     <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Tue Sep 17 2013 01:44:34 GMT+0000 (UTC)</div>
 </div>
 
-<script src="../../prettify.js"></script>
+<script src="../../../../prettify.js"></script>
 
 <script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
 <script>
