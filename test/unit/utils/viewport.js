@@ -1,9 +1,9 @@
-describe('Stimuli.core.Viewport', function() {
+describe('Stimuli.browser.Viewport', function() {
 
     var viewport;
 
     before(function() {
-        viewport = new Stimuli.core.Viewport();
+        viewport = new Stimuli.browser.Viewport();
     });
 
     after(function() {

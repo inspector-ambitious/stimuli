@@ -1,61 +1,67 @@
 'use strict';
 
 /**
- * Creates an instance of Stimuli
+ * @class Stimuli
+ * Creates a new stimuli
  * @constructor
  * @param {Object} options
- * @return {Stimuli} Fresh Stimuli instance
  */
 
 var Stimuli = function(options) {
     options = options || {};
-    this.devices = {};
 
-    this.viewport = new Stimuli.core.Viewport(options.view);
+
     if (typeof Stimuli.device.Mouse !== 'undefined') {
-        this.devices.mouse = new Stimuli.device.Mouse(this.viewport);
+        this.mouse = new Stimuli.device.Mouse(options);
     }
 
 };
 
+/**
+ * Returns a virtual mouse
+ * @return {Stimuli.device.Mouse}
+ */
 Stimuli.prototype.getMouse = function() {
-    return this.devices.mouse;
+    return this.mouse;
 };
 
 /**
- * @namespace Stimuli.core
+ * @static
+ * Returns the first dom element matching the css selector.
+ * @param {string} selector Css selector jquery styl
+ * @return {HTMLElement}
  */
-
-Stimuli.core = {};
-
-/**
- * @namespace Stimuli.device
- */
-
-Stimuli.device = {};
-
-/**
- * @namespace Stimuli.interaction
- */
-
-Stimuli.interaction = {
-    mouse: {}
-};
-
-/**
- * @namespace Stimuli.event
- */
-
- Stimuli.event = {
-    synthetizer: {}
- };
-
- Stimuli.$ = function(selector) {
+Stimuli.$ = function(selector) {
     /* jshint newcap: false */
     return Sizzle(selector)[0];
- };
+};
+
+/**
+ * @static
+ * Returns all dom elements matching the css selector.
+ * @param {string} selector Css selector jquery styl
+ * @return {HTMLElement[]}
+ */
 
 Stimuli.$$ = function(selector) {
     /* jshint newcap: false */
     return Sizzle(selector);
- };
+};
+
+// Namespaces declaration
+Stimuli.browser = {};
+
+Stimuli.device = {};
+
+Stimuli.event = {
+    synthetizer: {}
+};
+
+Stimuli.command = {
+    mouse: {
+        utils: {}
+    }
+};
+
+Stimuli.utils = {};
+

@@ -2,7 +2,7 @@
 
 (function() {
 
-    var ns = Stimuli.interaction.mouse;
+    var ns = Stimuli.command.mouse.utils;
 
     ns.BoundingRectangle = function(viewport, element) {
         var me = this;

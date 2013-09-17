@@ -7,33 +7,33 @@ module.exports = function(grunt) {
 
     // StimuliFiles
     var stimuliFiles = [
+        // dependencies
         'lib/sizzle/sizzle.js',
+
+        // core
         'src/stimuli.js',
-        'src/core/support.js',
-        'src/core/object.js',
-        'src/core/type.js',
-        'src/core/observable.js',
-        'src/core/scheduler.js',
-        'src/core/viewport.js',
-
-        'src/device/abstract.js',
-        'src/device/mouse.js',
-
+        'src/utils/object.js',
+        'src/utils/observable.js',
+        'src/utils/scheduler.js',
+        'src/browser/support.js',
+        'src/browser/viewport.js',
+        'src/device/generic.js',
         'src/event/emitter.js',
         'src/event/binder.js',
-        'src/event/synthetizer/mouse.js',
 
-        'src/interaction/abstract.js',
-        'src/interaction/mouse/bounding_rectangle.js',
-        'src/interaction/mouse/bounding_rectangle_offset.js',
-        'src/interaction/mouse/position.js',
-        'src/interaction/mouse/abstract.js',
-        'src/interaction/mouse/down.js',
-        'src/interaction/mouse/up.js',
-        'src/interaction/mouse/click.js',
-        'src/interaction/mouse/dblclick.js',
-        'src/interaction/mouse/move.js',
-        'src/interaction/mouse/drag.js'
+        // mouse
+        'src/device/mouse.js',
+        'src/event/synthetizer/mouse.js',
+        'src/command/generic.js',
+        'src/command/mouse/utils/bounding_rectangle.js',
+        'src/command/mouse/utils/bounding_rectangle_offset.js',
+        'src/command/mouse/utils/position.js',
+        'src/command/mouse/generic.js',
+        'src/command/mouse/down.js',
+        'src/command/mouse/up.js',
+        'src/command/mouse/click.js',
+        'src/command/mouse/dblclick.js'
+
         
     ];
 
@@ -56,11 +56,6 @@ module.exports = function(grunt) {
         {
             pattern: 'node_modules/sinon/pkg/sinon-ie.js',
             watched: false
-        },
-
-        {
-            pattern: 'test/templates/**/*.*',
-            included: false
         },
 
         {
@@ -335,7 +330,6 @@ module.exports = function(grunt) {
 
                 // extra options
                 options: {
-                    'builtin-classes': true,
                     'title': "Stimuli <%= pkg.version %> Documentation"
                 }
             }

@@ -1,18 +1,19 @@
 'use strict';
 
 /**
- * This mixin allows Objects to subscribe and publish events.
- * @mixin
- * @memberof Stimuli.core
+ * @class Stimuli.utils.Observable
+ * @singleton
+ * @private
+ * Base class that provides a common interface for publishing events.
  */
 
-Stimuli.core.Observable = {
+Stimuli.utils.Observable = {
 
     /**
+     * @protected
      * Publishes an event.
      * @param {String} eventName The event name.
-     * @param {...Misc=} data the data to be emitted.
-     * @param {Object=} options Options
+     * @param {Mixed} [data] the data to be emitted.
      */
     publish: function(eventName) {
         var me = this;
@@ -34,9 +35,10 @@ Stimuli.core.Observable = {
     },
 
     /**
+     * @protected
      * Subscribes to an event.
      * @param {String} eventName The event name.
-     * @param {Function} fn The listener to bind to the event.
+     * @param {Function} fn The listener to bind.
      * @param {Object=} scope The listener execution scope.
      */
     subscribe: function(eventName, fn, scope) {
@@ -59,10 +61,10 @@ Stimuli.core.Observable = {
     },
 
     /**
-     * Subscribes to an event.
+     * @protected
+     * Unsubscribes to an event.
      * @param {String} eventName The event name.
-     * @param {Function} fn The listener to bind to the event.
-     * @param {Object=} scope The listener execution scope.
+     * @param {Function} fn The listener to unbind.
      */
     unsubscribe: function(eventName, fn) {
         var listeners = this.listeners[eventName],

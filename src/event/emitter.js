@@ -1,10 +1,14 @@
 'use strict';
 
-(function() {
-    var ns = Stimuli.event,
-        synthetizer = ns.synthetizer;
+/**
+ * @class
+ */
 
-    ns.Emitter = {
+(function() {
+    
+    var synthetizer = Stimuli.event.synthetizer;
+
+    Stimuli.event.Emitter = {
 
         isMouseEvent: function(name) {
             return {

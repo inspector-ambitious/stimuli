@@ -3,7 +3,7 @@
 //     var viewport;
 
 //     before(function(done) {
-//         viewport = new Stimuli.core.Viewport();
+//         viewport = new Stimuli.browser.Viewport();
 //         TestHelper.loadTemplate('/base/test/templates/elements.html', function() {
 //             done();
 //         });

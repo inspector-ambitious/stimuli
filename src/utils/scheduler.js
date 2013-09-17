@@ -1,31 +1,33 @@
 'use strict';
 
+/**
+ * @class Stimuli.utils.Scheduler
+ * @mixins Stimuli.utils.Observable
+ * @private
+ * Provides a convenient way to "buffer" the emission of data.
+ * @cfg {Number} speed The emission speed
+ * @cfg {Number} interval The emission interval in ms
+ * @constructor
+ * Creates a new scheduler
+ * @param {Object} config The config object
+ */
+
 (function() {
 
-    /**
-     * This class allows to schedule events.
-     * @constructor
-     * @mixes Stimuli.core.Observable
-     * @memberof Stimuli.core
-     * @param {Object} options
-     * @returns {Scheduler}
-     */
-
-    Stimuli.core.Scheduler = function(options) {
+    Stimuli.utils.Scheduler = function(options) {
         this.options = options;
         this.queue = [];
         this.locked = false;
     };
 
     // Applies Observable mixin
-    Stimuli.core.Object.merge(Stimuli.core.Scheduler.prototype, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(Stimuli.utils.Scheduler.prototype, Stimuli.utils.Observable);
 
     /**
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
-
-    Stimuli.core.Scheduler.prototype.receive = function(data) {
+    Stimuli.utils.Scheduler.prototype.receive = function(data) {
 
         var me = this;
 
@@ -35,9 +37,10 @@
 
     };
 
-
-    // Schedules emission of received data   
-
+    /**
+     * @private
+     * Schedules emission of received data   
+     */
     function emit(me) {
 
         if (me.locked || me.queue.length === 0) {

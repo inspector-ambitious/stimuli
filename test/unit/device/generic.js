@@ -1,4 +1,4 @@
-describe('Stimuli.device.Abstract', function() {
+describe('Stimuli.device.Generic', function() {
 
     var dummy;
 
@@ -8,7 +8,7 @@ describe('Stimuli.device.Abstract', function() {
             this.name = 'dummy';
         };
 
-        Stimuli.core.Object.merge(DummyDevice.prototype, Stimuli.device.Abstract);
+        Stimuli.utils.Object.merge(DummyDevice.prototype, Stimuli.device.Generic);
 
         dummy = new DummyDevice();
     });
@@ -19,25 +19,25 @@ describe('Stimuli.device.Abstract', function() {
 
     describe('send', function() {
 
-        it('should send the data in the correct format', function(done) {
+        it('should send the command in the correct format', function(done) {
 
-            var data = {
-                test: 1
+            var options = {
+                foobar: true
             };
 
             var cb = function() {
                 return 1;
             };
 
-            dummy.subscribe('data', function(event) {
+            dummy.subscribe('command', function(event) {
                 expect(event.device).to.be('dummy');
-                expect(event.type).to.be('test');
-                expect(event.data).to.be(data);
+                expect(event.command).to.be('test');
+                expect(event.options).to.be(options);
                 expect(event.callback).to.be(cb);
                 done();
             });
 
-            dummy.send('test', data, cb);
+            dummy.send('test', options, cb);
 
         });
 

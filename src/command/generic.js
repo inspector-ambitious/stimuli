@@ -2,10 +2,7 @@
 
 (function() {
     
-    var ns = Stimuli.interaction,
-        isBoolean = Stimuli.core.Type.isBoolean;
-
-    ns.Interaction = {
+    Stimuli.command.Generic = {
 
         getEvents: function() {
             return this.events;
@@ -30,11 +27,11 @@
         },
 
         getCancelable: function() {
-            return isBoolean(this.options.cancelable) ? this.options.cancelable : true;
+            return typeof this.options.cancelable === 'boolean' ? this.options.cancelable : true;
         },
 
         getBubbles: function() {
-            return isBoolean(this.options.bubbles) ? this.options.bubbles : true;
+            return typeof this.options.bubbles === 'boolean' ? this.options.bubbles : true;
         },
         
         getAltKey: function() {
@@ -70,10 +67,12 @@
             data.view = this.viewport.getView();
 
             this.publish('event', data, callback);
+
+            return this;
         }
      
     };
 
-    Stimuli.core.Object.merge(ns.Interaction, Stimuli.core.Observable);
+    Stimuli.utils.Object.merge(Stimuli.command.Generic, Stimuli.utils.Observable);
 
 })();
