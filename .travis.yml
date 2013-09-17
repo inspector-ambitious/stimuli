@@ -32,6 +32,5 @@ script:
     grunt karma:ie8ci && 
     grunt karma:ie9ci && 
     grunt karma:ie10ci && 
-    grunt jsduck && 
     grunt cov && 
     .travis/ghpages-deploy.sh

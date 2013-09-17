@@ -326,7 +326,7 @@ module.exports = function(grunt) {
                 ],
 
                 // docs output dir
-                dest: 'docs',
+                dest: '/build/docs',
 
                 // extra options
                 options: {
@@ -349,6 +349,6 @@ module.exports = function(grunt) {
     grunt.registerTask('quicktest', ['karma:quick']);
     grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
     grunt.registerTask('cov', ['karma:coverage']);
-    grunt.registerTask('build', ['jshint', 'bower:install', 'concat:dist']);
+    grunt.registerTask('build', ['jshint', 'bower:install', 'jsduck', 'concat:dist']);
 
 };
