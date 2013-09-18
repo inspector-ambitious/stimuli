@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id=''>/**
+</span> * @class
+ * Allows to bind/unbind listeners to dom elements.
+ */
+
+(function() {
+
+    Stimuli.event.Binder = function(element) {
+        if (typeof element === 'string') {
+            element = Stimuli.$(element);
+        }
+
+        this.element = element;
+
+        this.listeners = {};
+    };
+
+    var Binder = Stimuli.event.Binder;
+
+    Binder.prototype.on = function(type, listener, scope) {
+        var me = this;
+
+        scope = scope || me;
+
+        function wrappedListener() {
+            listener.apply(scope, arguments);
+        }
+
+        if (Stimuli.browser.Support.isModern) {
+            me.element.addEventListener(type, wrappedListener, false);
+        } else {
+            me.element.attachEvent('on' + type, wrappedListener);
+        }
+
+        if (!me.listeners[type]) {
+            me.listeners[type] = [];
+        }
+
+        me.listeners[type].push({
+            type: type,
+            listener: listener,
+            wrappedListener: wrappedListener
+        });
+    };
+
+    Binder.prototype.off = function(type, listener) {
+        var me = this,
+            listeners = me.listeners[type],
+            length = listeners.length,
+            i = 0,
+            wrappedListener;
+
+        for (; i &lt; length; i++) {
+            if (listeners[i].listener === listener) {
+                wrappedListener = listeners[i].wrappedListener;
+                listeners.splice(i, 1);
+                break;
+            }
+        }
+
+        if (Stimuli.browser.Support.isModern) {
+            me.element.removeEventListener(type, wrappedListener, false);
+        } else {
+            me.element.detachEvent('on' + type, wrappedListener);
+        }
+    };
+
+    Binder.prototype.allOff = function() {
+        var me = this,
+            type,
+            listeners;
+
+        for (type in me.listeners) {
+            if (me.listeners.hasOwnProperty(type)) {
+                listeners = me.listeners[type];
+                while (listeners[0]) {
+                    me.off(type, listeners[0].listener);
+                }
+            }
+        }
+
+    };
+
+})();</pre>
+</body>
+</html>

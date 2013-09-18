@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-device-Mouse-method-constructor'><span id='Stimuli-device-Mouse-cfg-view'><span id='Stimuli-device-Mouse'>/**
+</span></span></span> * @class Stimuli.device.Mouse
+ * @alternateClassName Stimuli.Mouse
+ * @mixins Stimuli.device.Generic
+ * Your virtual mouse.
+ * @cfg {Window} [view=window] The target window where events will be injected
+ * @constructor
+ * @param {Object} The config object
+ */
+
+(function() {
+
+    Stimuli.device.Mouse = function(options) {
+    
+        options = options = {};
+
+        options.view = options.view || window;
+
+        this.viewport = new Stimuli.browser.Viewport(options.view);
+
+        this.name = 'mouse';
+
+    };
+    
+    var Mouse = Stimuli.device.Mouse;
+
+<span id='Stimuli-device-Mouse-method-click'>    /**
+</span>     * Executes a simple click.
+     * @param {Object} options
+     */
+    Mouse.prototype.click = function(options, callback) {
+        return this.send('click', options, callback);
+    };
+
+<span id='Stimuli-device-Mouse-method-dblclick'>    /**
+</span>     * Executes a double click.
+     * @param {Object} options
+     */
+    Mouse.prototype.dblclick = function(options, callback) {
+        return this.send('dblclick', options, callback);
+    };
+
+<span id='Stimuli-device-Mouse-method-down'>    /**
+</span>     * Presses a button.
+     * @param {Object} options
+     */
+    Mouse.prototype.down = function(options, callback) {
+        return this.send('down', options, callback);
+    };
+
+<span id='Stimuli-device-Mouse-method-up'>    /**
+</span>     * Releases a button.
+     * @param {Object} options
+     */
+    Mouse.prototype.up = function(options, callback) {
+        return this.send('up', options, callback);
+    };
+
+    // Extends Stimuli.Device.Abstract
+    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Generic);
+
+})();</pre>
+</body>
+</html>

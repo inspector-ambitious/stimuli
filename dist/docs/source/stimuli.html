@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-method-constructor'><span id='Stimuli'>/**
+</span></span> * @class Stimuli
+ * Creates a new stimuli
+ * @constructor
+ * @param {Object} options
+ */
+
+var Stimuli = function(options) {
+    options = options || {};
+
+
+    if (typeof Stimuli.device.Mouse !== 'undefined') {
+        this.mouse = new Stimuli.device.Mouse(options);
+    }
+
+};
+
+<span id='Stimuli-method-getMouse'>/**
+</span> * Returns a virtual mouse
+ * @return {Stimuli.device.Mouse}
+ */
+Stimuli.prototype.getMouse = function() {
+    return this.mouse;
+};
+
+<span id='Stimuli-static-method-S-'>/**
+</span> * @static
+ * Returns the first dom element matching the css selector.
+ * @param {string} selector Css selector jquery styl
+ * @return {HTMLElement}
+ */
+Stimuli.$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector)[0];
+};
+
+<span id='Stimuli-static-method-S-S-'>/**
+</span> * @static
+ * Returns all dom elements matching the css selector.
+ * @param {string} selector Css selector jquery styl
+ * @return {HTMLElement[]}
+ */
+
+Stimuli.$$ = function(selector) {
+    /* jshint newcap: false */
+    return Sizzle(selector);
+};
+
+// Namespaces declaration
+Stimuli.browser = {};
+
+Stimuli.device = {};
+
+Stimuli.event = {
+    synthetizer: {}
+};
+
+Stimuli.command = {
+    mouse: {
+        utils: {}
+    }
+};
+
+Stimuli.utils = {};
+
+</pre>
+</body>
+</html>
