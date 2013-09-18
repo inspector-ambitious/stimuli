@@ -17,47 +17,82 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-device-Generic'>/**
-</span> * @class Stimuli.device.Generic
- * This abstract class provides a standardized way for a device to emit a command.
- * @mixins Stimuli.utils.Observable
- * @private
- */
-
 (function() {
+    
+    Stimuli.command.Generic = {
 
-    Stimuli.device.Generic = {
+        getEvents: function() {
+            return this.events;
+        },
 
-<span id='Stimuli-device-Generic-method-send'>        /**
-</span>         * @protected
-         * @param {String} type The emitted command name
-         * @param {Object} options The emitted command options
-         * @param {Function} callback The callback function
-         */
-        send: function(command, options, callback) {
+        fail: function(message) {
+            this.options.callback(message);
+        },
 
-            var me = this;
+        getTarget: function() {
+            
+            var options = this.options,
+                target = null;
 
-            callback = callback || function() {};
+            if (options.target === 'function') {
+                target = options.target();
+            } else {
+                target = options.target || this.viewport.getElementAt(options.x, options.y);
+            }
 
-            me.publish('command', {
+            return target;
+        },
 
-                device: me.name,
+        getCancelable: function() {
+            return typeof this.options.cancelable === 'boolean' ? this.options.cancelable : true;
+        },
 
-                command: command,
+        getBubbles: function() {
+            return typeof this.options.bubbles === 'boolean' ? this.options.bubbles : true;
+        },
+        
+        getAltKey: function() {
+            return this.options.altKey || false;
+        },
 
-                options: options,
+        getMetaKey: function() {
+            return this.options.metaKey || false;
+        },
 
-                callback: callback
+        getCtrlKey: function() {
+            return this.options.ctrlKey || false;
+        },
 
-            });
+        getShiftKey: function() {
+            return this.options.shiftKey || false;
+        },
 
+        send: function(data, cb) {
+            var me = this,
+                callback = function(event, canceled) {
+                
+                me.events.push({
+                    src: event,
+                    canceled: canceled
+                });
+                
+                if (cb) {
+                    cb(null, event, canceled);
+                }
+            };
+            
+            data.view = this.viewport.getView();
+
+            this.publish('event', data, callback);
+
+            return this;
         }
-
+     
     };
 
-    Stimuli.utils.Object.merge(Stimuli.device.Generic, Stimuli.utils.Observable);
+    Stimuli.utils.Object.merge(Stimuli.command.Generic, Stimuli.utils.Observable);
 
-})();</pre>
+})();
+</pre>
 </body>
 </html>
