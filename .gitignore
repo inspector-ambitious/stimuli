@@ -16,6 +16,7 @@ npm-debug.log
 
 node_modules
 
+build
 
 docs
 
@@ -24,6 +25,6 @@ coverage
 *.sublime-project
 *.sublime-workspace
 
-build
+dist
 
 lib

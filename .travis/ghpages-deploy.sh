@@ -22,9 +22,7 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     COVERAGE_REPORT=`find ../coverage -name lcov-report`
 
-    cp -r ../docs .
-
-    cp -r ../build .
+    cp -r ../dist .
 
     cp ../README.md .
 

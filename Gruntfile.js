@@ -2,6 +2,9 @@
 
 module.exports = function(grunt) {
 
+    // Distribution folder
+    var distFolder = './dist/';
+
     // import package.json
     var pkg = grunt.file.readJSON('package.json');
 
@@ -85,7 +88,7 @@ module.exports = function(grunt) {
 
     // Add freshly build stimuli
     testFilesBuild.push({
-        pattern: 'build/' + pkg.name + '-' + pkg.version + '.js'
+        pattern: distFolder + pkg.name + '-' + pkg.version + '.js'
     });
 
 
@@ -141,7 +144,7 @@ module.exports = function(grunt) {
 
         karma: {
 
-            unit: {
+            full: {
 
                 configFile: 'karma.conf.js',
 
@@ -151,7 +154,7 @@ module.exports = function(grunt) {
 
             },
 
-            watch: {
+            fullwatch: {
 
                 configFile: 'karma.conf.js',
 
@@ -162,6 +165,16 @@ module.exports = function(grunt) {
                 files: testFilesDev,
 
                 browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
+
+            },
+
+            quick: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesDev,
+
+                browsers: ['PhantomJS']
 
             },
 
@@ -179,17 +192,7 @@ module.exports = function(grunt) {
 
             },
 
-            quick: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesDev,
-
-                browsers: ['PhantomJS']
-
-            },
-
-            coverage: {
+            quickcoverage: {
 
                 configFile: 'karma.conf.js',
 
@@ -198,6 +201,18 @@ module.exports = function(grunt) {
                 browsers: ['PhantomJS'],
 
                 reporters: ['coverage']
+
+            },
+
+            fullcoverage: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesDev,
+
+                reporters: ['coverage'],
+
+                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
 
             },
 
@@ -301,12 +316,31 @@ module.exports = function(grunt) {
 
                 src: stimuliFiles,
 
-                dest: 'build/<%= pkg.name %>-<%= pkg.version %>.js'
+                dest: distFolder + '<%= pkg.name %>-<%= pkg.version %>.js'
 
             }
         },
 
-         hub: {
+        copy: {
+
+            license: {
+                
+                src: 'LICENSE',
+
+                dest: distFolder
+
+            },
+
+            readme: {
+
+                src: 'README.md',
+
+                dest: distFolder
+            }
+
+        },
+
+        hub: {
 
             event_tester: {
 
@@ -326,7 +360,7 @@ module.exports = function(grunt) {
                 ],
 
                 // docs output dir
-                dest: '/build/docs',
+                dest: distFolder + 'docs',
 
                 // extra options
                 options: {
@@ -342,13 +376,23 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-hub');
 
-    grunt.registerTask('watchtest', ['karma:watch']);
-    grunt.registerTask('quicktest', ['karma:quick']);
+    
     grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
-    grunt.registerTask('cov', ['karma:coverage']);
-    grunt.registerTask('build', ['jshint', 'bower:install', 'jsduck', 'concat:dist']);
+    
+
+    grunt.registerTask('package', ['bower:install',  'concat:dist', 'jsduck', 'copy']);
+
+    grunt.registerTask('build', ['package']);
+
+    grunt.registerTask('coverage', ['karma:quickcoverage']);
+
+    grunt.registerTask('test', ['karma:quick']);
+    grunt.registerTask('test.watch', ['karma:quickwatch']);
+    grunt.registerTask('test.full', ['karma:full']);
+    grunt.registerTask('test.full.watch', ['karma:watchall']);
 
 };
