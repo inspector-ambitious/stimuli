@@ -18,13 +18,13 @@ before_script:
   - gem install jsduck
   - npm install -g grunt-cli
   - npm -g install bower
-  - bower install --dev
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
   - .travis/sauce_connect_setup.sh
 
 script:
-  - grunt build && 
+  - grunt jshint && 
+    grunt build && 
     grunt karma:phantomjsci && 
     grunt karma:chromeci && 
     grunt karma:firefoxci && 
@@ -32,6 +32,5 @@ script:
     grunt karma:ie8ci && 
     grunt karma:ie9ci && 
     grunt karma:ie10ci && 
-    grunt jsduck && 
-    grunt cov && 
+    grunt coverage && 
     .travis/ghpages-deploy.sh
