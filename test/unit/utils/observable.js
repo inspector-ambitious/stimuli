@@ -93,6 +93,23 @@ describe('Stimuli.utils.Observable', function() {
 
         });
 
+        it('should remove the listeners correctly', function() {
+            var fn1 = function() {};
+            var fn2 = function() {};
+
+            observable.subscribe('ev1', fn1);
+            observable.subscribe('ev2', fn2);
+
+            observable.unsubscribe('ev1', fn1);
+
+            expect(observable.listeners.ev1.length).to.be(0);
+            expect(observable.listeners.ev2.length).to.be(1);
+            expect(observable.listeners.ev2[0].fn).to.be(fn2);
+
+
+        });
+
+
     });
 
 });

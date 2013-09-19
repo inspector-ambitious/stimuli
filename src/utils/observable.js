@@ -75,10 +75,10 @@ Stimuli.utils.Observable = {
         for (; i < length; i++) {
             listener = listeners[i];
             if (listeners[i].fn === fn) {
+                listeners.splice(i, 1);
                 break;
             }
         }
-        this.listeners = listeners.slice(0, i - 1).concat(listeners.slice(i + 1));
 
     }
 };

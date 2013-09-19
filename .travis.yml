@@ -25,12 +25,6 @@ before_script:
 script:
   - grunt jshint && 
     grunt build && 
-    grunt karma:phantomjsci && 
-    grunt karma:chromeci && 
-    grunt karma:firefoxci && 
-    grunt karma:safarici && 
-    grunt karma:ie8ci && 
-    grunt karma:ie9ci && 
-    grunt karma:ie10ci && 
+    grunt test.sauce && 
     grunt coverage && 
     .travis/ghpages-deploy.sh
