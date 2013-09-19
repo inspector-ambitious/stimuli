@@ -24,29 +24,29 @@ describe('Stimuli.device.Mouse', function() {
 
     });
 
-    describe('interactions', function() {
+    describe('commands', function() {
 
-        var interactions = [
+        var commands = [
             'click',
             'dblclick',
             'down',
             'up'
         ];
 
-        var interaction;
+        var command;
 
-        for (var i = 0; i < interactions.length; i++) {
-            interaction = interactions[i];
+        for (var i = 0; i < commands.length; i++) {
+            command = commands[i];
             /*jshint loopfunc: true */
-            describe(interaction, function() {
+            describe(command, function() {
 
-                it('should an event command with the option device: "' + interaction + '"', function(done) {
+                it('should send an event command with the option device: "' + command + '"', function(done) {
                     mouse.subscribe('command', function(event) {
-                        expect(event.command).to.be(interaction);
+                        expect(event.command).to.be(command);
                         done();
                     });
 
-                    mouse[interaction]();
+                    mouse[command]();
                 });
 
             });
