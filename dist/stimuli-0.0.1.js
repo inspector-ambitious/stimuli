@@ -1,4 +1,4 @@
-/*! stimuli - v0.0.1 - 2013-09-18 */
+/*! stimuli - v0.0.1 - 2013-09-19 */
 'use strict';
 
 // Source: lib/sizzle/sizzle.js
@@ -2175,10 +2175,10 @@ Stimuli.utils.Observable = {
         for (; i < length; i++) {
             listener = listeners[i];
             if (listeners[i].fn === fn) {
+                listeners.splice(i, 1);
                 break;
             }
         }
-        this.listeners = listeners.slice(0, i - 1).concat(listeners.slice(i + 1));
 
     }
 };
