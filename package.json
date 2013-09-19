@@ -24,7 +24,7 @@
                 
         "grunt-contrib-jshint": "~0.6",
         
-        "grunt-karma": "~0.6",
+        "grunt-karma": "git://github.com/yhwh/grunt-karma.git#master",
         
         "grunt-jsduck": "~0.1",
 
@@ -40,7 +40,7 @@
 
         "sinon": "~1.7",
 
-        "karma": "~0.10",
+        "karma": "~0.11",
                 
         "karma-mocha": "~0.1",
         
@@ -52,7 +52,9 @@
         
         "karma-sauce-launcher": "~0.1",
         
-        "karma-ievms": "~0.0"
+        "karma-ievms": "~0.0",
+
+        "karma-ios-launcher": "~0.0"
 
     }
 }
