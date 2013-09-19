@@ -20,7 +20,7 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     git checkout gh-pages
 
-    COVERAGE_REPORT=`find ../coverage -name lcov-report`
+    #COVERAGE_REPORT=`find ../coverage -name lcov-report`
 
     cp -r ../dist .
 
@@ -28,7 +28,7 @@ if [[ "$TRAVIS_BRANCH" == "master" ]]; then
 
     cp ../package.json .
 
-    cp -r "$COVERAGE_REPORT" coverage
+    #cp -r "$COVERAGE_REPORT" coverage
 
     git add *
 

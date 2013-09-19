@@ -28,8 +28,9 @@ module.exports = function(config) {
     reporters: ['dots'],
 
     coverageReporter: {
-        dir : 'coverage/',
-        type: 'lcov'
+        type: 'lcovonly',
+        dir : './coverage/'
+        
     },
 
     sauceLabs: {
