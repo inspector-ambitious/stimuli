@@ -351,6 +351,6 @@ module.exports = function(grunt) {
     grunt.registerTask('test', ['karma:quick']);
     grunt.registerTask('test.watch', ['karma:quickwatch']);
     grunt.registerTask('test.full', ['karma:full']);
-    grunt.registerTask('test.full.watch', ['karma:watchall']);
+    grunt.registerTask('test.full.watch', ['karma:fullwatch']);
     grunt.registerTask('test.sauce', ['karma:travis']);
 };
