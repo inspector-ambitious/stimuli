@@ -146,12 +146,12 @@ function MainCtrl($scope, $http, $location, $templateCache) {
                 i, j, domListener, domEvent;
 
             for (i = 0; i < elementsLength; i++) {
-                domListener = new Stimuli.event.Binder(elements[i]);
+                domListener = new Stimuli.event.Observer(elements[i]);
                 capturedElements.push(domListener);
                 for (j = 0; j < domEventslength; j++) {
                     domEvent = domEvents[j];
                     if (domEvent.capture) {
-                        domListener.on(domEvent.name, updateEventsList);
+                        domListener.subscribe(domEvent.name, updateEventsList);
                     }
                 }
             }
@@ -169,7 +169,7 @@ function MainCtrl($scope, $http, $location, $templateCache) {
             i = 0;
 
         for(; i < length; i++) {
-            capturedElements[i].allOff();
+            capturedElements[i].unsubscribeAll();
         }
 
         capturedElements = [];

@@ -7,7 +7,7 @@
 
 (function() {
 
-    Stimuli.event.Binder = function(element) {
+    Stimuli.event.Observer = function(element) {
         if (typeof element === 'string') {
             element = Stimuli.$(element);
         }
@@ -17,9 +17,9 @@
         this.listeners = {};
     };
 
-    var Binder = Stimuli.event.Binder;
+    var Observer = Stimuli.event.Observer;
 
-    Binder.prototype.on = function(type, listener, scope) {
+    Observer.prototype.subscribe = function(type, listener, scope) {
         var me = this;
 
         scope = scope || me;
@@ -28,7 +28,7 @@
             listener.apply(scope, arguments);
         }
 
-        if (Stimuli.browser.Support.isModern) {
+        if (Stimuli.browser.Support.documentAddEventListener) {
             me.element.addEventListener(type, wrappedListener, false);
         } else {
             me.element.attachEvent('on' + type, wrappedListener);
@@ -45,7 +45,7 @@
         });
     };
 
-    Binder.prototype.off = function(type, listener) {
+    Observer.prototype.unsubscribe = function(type, listener) {
         var me = this,
             listeners = me.listeners[type],
             length = listeners.length,
@@ -60,14 +60,14 @@
             }
         }
 
-        if (Stimuli.browser.Support.isModern) {
+        if (Stimuli.browser.Support.documentAddEventListener) {
             me.element.removeEventListener(type, wrappedListener, false);
         } else {
             me.element.detachEvent('on' + type, wrappedListener);
         }
     };
 
-    Binder.prototype.allOff = function() {
+    Observer.prototype.unsubscribeAll = function() {
         var me = this,
             type,
             listeners;
@@ -76,7 +76,7 @@
             if (me.listeners.hasOwnProperty(type)) {
                 listeners = me.listeners[type];
                 while (listeners[0]) {
-                    me.off(type, listeners[0].listener);
+                    me.unsubscribe(type, listeners[0].listener);
                 }
             }
         }

@@ -22,7 +22,7 @@ module.exports = function(grunt) {
         'src/browser/viewport.js',
         'src/device/generic.js',
         'src/event/emitter.js',
-        'src/event/binder.js',
+        'src/event/observer.js',
 
         // mouse
         'src/device/mouse.js',
