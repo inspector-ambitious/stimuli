@@ -1,10 +1,10 @@
 'use strict';
 
 /**
- * @class Stimuli.device.Generic
- * This abstract class provides a standardized way for a device to emit a command.
- * @mixins Stimuli.utils.Observable
  * @private
+ * @class Stimuli.device.Generic
+ * @mixins Stimuli.utils.Observable
+ * A generic device implementation to mixes with other classes.
  */
 
 (function() {
@@ -13,6 +13,7 @@
 
         /**
          * @protected
+         * Sends a command.
          * @param {String} type The emitted command name
          * @param {Object} options The emitted command options
          * @param {Function} callback The callback function

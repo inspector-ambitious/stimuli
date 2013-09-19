@@ -3,7 +3,7 @@
 /**
  * @class Stimuli.browser.Viewport
  * Provides methods to deal with the window and the dom elements positioning.
- * @cfg {Window} view A window object 
+ * @cfg {Window=} view A window object 
  * @constructor
  * Creates a new viewport
  * @param {Object} config The config object

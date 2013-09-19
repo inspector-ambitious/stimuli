@@ -4,7 +4,7 @@
  * @class Stimuli.device.Mouse
  * @alternateClassName Stimuli.Mouse
  * @mixins Stimuli.device.Generic
- * Your virtual mouse.
+ * The virtual mouse interface.
  * @cfg {Window} [view=window] The target window where events will be injected
  * @constructor
  * @param {Object} The config object
