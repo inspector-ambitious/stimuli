@@ -144,6 +144,24 @@ module.exports = function(grunt) {
 
         karma: {
 
+            droid: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesDev,
+
+                browsers: ['Android_2.3']
+            },
+
+            ios: {
+
+                configFile: 'karma.conf.js',
+
+                files: testFilesDev,
+
+                browsers: ['iOS']
+            },
+
             full: {
 
                 configFile: 'karma.conf.js',
@@ -216,75 +234,16 @@ module.exports = function(grunt) {
 
             },
 
-            phantomjsci: {
+            travis: {
 
                 configFile: 'karma.conf.js',
 
                 files: testFilesBuild,
 
-                browsers: ['PhantomJS']
+                browsers: ['PhantomJS', 'SL_Chrome', 'SL_Firefox', 'SL_Safari', 'SL_IE8', 'SL_IE9', 'SL_IE10']
 
             },
 
-            chromeci: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesBuild,
-
-                browsers: ['SL_Chrome']
-
-            },
-
-            firefoxci: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesBuild,
-
-                browsers: ['SL_Firefox']
-
-            },
-
-            safarici: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesBuild,
-
-                browsers: ['SL_Safari']
-
-            },
-
-            ie8ci: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesBuild,
-
-                browsers: ['SL_IE8']
-
-            },
-
-            ie9ci: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesBuild,
-
-                browsers: ['SL_IE9']
-
-            },
-
-            ie10ci: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesBuild,
-
-                browsers: ['SL_IE10']
-
-            }
         },
 
         bower: {
@@ -394,5 +353,5 @@ module.exports = function(grunt) {
     grunt.registerTask('test.watch', ['karma:quickwatch']);
     grunt.registerTask('test.full', ['karma:full']);
     grunt.registerTask('test.full.watch', ['karma:watchall']);
-
+    grunt.registerTask('test.sauce', ['karma:travis']);
 };

@@ -43,46 +43,75 @@ module.exports = function(config) {
         
     },
 
-
     customLaunchers: {
         
-      'SL_Chrome': {
-        base: 'SauceLabs',
-        browserName: 'chrome'
-      },
-      
-      'SL_Firefox': {
-        base: 'SauceLabs',
-        browserName: 'firefox'
-      },
-      
-      'SL_Safari': {
-        base: 'SauceLabs',
-        browserName: 'safari',
-        platform: 'Mac 10.8',
-        version: '6'
-      },
-      
-      'SL_IE8': {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows 7',
-        version: '8'
-      },
-      
-      'SL_IE9': {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows 2008',
-        version: '9'
-      },
-      
-      'SL_IE10': {
-        base: 'SauceLabs',
-        browserName: 'internet explorer',
-        platform: 'Windows 2012',
-        version: '10'
-      }
+        'Android - 2.3': {
+            base: 'AndroidVBox',
+            vm: 'Android 2.3',
+            natForwardingPort: 54321
+        },
+        
+        'Android - 3.2': {
+            base: 'AndroidVBox',
+            vm: 'Android 3.2',
+            natForwardingPort: 54322
+        },
+
+        'Android - 4.0': {
+            base: 'AndroidVBox',
+            vm: 'Android 4.0',
+            natForwardingPort: 54323
+        },
+
+        'Android - 4.2': {
+            base: 'AndroidVBox',
+            vm: 'Android 4.2',
+            natForwardingPort: 54324
+        },
+
+        'Android - 4.3': {
+            base: 'AndroidVBox',
+            vm: 'Android 4.3',
+            natForwardingPort: 54325
+        },
+
+        'SL_Chrome': {
+            base: 'SauceLabs',
+            browserName: 'chrome'
+        },
+
+        'SL_Firefox': {
+            base: 'SauceLabs',
+            browserName: 'firefox'
+        },
+
+        'SL_Safari': {
+            base: 'SauceLabs',
+            browserName: 'safari',
+            platform: 'Mac 10.8',
+            version: '6'
+        },
+
+        'SL_IE8': {
+            base: 'SauceLabs',
+            browserName: 'internet explorer',
+            platform: 'Windows 7',
+            version: '8'
+        },
+
+        'SL_IE9': {
+            base: 'SauceLabs',
+            browserName: 'internet explorer',
+            platform: 'Windows 2008',
+            version: '9'
+        },
+
+        'SL_IE10': {
+            base: 'SauceLabs',
+            browserName: 'internet explorer',
+            platform: 'Windows 2012',
+            version: '10'
+        }
       
     },
 
