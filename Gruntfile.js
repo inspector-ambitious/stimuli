@@ -51,17 +51,17 @@ module.exports = function(grunt) {
         },
 
         {
-            pattern: 'node_modules/sinon/pkg/sinon.js',
-            watched: false
-        },
-
-        {
-            pattern: 'node_modules/sinon/pkg/sinon-ie.js',
+            pattern: 'node_modules/sinon/pkg/sinon-timers-*js',
             watched: false
         },
 
         {
             pattern: 'test/helper/**/*.js'
+        },
+
+        {
+            pattern: 'test/fixtures/**/*.html',
+            included: false
         }
 
     ];
