@@ -25,28 +25,6 @@ Stimuli.prototype.getMouse = function() {
     return this.mouse;
 };
 
-/**
- * @static
- * Returns the first dom element matching the css selector.
- * @param {string} selector Css selector jquery styl
- * @return {HTMLElement}
- */
-Stimuli.$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector)[0];
-};
-
-/**
- * @static
- * Returns all dom elements matching the css selector.
- * @param {string} selector Css selector jquery styl
- * @return {HTMLElement[]}
- */
-
-Stimuli.$$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector);
-};
 
 // Namespaces declaration
 Stimuli.browser = {};
