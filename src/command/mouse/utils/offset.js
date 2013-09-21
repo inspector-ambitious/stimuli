@@ -14,31 +14,35 @@
 
     Stimuli.command.mouse.utils.Offset = function(options, xLimit, yLimit) {
             
-        this.origin = options.origin || 'center';
+        var origin = options.origin || 'tl',
+            x = options.x || 0,
+            y = options.y || 0;
 
-        options.x = options.x || 0;
-        options.y = options.y || 0;
+        if (typeof x === 'string') {
+            x = Math.round(xLimit * (parseInt(x, 10)/100));
 
-        switch(this.origin) {
-            case 'center':
-                this.x = options.x + xLimit/2;
-                this.y = options.y + yLimit/2;
-                break;
+        }
+        if (typeof y === 'string') {
+            y = Math.round(yLimit * (parseInt(y, 10)/100));
+            
+        }
+
+        switch(origin) {
             case 'bl':
-                this.x = options.x;
-                this.y = yLimit - options.y;
+                this.x = x;
+                this.y = yLimit + y;
                 break;
             case 'tr':
-                this.x = xLimit - options.x;
-                this.y = options.y;
+                this.x = xLimit + x;
+                this.y = y;
                 break;
             case 'br':
-                this.x = xLimit - options.x;
-                this.y = yLimit - options.y;
+                this.x = xLimit + x;
+                this.y = yLimit + y;
                 break;
             default: // 'tl'
-                this.x = options.x;
-                this.y = options.y;
+                this.x = x;
+                this.y = y;
         }
 
     };
