@@ -1,7 +1,10 @@
 'use strict';
 
 /**
- * @class
+ * @private
+ * @class Stimuli.event.Emitter
+ * @singleton
+ * Provides an abstraction layer to routes events to their corresponding synthetizers.
  */
 
 (function() {
@@ -10,7 +13,12 @@
 
     Stimuli.event.Emitter = {
 
-        isMouseEvent: function(name) {
+        /**
+         * Determines if an event is a mouse event
+         * @param {String} eventType The event type
+         * @retun {Boolean} True if it's a mouse event
+         */
+        isMouseEvent: function(eventType) {
             return {
                 click: true,
                 mousedown: true,
@@ -22,13 +30,18 @@
                 mouseleave: true,
                 mouseenter: true,
                 contextmenu: true
-            }[name] || false;
+            }[eventType] || false;
         },
 
+        /**
+         * Emits the event and call the callback function
+         * @param {Object} data The event configuration
+         * @param {Function} callback The callback function to be called after the invent is injected.
+         */
         emit: function(data, callback) {
             var result;
 
-            if (this.isMouseEvent(data.name)) {
+            if (this.isMouseEvent(data.type)) {
                 result = synthetizer.Mouse.inject(data);
             }
 

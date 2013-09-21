@@ -25,7 +25,7 @@
                 event = eventConfig.view.document.createEvent('MouseEvents');
 
                 event.initMouseEvent(
-                    eventConfig.name,
+                    eventConfig.type,
                     eventConfig.bubbles,
                     eventConfig.cancelable,
                     eventConfig.view,
@@ -46,7 +46,7 @@
             
             } else { //IE8
                 
-                var eventName = 'on' + eventConfig.name;
+                var eventName = 'on' + eventConfig.type;
 
                 // Regardless of their values specified in the event object,
                 // cancelBubble is automatically initialized by fireEvent. 

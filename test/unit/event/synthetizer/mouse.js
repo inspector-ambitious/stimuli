@@ -43,7 +43,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
             });
 
             inject({
-                name: 'mousedown',
+                type: 'mousedown',
                 button: 0,
                 view: viewport.getView(),
                 target: viewport.getDocument().body
@@ -60,7 +60,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
             });
 
             var ret = inject({
-                name: 'mousedown',
+                type: 'mousedown',
                 button: 0,
                 view: viewport.getView(),
                 target: viewport.getDocument().body
@@ -105,7 +105,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                         });
 
                         inject({
-                            name: 'mousedown',
+                            type: 'mousedown',
                             button: 0,
                             bubbles: true,
                             view: viewport.getView(),
@@ -124,7 +124,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                         });
 
                         inject({
-                            name: 'mousedown',
+                            type: 'mousedown',
                             button: 0,
                             bubbles: false,
                             view: viewport.getView(),
@@ -146,7 +146,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                         });
 
                         var injection = inject({
-                            name: 'mousedown',
+                            type: 'mousedown',
                             button: 0,
                             cancelable: true,
                             view: viewport.getView(),
@@ -168,7 +168,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                         });
 
                         var injection = inject({
-                            name: 'mousedown',
+                            type: 'mousedown',
                             button: 0,
                             cancelable: false,
                             view: viewport.getView(),
@@ -213,7 +213,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             cancelable: true,
                             view: viewport.getView(),
                             target: div,
-                            name: 'mousedown',
+                            type: 'mousedown',
                             button: 0,
                             detail: 1,
                             screenX: 2,
@@ -250,7 +250,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                         });
 
                         inject({
-                            name: 'mousedown',
+                            type: 'mousedown',
                             button: 1,
                             bubbles: true,
                             view: viewport.getView(),
@@ -268,7 +268,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                         });
 
                         inject({
-                            name: 'click',
+                            type: 'click',
                             button: 1,
                             bubbles: false,
                             view: viewport.getView(),
@@ -311,7 +311,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             cancelable: true,
                             view: viewport.getView(),
                             target: div,
-                            name: 'mousedown',
+                            type: 'mousedown',
                             button: 1,
                             detail: 1,
                             screenX: 2,

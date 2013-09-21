@@ -40,7 +40,7 @@ describe('Stimuli.event.Observer', function() {
 
             Stimuli.event.synthetizer.Mouse.inject({
                 target: viewport.$('#textinput'),
-                name: 'mouseover',
+                type: 'mouseover',
                 button: 0,
                 view: viewport.view
             });
@@ -68,7 +68,7 @@ describe('Stimuli.event.Observer', function() {
 
             Stimuli.event.synthetizer.Mouse.inject({
                 target: viewport.$('#textinput'),
-                name: 'mouseover',
+                type: 'mouseover',
                 button: 0,
                 view: viewport.view
             });
@@ -98,7 +98,7 @@ describe('Stimuli.event.Observer', function() {
 
             Stimuli.event.synthetizer.Mouse.inject({
                 target: viewport.$('#textinput'),
-                name: 'mouseover',
+                type: 'mouseover',
                 button: 0,
                 view: viewport.view
             });
@@ -145,14 +145,14 @@ describe('Stimuli.event.Observer', function() {
 
             Stimuli.event.synthetizer.Mouse.inject({
                 target: viewport.$('#textinput'),
-                name: 'mouseover',
+                type: 'mouseover',
                 button: 0,
                 view: viewport.view
             });
 
             Stimuli.event.synthetizer.Mouse.inject({
                 target: viewport.$('#textinput2'),
-                name: 'mouseover',
+                type: 'mouseover',
                 button: 0,
                 view: viewport.view
             });

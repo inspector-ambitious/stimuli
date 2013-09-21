@@ -7,7 +7,7 @@ describe('Stimuli.event.Emitter', function() {
 
         it('should return the event object and the cancelation status in the callback', function() {
             Emitter.emit({
-                name: 'mousedown',
+                type: 'mousedown',
                 button: 0,
                 view: window,
                 target: document.body
