@@ -4,7 +4,6 @@ describe('Stimuli', function() {
         return new Stimuli(options);
     };
 
-
     describe('getMouse', function() {
 
         it('should return a Stimuli.device.Mouse instance', function() {
