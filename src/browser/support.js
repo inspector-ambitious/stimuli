@@ -32,7 +32,12 @@ Stimuli.browser.Support = {
      * @property {Boolean}
      * Is true if document supports createEventObject method. (IE8, IE9, IE10)
      */
-    documentCreateEventObject: typeof document.createEventObject === 'function'
+    documentCreateEventObject: typeof document.createEventObject === 'function',
 
-    
+
+    /**
+     * @property {Boolean}
+     * Is true if browser is ie8
+     */
+    isIE8: typeof document.addEventListener === 'undefined'
 };
