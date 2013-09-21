@@ -2,7 +2,6 @@ describe('Stimuli.browser.Viewport', function() {
 
     var viewport;
 
-
     beforeEach(function(done) {
         Stimuli.browser.Browser.createViewport({
             url: '/base/test/static/viewport.html'
@@ -49,6 +48,5 @@ describe('Stimuli.browser.Viewport', function() {
         });
 
     });
-
 
 });

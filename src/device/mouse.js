@@ -59,6 +59,6 @@
     };
 
     // Extends Stimuli.Device.Abstract
-    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Generic);
+    Stimuli.utils.Class.mix(Mouse, Stimuli.device.Generic);
 
 })();

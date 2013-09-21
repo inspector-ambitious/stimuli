@@ -2,22 +2,35 @@
 
 (function() {
 
-    var ns = Stimuli.command.mouse;
 
-    ns.down = ns.Generic.ctor;
+    Stimuli.command.mouse.Down = Stimuli.utils.Class.inherit(Stimuli.command.Generic);
 
-    ns.down.prototype.execute = function() {
+    var Down = Stimuli.command.mouse.Down;
+
+    Stimuli.utils.Class.mix(Down, Stimuli.command.mouse.Helper);
+
+    Down.prototype.execute = function() {
         var me = this,
-            target = me.getTarget(),
-            position = me.calculatePosition(target, me.options.offset);
+            callback = me.options.callback,
+            target, position;
+
+        target = me.getTarget();
+        
+        if (target === null) {
+            callback('Stimuli.command.mouse.Down: ' + me.error.invalidTarget);
+            return;
+        }
+
+        position = me.calculateViewportCoordinates(target, me.options.offset);
 
         if (position === null) {
+            callback('Stimuli.command.mouse.Down: ' + me.error.invalidPosition);
             return;
         }
 
         me.send({
             
-            name: 'mousedown',
+            type: 'mousedown',
 
             button: me.getButton(),
 
@@ -25,30 +38,28 @@
 
             cancelable: true,
             
-            altKey: me.getAltKey(),
+            altKey: me.options.alt,
 
-            ctrlKey: me.getCtrlKey(),
+            ctrlKey: me.options.ctrl,
 
-            shiftKey: me.getShiftKey(),
+            shiftKey: me.options.shift,
 
-            metaKey: me.getMetaKey(),
+            metaKey: me.options.meta,
 
             detail: 1,
 
             target: target,
 
-            clientX: position.getClientX(),
+            clientX: position.clientX,
             
-            clientY: position.getClientY(),
+            clientY: position.clientY,
 
-            screenX: position.getScreenX(),
+            screenX: position.screenX,
 
-            screenY: position.getScreenY()
+            screenY: position.screenY
            
-        }, me.options.callback);
+        }, callback);
 
     };
-
-    Stimuli.utils.Object.merge(ns.down.prototype, ns.Generic.proto);
 
 })();

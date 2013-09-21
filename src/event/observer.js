@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * @class
+ * @class Stimuli.event.Observer
  * Allows to bind/unbind listeners to EventTargets.
  */
 

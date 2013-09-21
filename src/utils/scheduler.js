@@ -20,14 +20,16 @@
         this.locked = false;
     };
 
+    var Scheduler = Stimuli.utils.Scheduler;
+
     // Applies Observable mixin
-    Stimuli.utils.Object.merge(Stimuli.utils.Scheduler.prototype, Stimuli.utils.Observable);
+    Stimuli.utils.Class.mix(Stimuli.utils.Scheduler, Stimuli.utils.Observable);
 
     /**
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
-    Stimuli.utils.Scheduler.prototype.receive = function(data) {
+    Scheduler.prototype.receive = function(data) {
 
         var me = this;
 
