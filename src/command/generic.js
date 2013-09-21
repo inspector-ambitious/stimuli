@@ -12,43 +12,6 @@
             this.options.callback(message);
         },
 
-        getTarget: function() {
-            
-            var options = this.options,
-                target = null;
-
-            if (options.target === 'function') {
-                target = options.target();
-            } else {
-                target = options.target || this.viewport.getElementAt(options.x, options.y);
-            }
-
-            return target;
-        },
-
-        getCancelable: function() {
-            return typeof this.options.cancelable === 'boolean' ? this.options.cancelable : true;
-        },
-
-        getBubbles: function() {
-            return typeof this.options.bubbles === 'boolean' ? this.options.bubbles : true;
-        },
-        
-        getAltKey: function() {
-            return this.options.altKey || false;
-        },
-
-        getMetaKey: function() {
-            return this.options.metaKey || false;
-        },
-
-        getCtrlKey: function() {
-            return this.options.ctrlKey || false;
-        },
-
-        getShiftKey: function() {
-            return this.options.shiftKey || false;
-        },
 
         send: function(data, cb) {
             var me = this,
@@ -64,8 +27,6 @@
                 }
             };
             
-            data.view = this.viewport.getView();
-
             this.publish('event', data, callback);
 
             return this;

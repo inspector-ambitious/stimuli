@@ -17,6 +17,36 @@
 
         proto: {
 
+        getTarget: function() {
+            
+            var options = this.options,
+                target = null;
+
+            if (options.target === 'function') {
+                target = options.target();
+            } else {
+                target = options.target || this.viewport.getElementAt(options.x, options.y);
+            }
+
+            return target;
+        },
+
+        getAltKey: function() {
+            return this.options.alt || false;
+        },
+
+        getMetaKey: function() {
+            return this.options.meta || false;
+        },
+
+        getCtrlKey: function() {
+            return this.options.ctrl || false;
+        },
+
+        getShiftKey: function() {
+            return this.options.shift || false;
+        },
+
             getBoundingRectangle: function(element) {
                 return new ns.BoundingRectangle(this.viewport, element);
             },

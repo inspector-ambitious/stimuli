@@ -21,8 +21,10 @@
 
             button: me.getButton(),
 
-            bubbles: me.getBubbles(),
+            bubbles: true,
 
+            cancelable: true,
+            
             altKey: me.getAltKey(),
 
             ctrlKey: me.getCtrlKey(),
