@@ -2,15 +2,12 @@
 
 /**
  * @class
- * Allows to bind/unbind listeners to dom elements.
+ * Allows to bind/unbind listeners to EventTargets.
  */
 
 (function() {
 
     Stimuli.event.Observer = function(element) {
-        if (typeof element === 'string') {
-            element = Stimuli.$(element);
-        }
 
         this.element = element;
 
