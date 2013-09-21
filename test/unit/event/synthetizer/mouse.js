@@ -3,11 +3,25 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
     var inject = function() {
             return Stimuli.event.synthetizer.Mouse.inject.apply(Stimuli.event.synthetizer.Mouse, arguments);
         },
+        viewport,
         body,
         bodyObserver;
 
-    before(function() {
-        body = Stimuli.$('body');
+    before(function(done) {
+        Stimuli.browser.Browser.createViewport({
+            url: '/base/test/static/viewport.html'
+        },
+        function(err, vport) {
+            viewport = vport;
+            body = viewport.$('body');
+            done();
+        });
+        
+    });
+
+    after(function() {
+        Stimuli.browser.Browser.destroyViewport(viewport);
+        viewport = null;
     });
 
     beforeEach(function() {
@@ -31,8 +45,8 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
             inject({
                 name: 'mousedown',
                 button: 0,
-                view: window,
-                target: document.body
+                view: viewport.getView(),
+                target: viewport.getDocument().body
             });
 
             expect(i).to.be(1);
@@ -48,8 +62,8 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
             var ret = inject({
                 name: 'mousedown',
                 button: 0,
-                view: window,
-                target: document.body
+                view: viewport.getView(),
+                target: viewport.getDocument().body
             });
 
             expect(ret.event).to.be(receivedEvent);
@@ -64,8 +78,8 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
             divObserver;
 
         beforeEach(function(done) {
-            TestHelper.loadFixture('simplediv', function(){
-                div = Stimuli.$('#simplediv');
+            TestHelper.loadFixture(viewport, 'simplediv', function(){
+                div = viewport.$('#simplediv');
                 divObserver = new Stimuli.event.Observer(div);
                 done();
             });
@@ -73,7 +87,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
 
         afterEach(function() {
             divObserver.unsubscribeAll();
-            TestHelper.removeFixture('simplediv');
+            TestHelper.removeFixture(viewport);
         });
 
         if (Stimuli.browser.Support.documentCreateEvent) {
@@ -94,7 +108,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             name: 'mousedown',
                             button: 0,
                             bubbles: true,
-                            view: window,
+                            view: viewport.getView(),
                             target: div
                         });
 
@@ -113,7 +127,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             name: 'mousedown',
                             button: 0,
                             bubbles: false,
-                            view: window,
+                            view: viewport.getView(),
                             target: div
                         });
 
@@ -135,7 +149,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             name: 'mousedown',
                             button: 0,
                             cancelable: true,
-                            view: window,
+                            view: viewport.getView(),
                             target: div
                         });
 
@@ -157,7 +171,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             name: 'mousedown',
                             button: 0,
                             cancelable: false,
-                            view: window,
+                            view: viewport.getView(),
                             target: div
                         });
 
@@ -178,7 +192,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
 
                             expect(e.cancelBubble).to.be(false);
            
-                            expect(e.view).to.be(window);
+                            expect(e.view).to.be(viewport.getView());
                             expect(e.target).to.be(div);
                             expect(e.type).to.be('mousedown');
                             expect(e.button).to.be(0);
@@ -197,7 +211,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                         var injection = inject({
                             bubbles: false,
                             cancelable: true,
-                            view: window,
+                            view: viewport.getView(),
                             target: div,
                             name: 'mousedown',
                             button: 0,
@@ -239,7 +253,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             name: 'mousedown',
                             button: 1,
                             bubbles: true,
-                            view: window,
+                            view: viewport.getView(),
                             target: div
                         });
 
@@ -257,7 +271,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             name: 'click',
                             button: 1,
                             bubbles: false,
-                            view: window,
+                            view: viewport.getView(),
                             target: div
                         });
 
@@ -276,7 +290,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                             wasListenerCalled = true;
 
                             expect(e.canBubble).to.be(false);
-                            expect(e.view).to.be(window);
+                            expect(e.view).to.be(viewport.getView());
                             expect(e.srcElement).to.be(div);
                             expect(e.type).to.be('mousedown');
                             expect(e.button).to.be(0);
@@ -295,7 +309,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
                         var injection = inject({
                             bubbles: false,
                             cancelable: true,
-                            view: window,
+                            view: viewport.getView(),
                             target: div,
                             name: 'mousedown',
                             button: 1,
