@@ -4,17 +4,22 @@ describe('Stimuli.event.Observer', function() {
         viewport;
 
     beforeEach(function(done) {
-        viewport = new Stimuli.browser.Viewport();
-        TestHelper.loadFixture(viewport, 'textinput', function() {
-            observer = new Stimuli.event.Observer(viewport.$('#textinput'));
-            done();
+        Stimuli.browser.Browser.createViewport({
+            url: '/base/test/static/viewport.html'
+        },
+        function(err, vport) {
+            viewport = vport;
+            TestHelper.loadFixture(viewport, 'textinput', function() {
+                observer = new Stimuli.event.Observer(viewport.$('#textinput'));
+                done();
+            });
         });
     });
 
     afterEach(function() {
-        TestHelper.removeFixture(viewport);
         observer.unsubscribeAll();
         observer = null;
+        Stimuli.browser.Browser.destroyViewport(viewport);
         viewport = null;
     });
 
@@ -30,13 +35,19 @@ describe('Stimuli.event.Observer', function() {
                 eventName = e.type;
             };
 
-            observer.subscribe('focusin', listener);
+            observer.subscribe('mouseover', listener);
 
-            viewport.$('#textinput').focus();
+
+            Stimuli.event.synthetizer.Mouse.inject({
+                target: viewport.$('#textinput'),
+                name: 'mouseover',
+                button: 0,
+                view: viewport.view
+            });
 
             expect(wasCalled).to.be(true);
             expect(scope).to.be(observer);
-            expect(eventName).to.be('focusin');
+            expect(eventName).to.be('mouseover');
         });
 
 
@@ -52,13 +63,19 @@ describe('Stimuli.event.Observer', function() {
                 eventName = e.type;
             };
 
-            observer.subscribe('focusin', listener, scope);
+            observer.subscribe('mouseover', listener, scope);
 
-            viewport.$('#textinput').focus();
+
+            Stimuli.event.synthetizer.Mouse.inject({
+                target: viewport.$('#textinput'),
+                name: 'mouseover',
+                button: 0,
+                view: viewport.view
+            });
 
             expect(wasCalled).to.be(true);
             expect(capturedScope).to.be(scope);
-            expect(eventName).to.be('focusin');
+            expect(eventName).to.be('mouseover');
         });
 
     });
@@ -76,9 +93,15 @@ describe('Stimuli.event.Observer', function() {
                 eventName = e.type;
             };
 
-            observer.subscribe('focusin', listener);
-            observer.unsubscribe('focusin', listener);
-            viewport.$('#textinput').focus();
+            observer.subscribe('mouseover', listener);
+            observer.unsubscribe('mouseover', listener);
+
+            Stimuli.event.synthetizer.Mouse.inject({
+                target: viewport.$('#textinput'),
+                name: 'mouseover',
+                button: 0,
+                view: viewport.view
+            });
 
             expect(wasCalled).to.be(false);
             expect(scope).to.be(null);
@@ -90,13 +113,13 @@ describe('Stimuli.event.Observer', function() {
             var fn1 = function() {};
             var fn2 = function() {};
 
-            observer.subscribe('focusin', fn1);
-            observer.subscribe('focusout', fn2);
+            observer.subscribe('mouseover', fn1);
+            observer.subscribe('mouseout', fn2);
 
-            observer.unsubscribe('focusin', fn1);
+            observer.unsubscribe('mouseover', fn1);
 
-            expect(observer.listeners.focusin.length).to.be(0);
-            expect(observer.listeners.focusout.length).to.be(1);
+            expect(observer.listeners.mouseover.length).to.be(0);
+            expect(observer.listeners.mouseout.length).to.be(1);
 
         });
 
@@ -115,13 +138,24 @@ describe('Stimuli.event.Observer', function() {
                 fn2WasCalled = true;
             };
 
-            observer.subscribe('focusin', fn1);
-            observer.subscribe('focusout', fn2);
+            observer.subscribe('mouseover', fn1);
+            observer.subscribe('mouseover', fn2);
 
             observer.unsubscribeAll();
 
-            viewport.$('#textinput').focus();
-            viewport.$('#textinput2').focus();
+            Stimuli.event.synthetizer.Mouse.inject({
+                target: viewport.$('#textinput'),
+                name: 'mouseover',
+                button: 0,
+                view: viewport.view
+            });
+
+            Stimuli.event.synthetizer.Mouse.inject({
+                target: viewport.$('#textinput2'),
+                name: 'mouseover',
+                button: 0,
+                view: viewport.view
+            });
 
             expect(fn1WasCalled).to.be(false);
             expect(fn2WasCalled).to.be(false);
