@@ -1,10 +1,18 @@
 'use strict';
 
+/**
+ * @private
+ * @class Stimuli.command.mouse.utils.Offset
+ * Parses the mouse command offset option.
+ * @constructor
+ * @param {Object=} options The offset options
+ * @param {String} [option.origin='center'] The possible values are 'center', 'bl', 'tr', 'br', 'tl'
+ * @param {Number} [option.x=0] The X coordinate relative to the origin
+ * @param {Number} [options.y=0] The Y coordinate relative to the origin
+ */
 (function() {
 
-    var ns = Stimuli.command.mouse.utils;
-
-    ns.BoundingRectangleOffset = function(options, xLimit, yLimit) {
+    Stimuli.command.mouse.utils.Offset = function(options, xLimit, yLimit) {
             
         this.origin = options.origin || 'center';
 
@@ -33,16 +41,6 @@
                 this.y = options.y;
         }
 
-    };
-
-    var BoundingRectangleOffset = ns.BoundingRectangleOffset;
-
-    BoundingRectangleOffset.prototype.getX = function() {
-        return this.x;
-    };
-
-    BoundingRectangleOffset.prototype.getY = function() {
-        return this.y;
     };
 
 })();
