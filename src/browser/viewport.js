@@ -2,53 +2,22 @@
 
 /**
  * @class Stimuli.browser.Viewport
- * Provides methods to deal with the window and the dom elements positioning.
+ * Provides methods to deal with the visible elements of the viewport,
+ * the page size and scrolling.
  * @cfg {Window=} view A window object 
  * @constructor
- * Creates a new viewport
  * @param {Object} config The config object
  */
 
 (function() {
 
-    Stimuli.browser.Viewport = function(view) {
+    Stimuli.browser.Viewport = function(view, iframe) {
 
         this.view = view || window;
 
     };
 
     var Viewport = Stimuli.browser.Viewport;
-
-    /**
-     * Iterates through all the document visible pixels.
-     * @param {Function} fn The function to call for each visible pixel
-     * @param {HTMLElement} el The element
-     * @param {Number} x The pixel x coordinate
-     * @param {Number} y The pixel y coordinate
-     */
-    Viewport.prototype.traverse = function(fn) {
-        var doc = this.view.document,
-            x = 0,
-            y = 0,
-            el;
-
-        // Scan the entire viewport pixel by pixel
-        while(true) {
-            el = doc.elementFromPoint(x, y);
-            
-            if (!el) {
-                break;
-            }
-
-            while(el) {
-                fn(el, x, y);
-                y++;
-                el = doc.elementFromPoint(x, y);
-            }
-            x++;
-            y = 0;
-        }
-    };
 
     /**
      * Returns the x coordinate of the window relative to the screen.
@@ -67,21 +36,68 @@
     };
 
     /**
-     * Returns the element from the document at the specified coordinates.
+     * Returns the a visible element at the specified coordinates.
      * @param {Number} x The x coordinate
      * @param {Number} y The y coordinate
      * @return {HTMLElement}
      */
-    Viewport.prototype.getElementAt = function(x, y) {
-        return this.view.document.elementFromPoint(x, y);
+    Viewport.prototype.getVisibleElementAt = function(x, y) {
+        var me = this,
+            doc = me.view.document;
+
+        if (x < 0 || y < 0) {
+            return null;
+        }
+
+        var ret = doc.elementFromPoint(x, y);
+
+
+        // IE8 hack: When nesting iframes ie8 doesn't layout properly 
+        // freshly inserted elements, so before calling elementFromPoint
+        // we trigger a reflow to force the layout to be recalculated
+        // (Note: that was a tricky one it's 4:39AM)
+        if (Stimuli.browser.Support.isIE8 &&
+            ret === null &&
+            me.view.parent && me.view.parent.parent) { // encapsulated iframe check
+            doc.body.getBoundingClientRect();
+            ret = doc.elementFromPoint(x, y);
+        }
+
+        return ret;
     };
 
     /**
-     * Returns the current viewport window.
+     * Returns the viewport window.
      * return {Window}
      */
     Viewport.prototype.getView = function() {
         return this.view;
     };
+
+    /**
+     * Returns the viewport document.
+     * return {Window}
+     */
+    Viewport.prototype.getDocument = function() {
+        return this.view.document;
+    };
+
+    /**
+     * Returns the first {HTMLElement} matching the css selector.
+     * @param {string} selector The css selector (see http://sizzlejs.com/)
+     * @param {Boolean=} all If set to True all elements matching the css selector will be returned in an {Array}. 
+     * @return {Mixed}
+     */
+
+    Viewport.prototype.$ = function(selector, all) {
+        /* jshint newcap: false */
+        var elements = Sizzle(selector, this.view.document);
+        if (all) {
+            return elements;
+        } else {
+            return elements[0];
+        }
+    };
+
     
 })();

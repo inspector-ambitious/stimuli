@@ -25,29 +25,29 @@
             req.send();
         },
 
-        // Load a html fixture in the body
-        loadFixture: function(name, callback) {
+        // Load a html fixture in the viewport document body
+        loadFixture: function(viewport, name, callback) {
 
-            if (!Stimuli.$('#fixtureContainer')) {
+            if (!viewport.$('#fixtureContainer')) {
                 var fixtureContainer = document.createElement('div');
                 fixtureContainer.id = 'fixtureContainer';
-                Stimuli.$('body').appendChild(fixtureContainer);
+                viewport.$('body').appendChild(fixtureContainer);
             }
             
-            TestHelper.ajax('get', 'base/test/fixtures/' + name + '.html', function(response) {
-                Stimuli.$('#fixtureContainer').innerHTML = response;
+            TestHelper.ajax('get', '/base/test/fixtures/' + name + '.html', function(response) {
+                viewport.$('#fixtureContainer').innerHTML = response;
                 callback();
             });
             
         },
 
         // remove a fixture
-        removeFixture: function(fixture) {
-            var fixtureContainer = Stimuli.$('#fixtureContainer');
+        removeFixture: function(viewport) {
+            var fixtureContainer = viewport.$('#fixtureContainer');
             if (fixtureContainer) {
                 fixtureContainer.innerHTML = '';
                 if (fixtureContainer.childNodes.length === 0) {
-                    Stimuli.$('body').removeChild(fixtureContainer);
+                    viewport.$('body').removeChild(fixtureContainer);
                     fixtureContainer = null;
                 }
             }

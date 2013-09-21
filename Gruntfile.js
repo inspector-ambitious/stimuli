@@ -20,6 +20,7 @@ module.exports = function(grunt) {
         'src/utils/scheduler.js',
         'src/browser/support.js',
         'src/browser/viewport.js',
+        'src/browser/browser.js',
         'src/device/generic.js',
         'src/event/emitter.js',
         'src/event/observer.js',
@@ -59,7 +60,12 @@ module.exports = function(grunt) {
         },
 
         {
-            pattern: 'test/fixtures/**/*.html',
+            pattern: 'test/static/**/*.*',
+            included: false
+        },
+
+        {
+            pattern: 'test/fixtures/**/*.*',
             included: false
         }
 
