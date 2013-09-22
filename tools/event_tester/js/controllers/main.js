@@ -138,8 +138,8 @@ function MainCtrl($scope, $http, $location, $templateCache) {
     $scope.startCapture = function() {
 
         if ($scope.capture) {
-            
-            var elements = Stimuli.$$($scope.selector),
+            var viewport = new Stimuli.browser.Viewport();
+            var elements = viewport.$($scope.selector, true),
                 elementsLength = elements.length,
                 domEvents = $scope.domEvents,
                 domEventslength  = domEvents.length,
