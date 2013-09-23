@@ -30,7 +30,7 @@
 
         getButton: function() {
                 
-            var isIE8 = Stimuli.browser.Support.isIE8,
+            var isIE8 = Stimuli.core.Support.isIE8,
                 buttonsMap = {
                 left: isIE8 ? 0 : 1,
                 middle: isIE8 ? 1 : 4,
@@ -92,7 +92,7 @@
                 }
             }
 
-
+            // translates origin of offset coordinates to the top left corner
             if (offset.origin) {
                 switch(offset.origin) {
                     case 'bl':

@@ -1,16 +1,18 @@
-describe('Stimuli.device.Generic', function() {
+xdescribe('Stimuli.device.Generic', function() {
 
-    var dummy;
+    var dummy,
+        browser;
 
     beforeEach(function() {
 
-        var DummyDevice = function(options) {
+        var DummyDevice = function(options, browser) {
             this.name = 'dummy';
+            this.browser = browser;
         };
+        Stimuli.core.Object.merge(DummyDevice.prototype, Stimuli.device.Generic);
 
-        Stimuli.utils.Object.merge(DummyDevice.prototype, Stimuli.device.Generic);
-
-        dummy = new DummyDevice();
+        browser = new Stimuli.virtual.Browser();
+        dummy = new DummyDevice({}, browser);
     });
 
     afterEach(function() {
@@ -31,6 +33,7 @@ describe('Stimuli.device.Generic', function() {
 
             dummy.subscribe('command', function(event) {
                 expect(event.device).to.be('dummy');
+                expect(event.browser).to.be(browser);
                 expect(event.command).to.be('test');
                 expect(event.options).to.be(options);
                 expect(event.callback).to.be(cb);

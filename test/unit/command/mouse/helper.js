@@ -1,14 +1,12 @@
 describe('Stimuli.command.mouse.Helper', function() {
     
-    var helper, viewport, position, options, yellow, blue;
+    var s, helper, viewport, position, options, yellow, blue;
 
     before(function(done) {
-
-        Stimuli.browser.Browser.createViewport({
-            url: '/base/test/static/viewport.html'
-        },
-        function(err, vport) {
-            viewport = vport;
+        s = new Stimuli();
+        s.navigateTo('/base/test/static/viewport.html',
+        function(win) {
+            viewport = s.viewport;
             TestHelper.loadFixture(viewport, 'divinfront', function() {
                 helper = {
                     viewport: viewport,
@@ -19,7 +17,7 @@ describe('Stimuli.command.mouse.Helper', function() {
                 
                 yellow = viewport.$('#yellow');
                 blue = viewport.$('#blue');
-                Stimuli.utils.Object.merge(helper, Stimuli.command.mouse.Helper);
+                Stimuli.core.Object.merge(helper, Stimuli.command.mouse.Helper);
                 done();
             });
         });
@@ -27,7 +25,7 @@ describe('Stimuli.command.mouse.Helper', function() {
 
     after(function() {
         TestHelper.removeFixture(viewport);
-        Stimuli.browser.Browser.destroyViewport(viewport);
+        s.destroy();
         viewport = null;
         position = null;
     });
@@ -92,7 +90,7 @@ describe('Stimuli.command.mouse.Helper', function() {
 
             it('should return null', function() {
     
-                options.target = viewport.getView();
+                options.target = viewport.getWindow();
 
                 expect(helper.getTarget()).to.be(null);
             });

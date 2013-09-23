@@ -15,24 +15,25 @@ module.exports = function(grunt) {
 
         // core
         'src/stimuli.js',
-        'src/utils/object.js',
-        'src/utils/class.js',
-        'src/utils/observable.js',
-        'src/utils/scheduler.js',
-        'src/browser/support.js',
-        'src/browser/viewport.js',
-        'src/browser/browser.js',
-        'src/device/generic.js',
-        'src/event/emitter.js',
-        'src/event/observer.js',
 
-        // mouse
-        'src/device/mouse.js',
-        'src/event/synthetizer/mouse.js',
+        'src/core/object.js',
+        'src/core/class.js',
+        'src/core/observable.js',
+        'src/core/scheduler.js',
+        'src/core/support.js',
+        'src/core/ajax.js',
+        'src/core/iframe.js',
+
+        'src/view/viewport.js',
+        'src/view/event/emitter.js',
+        'src/view/event/observer.js',
+        'src/view/event/synthetizer/mouse.js',
+
+        'src/virtual/mouse.js',
+        'src/virtual/browser.js',
+
         'src/command/generic.js',
         'src/command/mouse/helper.js',
-        'src/command/mouse/down.js',
-        'src/command/mouse/up.js',
         'src/command/mouse/click.js',
         'src/command/mouse/dblclick.js'
 

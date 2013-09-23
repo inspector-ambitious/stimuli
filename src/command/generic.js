@@ -5,7 +5,7 @@
     Stimuli.command.Generic = function(options, viewport) {
         this.options = {};
         this.viewport = viewport;
-        Stimuli.utils.Object.merge(this, options);
+        Stimuli.core.Object.merge(this, options);
         this.events = [];
     };
 
@@ -34,6 +34,6 @@
     };
  
  
-    Stimuli.utils.Class.mix(Generic, Stimuli.utils.Observable);
+    Stimuli.core.Class.mix(Generic, Stimuli.core.Observable);
 
 })();

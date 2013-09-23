@@ -3,11 +3,11 @@
 (function() {
 
 
-    Stimuli.command.mouse.Down = Stimuli.utils.Class.inherit(Stimuli.command.Generic);
+    Stimuli.command.mouse.Down = Stimuli.core.Class.inherit(Stimuli.command.Generic);
 
     var Down = Stimuli.command.mouse.Down;
 
-    Stimuli.utils.Class.mix(Down, Stimuli.command.mouse.Helper);
+    Stimuli.core.Class.mix(Down, Stimuli.command.mouse.Helper);
 
     Down.prototype.execute = function() {
         var me = this,
@@ -56,7 +56,9 @@
 
             screenX: position.screenX,
 
-            screenY: position.screenY
+            screenY: position.screenY,
+
+            view: me.viewport.getWindow()
            
         }, callback);
 
