@@ -17,25 +17,25 @@
     var Observer = Stimuli.view.event.Observer;
 
     Observer.prototype.subscribe = function(type, listener, scope) {
-        var me = this;
+        var self = this;
 
-        scope = scope || me;
+        scope = scope || self;
 
         function wrappedListener() {
             listener.apply(scope, arguments);
         }
 
         if (Stimuli.core.Support.documentAddEventListener) {
-            me.element.addEventListener(type, wrappedListener, false);
+            self.element.addEventListener(type, wrappedListener, false);
         } else {
-            me.element.attachEvent('on' + type, wrappedListener);
+            self.element.attachEvent('on' + type, wrappedListener);
         }
 
-        if (!me.listeners[type]) {
-            me.listeners[type] = [];
+        if (!self.listeners[type]) {
+            self.listeners[type] = [];
         }
 
-        me.listeners[type].push({
+        self.listeners[type].push({
             type: type,
             listener: listener,
             wrappedListener: wrappedListener
@@ -43,8 +43,8 @@
     };
 
     Observer.prototype.unsubscribe = function(type, listener) {
-        var me = this,
-            listeners = me.listeners[type],
+        var self = this,
+            listeners = self.listeners[type],
             length = listeners.length,
             i = 0,
             wrappedListener;
@@ -58,22 +58,22 @@
         }
 
         if (Stimuli.core.Support.documentAddEventListener) {
-            me.element.removeEventListener(type, wrappedListener, false);
+            self.element.removeEventListener(type, wrappedListener, false);
         } else {
-            me.element.detachEvent('on' + type, wrappedListener);
+            self.element.detachEvent('on' + type, wrappedListener);
         }
     };
 
     Observer.prototype.unsubscribeAll = function() {
-        var me = this,
+        var self = this,
             type,
             listeners;
 
-        for (type in me.listeners) {
-            if (me.listeners.hasOwnProperty(type)) {
-                listeners = me.listeners[type];
+        for (type in self.listeners) {
+            if (self.listeners.hasOwnProperty(type)) {
+                listeners = self.listeners[type];
                 while (listeners[0]) {
-                    me.unsubscribe(type, listeners[0].listener);
+                    self.unsubscribe(type, listeners[0].listener);
                 }
             }
         }

@@ -16,11 +16,14 @@ module.exports = function(grunt) {
         // core
         'src/stimuli.js',
 
+        'src/core/support.js',
         'src/core/object.js',
         'src/core/class.js',
         'src/core/observable.js',
+
         'src/core/scheduler.js',
-        'src/core/support.js',
+        'src/core/deferable.js',
+
         'src/core/ajax.js',
         'src/core/iframe.js',
 

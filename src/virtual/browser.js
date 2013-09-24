@@ -3,52 +3,48 @@
 (function() {
     
     Stimuli.virtual.Browser = function(options) {
-        this.viewport = options.viewport;
-        this.iframe = new Stimuli.core.Iframe();
+        var self = this;
+        self.viewport = options.viewport;
+
+        self.iframe = new Stimuli.core.Iframe();
+
+        self.iframe.subscribe('refresh', function(win){
+            self.win = win;
+            self.viewport.setWindow(self.win);
+        });
+
+        self.iframe.subscribe('beforerefresh', function() {
+            self.win = null;
+            self.viewport.setWindow(null);
+        });
     };
 
     var Browser = Stimuli.virtual.Browser;
 
+    // Extends Stimuli.Device.Abstract
+    Stimuli.core.Class.mix(Browser, Stimuli.core.Deferable);
 
     Browser.prototype.navigateTo = function(options, callback) {
-        var me = this;
-
-        function navigateTo(next) {
-            me.iframe.navigateTo(options, function(win) {
-                me.viewport.setWindow(win);
-                next(win);
+        var self = this;
+        self.viewport.setWindow(null);
+        self.defer(function(cb) {
+            self.iframe.subscribe('refresh', function(win) {
+                cb(win);
             });
-        }
+            self.iframe.navigateTo(options);
+        }, callback);
 
-        send(me, navigateTo, callback);
+        return self;
     };
 
     Browser.prototype.close = function() {
-        var me = this;
+        var self = this;
 
-        function destroy() {
-            me.viewport.setWindow(window);
-            me.iframe.destroy();
-        }
-
-        send(me, destroy);
-
-    };
-
-    // Extends Stimuli.Device.Abstract
-    Stimuli.core.Class.mix(Browser, Stimuli.core.Observable);
-
-    function send(me, fn, callback) {
-
-        me.publish('command', {
-
-            fn: fn,
-
-            callback: callback
-
+        return self.defer(function() {
+            self.viewport.setWindow(window);
+            self.iframe.destroy();
         });
 
-        return me;
-    }
+    };
 
 })();

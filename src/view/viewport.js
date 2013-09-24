@@ -42,8 +42,8 @@
      * @return {HTMLElement}
      */
     Viewport.prototype.getVisibleElementAt = function(x, y) {
-        var me = this,
-            doc = me.view.document;
+        var self = this,
+            doc = self.view.document;
 
         if (x < 0 || y < 0) {
             return null;
@@ -58,7 +58,7 @@
         // (Note: that was a tricky one it's 4:39AM)
         if (Stimuli.core.Support.isIE8 &&
             ret === null &&
-            me.view.parent && me.view.parent.parent) { // encapsulated iframe check
+            self.view.parent && self.view.parent.parent) { // encapsulated iframe check
             doc.body.getBoundingClientRect();
             ret = doc.elementFromPoint(x, y);
         }

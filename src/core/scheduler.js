@@ -6,7 +6,7 @@
  * @private
  * Provides a convenient way to "buffer" the emission of data.
  * @cfg {Number} speed The emission speed
- * @cfg {Number} interval The emission interval in ms
+ * @cfg {Number} delay The emission delay in ms
  * @constructor
  * Creates a new scheduler
  * @param {Object} config The config object
@@ -15,10 +15,9 @@
 (function() {
 
     Stimuli.core.Scheduler = function(options) {
-        this.options = options || {
-            speed: 1.0,
-            interval: 1
-        };
+        this.delay = options.delay || 1;
+        this.speed = options.speed || 1;
+
         this.queue = [];
         this.locked = false;
     };
@@ -32,32 +31,54 @@
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
-    Scheduler.prototype.schedule = function(data) {
+    Scheduler.prototype.schedule = function(data, callback, options) {
+        var self = this,
+            frame = {data: data, callback: callback, options: options};
 
-        var me = this;
+        if (options && options.now) {
+            self.queue.splice(0, 0, frame);
+        } else {
+            self.queue.push(frame);
+        }
 
-        me.queue.push(data);
+        self.emit();
 
-        emit(me);
+    };
 
+    Scheduler.prototype.calculateTimeout = function(options) {
+        var delay = this.delay,
+            speed = this.speed,
+            timeout;
+
+        if (options) {
+            delay = !isNaN(options.delay) ? options.delay: delay;
+            speed = !isNaN(options.speed) ? options.speed: speed;
+        }
+
+        return delay/speed;
+    };
+
+    Scheduler.prototype.skip = function() {
+        this.locked = false;
+        this.emit();
     };
 
     /**
      * @private
      * Schedules emission of received data   
      */
-    function emit(me) {
-
-        if (me.locked || me.queue.length === 0) {
+    Scheduler.prototype.emit = function() {
+        var self = this;
+        if (self.locked || self.queue.length === 0) {
             return;
         }
 
-        me.locked = true;
+        self.locked = true;
 
-        var data = me.queue.shift(),
-            fn = data.callback || function() {};
-
-        delete data.callback;
+        var frame = self.queue.shift(),
+            options = frame.options,
+            data = frame.data,
+            fn = frame.callback || function() {};
 
         var callback = function() {
             var args = Array.prototype.slice.call(arguments, 0);
@@ -67,24 +88,31 @@
                 // adding a function as last argument to allow the execution
                 // of the next device action
                 args.push(function() {
-                    me.locked = false;
-                    emit(me);
+                    self.locked = false;
+                    self.emit();
                 });
 
-                fn.apply(me, args);
+                fn.apply(self, args);
                 // synchronous action callback
             } else {
-                fn.apply(me, args);
-                me.locked = false;
-                emit(me);
+                fn.apply(self, args);
+                self.locked = false;
+                self.emit();
             }
 
         };
 
-        setTimeout(function() {
-            me.publish('newframe', data, callback);
-        }, me.options.speed * me.options.interval);
+        var timeout = self.calculateTimeout(options);
 
-    }
+        if (timeout) {
+            setTimeout(function() {
+                self.publish('data', data, callback, options);
+            }, timeout);
+        } else {
+            self.publish('data', data, callback, options);
+        }
+
+
+    };
 
 })();

@@ -8,34 +8,45 @@
  */
 
 var Stimuli = function(options) {
-
-    var me = this;
+    var self = this;
 
     options = options || {};
 
-    me.viewport = new Stimuli.view.Viewport();
+    self.viewport = new Stimuli.view.Viewport();
 
-    me.browser = new Stimuli.virtual.Browser({
-        viewport: me.viewport
+    self.browser = new Stimuli.virtual.Browser({
+        viewport: self.viewport
     });
 
-    me.mouse = new Stimuli.virtual.Mouse({
-        viewport: me.viewport
+    self.mouse = new Stimuli.virtual.Mouse({
+        viewport: self.viewport
     });
 
-    me.scheduler = new Stimuli.core.Scheduler({
-        interval: 0
-    });
-
-    me.browser.subscribe('command', me.scheduler.schedule, me.scheduler);
-
-    me.mouse.subscribe('command', me.scheduler.schedule, me.scheduler);
-
-    me.scheduler.subscribe('newframe', function(frame, callback) {
-        frame.fn(callback);
-    });
+    self.initScheduler();
+    self.browser.attachScheduler(self.scheduler);
+    self.mouse.attachScheduler(self.scheduler);
 
 };
+
+// Namespaces declaration
+Stimuli.view = {
+    event: {
+        synthetizer: {}
+    }
+};
+
+Stimuli.virtual = {
+    mouse: {},
+    keyboard: {},
+    touch:{}
+};
+
+Stimuli.core = {};
+
+Stimuli.command = {
+    mouse: {}
+};
+
 
 /**
  * Navigates to an url
@@ -73,7 +84,7 @@ Stimuli.prototype.dblclick = function() {
  */
 Stimuli.prototype.destroy = function() {
     var browser = this.browser;
-    browser.close.apply(browser);
+    browser.close();
     return this;
 };
 
@@ -85,24 +96,13 @@ Stimuli.prototype.$ = function(selector) {
     return this.viewport.$(selector);
 };
 
-
-// Namespaces declaration
-Stimuli.view = {
-    event: {
-        synthetizer: {}
-    }
+/**
+ * Returns the browser window
+ * @return {window}
+ */
+Stimuli.prototype.getWindow = function() {
+    return this.viewport.getWindow();
 };
 
-Stimuli.virtual = {
-    mouse: {},
-    keyboard: {},
-    touch:{}
-};
-
-Stimuli.core = {};
-
-Stimuli.command = {
-    mouse: {}
-};
 
 

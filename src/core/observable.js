@@ -16,13 +16,13 @@ Stimuli.core.Observable = {
      * @param {Mixed} [data] the data to be emitted.
      */
     publish: function(eventName) {
-        var me = this;
-        if (!me.listeners || !me.listeners[eventName]) {
+        var self = this;
+        if (!self.listeners || !self.listeners[eventName]) {
             return;
         }
 
         var args = Array.prototype.slice.call(arguments, 1),
-            listeners = me.listeners[eventName],
+            listeners = self.listeners[eventName],
             length = listeners.length,
             i = 0,
             listener;

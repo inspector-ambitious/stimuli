@@ -19,14 +19,14 @@
     var Mouse = Stimuli.virtual.Mouse;
 
     // Extends Stimuli.Device.Abstract
-    Stimuli.core.Class.mix(Mouse, Stimuli.core.Observable);
+    Stimuli.core.Class.mix(Mouse, Stimuli.core.Deferable);
 
     /**
      * Executes a simple click.
      * @param {Object} options
      */
     Mouse.prototype.click = function(options, callback) {
-        return send(this, 'click', options, callback);
+        return this.defer(this.generateCommand('click', options), callback);
     };
 
     /**
@@ -34,24 +34,19 @@
      * @param {Object} options
      */
     Mouse.prototype.dblclick = function(options, callback) {
-        return send(this, 'dblclick', options, callback);
+        return this.defer(this.generateCommand('dblclick', options), callback);
     };
 
-    function send(me, commandName, options, callback) {
-        var viewport = me.viewport;
+    Mouse.prototype.generateCommand = function(commandName, options) {
+        var viewport = this.viewport;
 
-        me.publish('command', {
+        return function(callback) {
+            var command = new Stimuli.command.mouse[commandName](options, viewport);
+            command.execute(callback);
+        };
 
-            fn: function(next) {
-                var command = new Stimuli.command.mouse[commandName](options, viewport);
-                command.execute(next);
-            },
+    };
 
-            callback: callback
 
-        });
-
-        return me;
-    }
 
 })();

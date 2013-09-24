@@ -3,37 +3,57 @@
 (function() {
     
     Stimuli.command.Generic = function(options, viewport) {
-        this.options = {};
-        this.viewport = viewport;
-        Stimuli.core.Object.merge(this, options);
-        this.events = [];
+        var self = this;
+        self.options = {};
+        self.viewport = viewport;
+        Stimuli.core.Object.merge(self.options, options);
+        self.events = [];
+        self.initScheduler();
     };
 
     var Generic = Stimuli.command.Generic;
 
-    Generic.prototype.send =  function(data, callback) {
+    Stimuli.core.Class.mix(Generic, Stimuli.core.Deferable);
 
-        var me = this,
-            callbackWrap;
+    Generic.prototype.configure = Generic.prototype.then;
 
-        callbackWrap = function(event, canceled) {
-            
-            me.events.push({
-                src: event,
-                canceled: canceled
-            });
-            
+    Generic.prototype.finish = function(callback) {
+        var self = this;
+        self.then(function() {
             if (callback) {
-                callback(null, me.events, canceled);
+                callback(self.events);
             }
-        };
-        
-        me.publish('event', data, callbackWrap);
+        }, {delay: 1});
 
-        return me;
+        return self;
     };
- 
- 
-    Stimuli.core.Class.mix(Generic, Stimuli.core.Observable);
+
+    Generic.prototype.getLastEvent = function(callback) {
+        return this.events[this.events.length - 1];
+    };
+
+    Generic.prototype.inject =  function(generateEventConfig, delay) {
+        var self = this,
+            callback = function(event, canceled) {
+                self.events.push({
+                    src: event,
+                    canceled: canceled
+                });
+            },
+            options;
+
+        if (!isNaN(delay)) {
+            options = {delay: delay};
+        }
+
+        self.defer(function(cb) {
+            var eventConfig = generateEventConfig();
+            eventConfig.view = self.viewport.getWindow();
+            Stimuli.view.event.Emitter.emit(eventConfig, cb);
+        }, callback, options);
+
+        return self;
+    };
+
 
 })();

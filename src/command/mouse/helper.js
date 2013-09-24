@@ -17,9 +17,11 @@
 
             if (target) {
                 if (typeof target === 'function') {
-                    return target();
+                    return target() || null;
+                } else if (typeof target === 'string') {
+                    return this.viewport.$(target) || null;
                 } else if (target.nodeType === 1) { // is an HTMLElement ?
-                    return target;
+                    return target || null;
                 } else if (!isNaN(target.x) && !isNaN(target.y)) {
                     return this.viewport.getVisibleElementAt(target.x, target.y);
                 }
@@ -35,15 +37,15 @@
                 left: isIE8 ? 0 : 1,
                 middle: isIE8 ? 1 : 4,
                 right: 2,
-                'left+right': 4,
-                'left+middle': 5,
-                'rigth+middle': 6,
-                all: 7,
                 none: undefined
             };
 
             return buttonsMap[this.options.button || 'left']; // Default left button
 
+        },
+
+        isElementVisibleAt: function(element, x, y) {
+            return this.viewport.getVisibleElementAt(x, y) === element;
         },
 
         calculateViewportCoordinates: function(element, offset) {
