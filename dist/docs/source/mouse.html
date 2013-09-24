@@ -17,67 +17,124 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-device-Mouse-method-constructor'><span id='Stimuli-device-Mouse-cfg-view'><span id='Stimuli-device-Mouse'>/**
-</span></span></span> * @class Stimuli.device.Mouse
- * @alternateClassName Stimuli.Mouse
- * @mixins Stimuli.device.Generic
- * Your virtual mouse.
- * @cfg {Window} [view=window] The target window where events will be injected
- * @constructor
- * @param {Object} The config object
+<span id='Stimuli-view-event-synthetizer-Mouse'>/**
+</span> * @private
+ * @class Stimuli.view.event.synthetizer.Mouse
+ * @singleton
+ * Abstraction layer for cross-browsers synthetic mouse events injection. 
  */
-
 (function() {
+   
+    Stimuli.view.event.synthetizer.Mouse = {
+ 
+<span id='Stimuli-view-event-synthetizer-Mouse-method-inject'>        /**
+</span>         * Injects an a synthetic mouse event into the dom.
+         * @param {Object} eventConfig The mouse event configuration
+         */
 
-    Stimuli.device.Mouse = function(options) {
+        inject: function(eventConfig) {
+            var event,
+                canceled;
+
+            if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
+                
+                event = eventConfig.view.document.createEvent('MouseEvents');
+
+                event.initMouseEvent(
+                    eventConfig.type,
+                    eventConfig.bubbles,
+                    eventConfig.cancelable,
+                    eventConfig.view,
+                    eventConfig.detail,
+                    eventConfig.screenX,
+                    eventConfig.screenY,
+                    eventConfig.clientX,
+                    eventConfig.clientY,
+                    eventConfig.ctrlKey,
+                    eventConfig.altKey,
+                    eventConfig.shiftKey,
+                    eventConfig.metaKey,
+                    eventConfig.button,
+                    eventConfig.relatedTarget || null //IE 9 throw and &quot;Invalid Argument&quot; Error if this property is undefined so just in case
+                );
+
+                canceled = !eventConfig.target.dispatchEvent(event);
+            
+            } else { //IE8
+                
+                var eventName = 'on' + eventConfig.type;
+
+                // Regardless of their values specified in the event object,
+                // cancelBubble is automatically initialized by fireEvent. 
+                // (see http://msdn.microsoft.com/en-us/library/ie/ms536423(v=vs.85).aspx)
+                // So to bypass this limitation we create a listener which will be binded expando style,
+                // this way it will be fired before any other listener and the cancelBubble can be fixed.
+            
+                var currentListener = eventConfig.target[eventName];
+
+                eventConfig.target[eventName] = function() {
+                    var e = eventConfig.view.event;
+
+                    e.cancelBubble = !eventConfig.bubbles;
+
+                    // A possible hack to force an event to not be cancelable
+                    // we could set the returnValue to readonly...
+                    // But don't think it's a good idea to do that. 
+                    // Leaving this commented code for now.
+                    // if (!eventConfig.cancelable) {
+                    //     Object.defineProperty( e, 'returnValue', {
+                    //         get: function () {
+                    //             return undefined;
+                    //         }
+                    //     });
+                    // }
+
+                    if (currentListener) {
+                        currentListener.apply(this);
+                    } else {
+                        eventConfig.target[eventName] = null;
+                    }
+                };
     
-        options = options = {};
+                event = eventConfig.view.document.createEventObject();
+                event.detail = eventConfig.detail;
+                event.screenX = eventConfig.screenX;
+                event.screenY = eventConfig.screenY;
+                event.clientX = eventConfig.clientX;
+                event.clientY = eventConfig.clientY;
+                event.ctrlKey = eventConfig.ctrlKey;
+                event.altKey = eventConfig.altKey;
+                event.shiftKey = eventConfig.shiftKey;
+                event.metaKey = eventConfig.metaKey;
+                event.button = eventConfig.button;
 
-        options.view = options.view || window;
+                // TODO: the real event flow should be investigated
+                // see http://www.quirksmode.org/js/events_mouse.html#relatedtarget
+                if (eventConfig.relatedTarget) {
+                    if (eventName === 'onmouseover') {
+                        event.fromElement = eventConfig.relatedTarget;
+                        event.toElement = eventConfig.target;
+                    }
 
-        this.viewport = new Stimuli.browser.Viewport(options.view);
+                    if (eventName === 'onmouseout') {
+                        event.fromElement = eventConfig.target;
+                        event.toElement = eventConfig.relatedTarget;
+                    }
 
-        this.name = 'mouse';
+                }
 
-    };
-    
-    var Mouse = Stimuli.device.Mouse;
-
-<span id='Stimuli-device-Mouse-method-click'>    /**
-</span>     * Executes a simple click.
-     * @param {Object} options
-     */
-    Mouse.prototype.click = function(options, callback) {
-        return this.send('click', options, callback);
-    };
-
-<span id='Stimuli-device-Mouse-method-dblclick'>    /**
-</span>     * Executes a double click.
-     * @param {Object} options
-     */
-    Mouse.prototype.dblclick = function(options, callback) {
-        return this.send('dblclick', options, callback);
-    };
-
-<span id='Stimuli-device-Mouse-method-down'>    /**
-</span>     * Presses a button.
-     * @param {Object} options
-     */
-    Mouse.prototype.down = function(options, callback) {
-        return this.send('down', options, callback);
-    };
-
-<span id='Stimuli-device-Mouse-method-up'>    /**
-</span>     * Releases a button.
-     * @param {Object} options
-     */
-    Mouse.prototype.up = function(options, callback) {
-        return this.send('up', options, callback);
+                eventConfig.target.fireEvent(eventName, event);
+                canceled = event.returnValue === false;
+            }
+            
+            return {
+                event: event,
+                canceled: canceled
+            };
+        }
     };
 
-    // Extends Stimuli.Device.Abstract
-    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Generic);
-
-})();</pre>
+})();
+</pre>
 </body>
 </html>

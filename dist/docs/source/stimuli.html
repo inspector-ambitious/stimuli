@@ -25,62 +25,103 @@
  */
 
 var Stimuli = function(options) {
+    var self = this;
+
     options = options || {};
 
+    self.viewport = new Stimuli.view.Viewport();
 
-    if (typeof Stimuli.device.Mouse !== 'undefined') {
-        this.mouse = new Stimuli.device.Mouse(options);
-    }
+    self.browser = new Stimuli.virtual.Browser({
+        viewport: self.viewport
+    });
 
-};
+    self.mouse = new Stimuli.virtual.Mouse({
+        viewport: self.viewport
+    });
 
-<span id='Stimuli-method-getMouse'>/**
-</span> * Returns a virtual mouse
- * @return {Stimuli.device.Mouse}
- */
-Stimuli.prototype.getMouse = function() {
-    return this.mouse;
-};
+    self.initScheduler();
+    self.browser.attachScheduler(self.scheduler);
+    self.mouse.attachScheduler(self.scheduler);
 
-<span id='Stimuli-static-method-S-'>/**
-</span> * @static
- * Returns the first dom element matching the css selector.
- * @param {string} selector Css selector jquery styl
- * @return {HTMLElement}
- */
-Stimuli.$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector)[0];
-};
-
-<span id='Stimuli-static-method-S-S-'>/**
-</span> * @static
- * Returns all dom elements matching the css selector.
- * @param {string} selector Css selector jquery styl
- * @return {HTMLElement[]}
- */
-
-Stimuli.$$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector);
 };
 
 // Namespaces declaration
-Stimuli.browser = {};
-
-Stimuli.device = {};
-
-Stimuli.event = {
-    synthetizer: {}
-};
-
-Stimuli.command = {
-    mouse: {
-        utils: {}
+Stimuli.view = {
+    event: {
+        synthetizer: {}
     }
 };
 
-Stimuli.utils = {};
+Stimuli.virtual = {
+    mouse: {},
+    keyboard: {},
+    touch:{}
+};
+
+Stimuli.core = {};
+
+Stimuli.command = {
+    mouse: {}
+};
+
+
+<span id='Stimuli-method-navigateTo'>/**
+</span> * Navigates to an url
+ * @param {Object} options
+ */
+Stimuli.prototype.navigateTo = function() {
+    var browser = this.browser;
+    browser.navigateTo.apply(browser, arguments);
+    return this;
+};
+
+<span id='Stimuli-method-click'>/**
+</span> * Executes a mouse click.
+ * @param {Object} options
+ */
+Stimuli.prototype.click = function() {
+    var mouse = this.mouse;
+    mouse.click.apply(mouse, arguments);
+    return this;
+};
+
+<span id='Stimuli-method-dblclick'>/**
+</span> * Executes a mouse double click.
+ * @param {Object} options
+ */
+Stimuli.prototype.dblclick = function() {
+    var mouse = this.mouse;
+    mouse.dblclick.apply(mouse, arguments);
+    return this;
+};
+
+<span id='Stimuli-method-destroy'>/**
+</span> * Destroy the stimuli instance
+ * @param {Object} options
+ */
+Stimuli.prototype.destroy = function() {
+    var browser = this.browser;
+    browser.close();
+    return this;
+};
+
+<span id='Stimuli-method-S-'>/**
+</span> * Finds the dom element matching the css selector.
+ * @param {Object} options
+ */
+Stimuli.prototype.$ = function(selector) {
+    return this.viewport.$(selector);
+};
+
+<span id='Stimuli-method-getWindow'>/**
+</span> * Returns the browser window
+ * @return {window}
+ */
+Stimuli.prototype.getWindow = function() {
+    return this.viewport.getWindow();
+};
+
+
 
 </pre>
 </body>

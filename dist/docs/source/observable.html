@@ -17,29 +17,29 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-utils-Observable'>/**
-</span> * @class Stimuli.utils.Observable
+<span id='Stimuli-core-Observable'>/**
+</span> * @class Stimuli.core.Observable
  * @singleton
  * @private
  * Base class that provides a common interface for publishing events.
  */
 
-Stimuli.utils.Observable = {
+Stimuli.core.Observable = {
 
-<span id='Stimuli-utils-Observable-method-publish'>    /**
+<span id='Stimuli-core-Observable-method-publish'>    /**
 </span>     * @protected
      * Publishes an event.
      * @param {String} eventName The event name.
      * @param {Mixed} [data] the data to be emitted.
      */
     publish: function(eventName) {
-        var me = this;
-        if (!me.listeners || !me.listeners[eventName]) {
+        var self = this;
+        if (!self.listeners || !self.listeners[eventName]) {
             return;
         }
 
         var args = Array.prototype.slice.call(arguments, 1),
-            listeners = me.listeners[eventName],
+            listeners = self.listeners[eventName],
             length = listeners.length,
             i = 0,
             listener;
@@ -51,7 +51,7 @@ Stimuli.utils.Observable = {
 
     },
 
-<span id='Stimuli-utils-Observable-method-subscribe'>    /**
+<span id='Stimuli-core-Observable-method-subscribe'>    /**
 </span>     * @protected
      * Subscribes to an event.
      * @param {String} eventName The event name.
@@ -77,7 +77,7 @@ Stimuli.utils.Observable = {
 
     },
 
-<span id='Stimuli-utils-Observable-method-unsubscribe'>    /**
+<span id='Stimuli-core-Observable-method-unsubscribe'>    /**
 </span>     * @protected
      * Unsubscribes to an event.
      * @param {String} eventName The event name.
@@ -98,6 +98,8 @@ Stimuli.utils.Observable = {
         }
 
     }
-};</pre>
+};
+
+Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);</pre>
 </body>
 </html>

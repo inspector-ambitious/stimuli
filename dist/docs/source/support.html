@@ -17,20 +17,46 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-browser-Support'>/**
-</span> * @class Stimuli.browser.Support
+<span id='Stimuli-core-Support'>/**
+</span> * @class Stimuli.core.Support
  * @singleton
  * This class detects supported browser features.
  */
 
-Stimuli.browser.Support = {
+Stimuli.core.Support = {
 
-<span id='Stimuli-browser-Support-property-isModern'>    /**
+<span id='Stimuli-core-Support-property-documentAddEventListener'>    /**
 </span>     * @property {Boolean}
-     * Is it a modern browser ?
+     * Is true if document supports addEventListener method
      */
-    isModern: typeof document.createEvent !== 'undefined'
+    documentAddEventListener: typeof document.addEventListener === 'function',
 
+<span id='Stimuli-core-Support-property-windowMouseEvent'>    /**
+</span>     * @property {Boolean}
+     * Is true if window supports MouseEvent class (Firefox, Chrome)
+     */
+    windowMouseEvent: typeof MouseEvent === 'function',
+
+
+<span id='Stimuli-core-Support-property-documentCreateEvent'>    /**
+</span>     * @property {Boolean}
+     * Is true if document supports createEvent method (IE9, IE10, IE11, Safari, PhantomJS)
+     */
+    documentCreateEvent: typeof document.createEvent === 'function',
+
+    
+<span id='Stimuli-core-Support-property-documentCreateEventObject'>    /**
+</span>     * @property {Boolean}
+     * Is true if document supports createEventObject method. (IE8, IE9, IE10)
+     */
+    documentCreateEventObject: typeof document.createEventObject === 'function',
+
+
+<span id='Stimuli-core-Support-property-isIE8'>    /**
+</span>     * @property {Boolean}
+     * Is true if browser is ie8
+     */
+    isIE8: typeof document.addEventListener === 'undefined'
 };</pre>
 </body>
 </html>

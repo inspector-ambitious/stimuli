@@ -17,10 +17,23 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-(function() {
-    Stimuli.command.mouse.dblclick = Stimuli.core.Class.inherit(Stimuli.command.Generic);
+Stimuli.core.Class = {
 
+    inherit: function(clsSource) {
+        var cls = function() {
+            return clsSource.apply(this, arguments);
+        };
 
-})();</pre>
+        Stimuli.core.Object.merge(cls.prototype, clsSource.prototype);
+
+        return cls;
+    },
+
+    mix: function(cls, mixin) {
+        Stimuli.core.Object.merge(cls.prototype, mixin);
+    }
+
+};
+</pre>
 </body>
 </html>

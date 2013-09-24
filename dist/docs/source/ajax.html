@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+(function() {
+
+    Stimuli.core.Ajax = function() {
+        var xhr;
+
+        try {
+            xhr = new XMLHttpRequest();
+        } catch (ex) {
+            xhr = new ActiveXObject(&quot;Microsoft.XMLHTTP&quot;);
+        }
+
+        this.xhr = xhr;
+    };
+
+    var Ajax = Stimuli.core.Ajax;
+
+    Ajax.prototype.request = function(options) {
+        var xhr = this.xhr,
+            url = options.url,
+            method = options.method || 'get',
+            callback = options.callback,
+            sync = options.sync || false,
+            timeout = options.timeout || 5000,
+            data = options.data;
+
+        if (!sync) {
+            xhr.onload = function() {
+                xhr.onload = null;
+                xhr.onreadystatechange = null;
+                callback(this.responseText);
+            };
+
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState === 4){
+                    xhr.onload = null;
+                    xhr.onreadystatechange = null;
+                    callback(this.responseText);
+                }
+            };
+        }
+
+
+        xhr.open(method, url, !sync);
+        xhr.timeout = timeout;
+        xhr.ontimeout = options.ontimeout;
+        xhr.send();
+
+        if (sync) {
+            callback(xhr.responseText);
+        }
+    };
+
+})();</pre>
+</body>
+</html>

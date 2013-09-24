@@ -1,4 +1,4 @@
-/*! stimuli - v0.0.1 - 2013-09-19 */
+/*! stimuli - v0.0.1 - 2013-09-24 */
 'use strict';
 
 // Source: lib/sizzle/sizzle.js
@@ -2007,75 +2007,160 @@ if ( typeof define === "function" && define.amd ) {
  */
 
 var Stimuli = function(options) {
+    var self = this;
+
     options = options || {};
 
+    self.viewport = new Stimuli.view.Viewport();
 
-    if (typeof Stimuli.device.Mouse !== 'undefined') {
-        this.mouse = new Stimuli.device.Mouse(options);
-    }
+    self.browser = new Stimuli.virtual.Browser({
+        viewport: self.viewport
+    });
 
-};
+    self.mouse = new Stimuli.virtual.Mouse({
+        viewport: self.viewport
+    });
 
-/**
- * Returns a virtual mouse
- * @return {Stimuli.device.Mouse}
- */
-Stimuli.prototype.getMouse = function() {
-    return this.mouse;
-};
+    self.initScheduler();
+    self.browser.attachScheduler(self.scheduler);
+    self.mouse.attachScheduler(self.scheduler);
 
-/**
- * @static
- * Returns the first dom element matching the css selector.
- * @param {string} selector Css selector jquery styl
- * @return {HTMLElement}
- */
-Stimuli.$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector)[0];
-};
-
-/**
- * @static
- * Returns all dom elements matching the css selector.
- * @param {string} selector Css selector jquery styl
- * @return {HTMLElement[]}
- */
-
-Stimuli.$$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector);
 };
 
 // Namespaces declaration
-Stimuli.browser = {};
-
-Stimuli.device = {};
-
-Stimuli.event = {
-    synthetizer: {}
-};
-
-Stimuli.command = {
-    mouse: {
-        utils: {}
+Stimuli.view = {
+    event: {
+        synthetizer: {}
     }
 };
 
-Stimuli.utils = {};
+Stimuli.virtual = {
+    mouse: {},
+    keyboard: {},
+    touch:{}
+};
 
+Stimuli.core = {};
 
+Stimuli.command = {
+    mouse: {}
+};
 
-// Source: src/utils/object.js
 
 /**
- * @class Stimuli.utils.Object
+ * Navigates to an url
+ * @param {Object} options
+ */
+Stimuli.prototype.navigateTo = function() {
+    var browser = this.browser;
+    browser.navigateTo.apply(browser, arguments);
+    return this;
+};
+
+/**
+ * Executes a mouse click.
+ * @param {Object} options
+ */
+Stimuli.prototype.click = function() {
+    var mouse = this.mouse;
+    mouse.click.apply(mouse, arguments);
+    return this;
+};
+
+/**
+ * Executes a mouse double click.
+ * @param {Object} options
+ */
+Stimuli.prototype.dblclick = function() {
+    var mouse = this.mouse;
+    mouse.dblclick.apply(mouse, arguments);
+    return this;
+};
+
+/**
+ * Destroy the stimuli instance
+ * @param {Object} options
+ */
+Stimuli.prototype.destroy = function() {
+    var browser = this.browser;
+    browser.close();
+    return this;
+};
+
+/**
+ * Finds the dom element matching the css selector.
+ * @param {Object} options
+ */
+Stimuli.prototype.$ = function(selector) {
+    return this.viewport.$(selector);
+};
+
+/**
+ * Returns the browser window
+ * @return {window}
+ */
+Stimuli.prototype.getWindow = function() {
+    return this.viewport.getWindow();
+};
+
+
+
+
+
+// Source: src/core/support.js
+
+/**
+ * @class Stimuli.core.Support
+ * @singleton
+ * This class detects supported browser features.
+ */
+
+Stimuli.core.Support = {
+
+    /**
+     * @property {Boolean}
+     * Is true if document supports addEventListener method
+     */
+    documentAddEventListener: typeof document.addEventListener === 'function',
+
+    /**
+     * @property {Boolean}
+     * Is true if window supports MouseEvent class (Firefox, Chrome)
+     */
+    windowMouseEvent: typeof MouseEvent === 'function',
+
+
+    /**
+     * @property {Boolean}
+     * Is true if document supports createEvent method (IE9, IE10, IE11, Safari, PhantomJS)
+     */
+    documentCreateEvent: typeof document.createEvent === 'function',
+
+    
+    /**
+     * @property {Boolean}
+     * Is true if document supports createEventObject method. (IE8, IE9, IE10)
+     */
+    documentCreateEventObject: typeof document.createEventObject === 'function',
+
+
+    /**
+     * @property {Boolean}
+     * Is true if browser is ie8
+     */
+    isIE8: typeof document.addEventListener === 'undefined'
+};
+
+// Source: src/core/object.js
+
+/**
+ * @class Stimuli.core.Object
  * @singleton
  * @private
  * A set of useful methods to deal with objects.
  */
 
-Stimuli.utils.Object = {
+Stimuli.core.Object = {
 
     /**
      * Merge objects properties.
@@ -2098,16 +2183,37 @@ Stimuli.utils.Object = {
 
 };
 
-// Source: src/utils/observable.js
+// Source: src/core/class.js
+
+Stimuli.core.Class = {
+
+    inherit: function(clsSource) {
+        var cls = function() {
+            return clsSource.apply(this, arguments);
+        };
+
+        Stimuli.core.Object.merge(cls.prototype, clsSource.prototype);
+
+        return cls;
+    },
+
+    mix: function(cls, mixin) {
+        Stimuli.core.Object.merge(cls.prototype, mixin);
+    }
+
+};
+
+
+// Source: src/core/observable.js
 
 /**
- * @class Stimuli.utils.Observable
+ * @class Stimuli.core.Observable
  * @singleton
  * @private
  * Base class that provides a common interface for publishing events.
  */
 
-Stimuli.utils.Observable = {
+Stimuli.core.Observable = {
 
     /**
      * @protected
@@ -2116,13 +2222,13 @@ Stimuli.utils.Observable = {
      * @param {Mixed} [data] the data to be emitted.
      */
     publish: function(eventName) {
-        var me = this;
-        if (!me.listeners || !me.listeners[eventName]) {
+        var self = this;
+        if (!self.listeners || !self.listeners[eventName]) {
             return;
         }
 
         var args = Array.prototype.slice.call(arguments, 1),
-            listeners = me.listeners[eventName],
+            listeners = self.listeners[eventName],
             length = listeners.length,
             i = 0,
             listener;
@@ -2183,15 +2289,17 @@ Stimuli.utils.Observable = {
     }
 };
 
-// Source: src/utils/scheduler.js
+Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
+
+// Source: src/core/scheduler.js
 
 /**
- * @class Stimuli.utils.Scheduler
- * @mixins Stimuli.utils.Observable
+ * @class Stimuli.core.Scheduler
+ * @mixins Stimuli.core.Observable
  * @private
  * Provides a convenient way to "buffer" the emission of data.
  * @cfg {Number} speed The emission speed
- * @cfg {Number} interval The emission interval in ms
+ * @cfg {Number} delay The emission delay in ms
  * @constructor
  * Creates a new scheduler
  * @param {Object} config The config object
@@ -2199,45 +2307,71 @@ Stimuli.utils.Observable = {
 
 (function() {
 
-    Stimuli.utils.Scheduler = function(options) {
-        this.options = options;
+    Stimuli.core.Scheduler = function(options) {
+        this.delay = options.delay || 1;
+        this.speed = options.speed || 1;
+
         this.queue = [];
         this.locked = false;
     };
 
+    var Scheduler = Stimuli.core.Scheduler;
+
     // Applies Observable mixin
-    Stimuli.utils.Object.merge(Stimuli.utils.Scheduler.prototype, Stimuli.utils.Observable);
+    Stimuli.core.Class.mix(Stimuli.core.Scheduler, Stimuli.core.Observable);
 
     /**
      * Receives data to emit.
      * @param {Object} data The data to emit.
      */
-    Stimuli.utils.Scheduler.prototype.receive = function(data) {
+    Scheduler.prototype.schedule = function(data, callback, options) {
+        var self = this,
+            frame = {data: data, callback: callback, options: options};
 
-        var me = this;
+        if (options && options.now) {
+            self.queue.splice(0, 0, frame);
+        } else {
+            self.queue.push(frame);
+        }
 
-        me.queue.push(data);
+        self.emit();
 
-        emit(me);
+    };
 
+    Scheduler.prototype.calculateTimeout = function(options) {
+        var delay = this.delay,
+            speed = this.speed,
+            timeout;
+
+        if (options) {
+            delay = !isNaN(options.delay) ? options.delay: delay;
+            speed = !isNaN(options.speed) ? options.speed: speed;
+        }
+
+        return delay/speed;
+    };
+
+    Scheduler.prototype.skip = function() {
+        this.locked = false;
+        this.emit();
     };
 
     /**
      * @private
      * Schedules emission of received data   
      */
-    function emit(me) {
-
-        if (me.locked || me.queue.length === 0) {
+    Scheduler.prototype.emit = function() {
+        var self = this;
+        if (self.locked || self.queue.length === 0) {
             return;
         }
 
-        me.locked = true;
+        self.locked = true;
 
-        var data = me.queue.shift(),
-            fn = data.callback || function() {};
-
-        delete data.callback;
+        var frame = self.queue.shift(),
+            options = frame.options,
+            data = frame.data,
+            fn = frame.callback || function() {};
 
         var callback = function() {
             var args = Array.prototype.slice.call(arguments, 0);
@@ -2247,97 +2381,313 @@ Stimuli.utils.Observable = {
                 // adding a function as last argument to allow the execution
                 // of the next device action
                 args.push(function() {
-                    me.locked = false;
-                    emit(me);
+                    self.locked = false;
+                    self.emit();
                 });
 
-                fn.apply(me, args);
+                fn.apply(self, args);
                 // synchronous action callback
             } else {
-                fn.apply(me, args);
-                me.locked = false;
-                emit(me);
+                fn.apply(self, args);
+                self.locked = false;
+                self.emit();
             }
 
         };
 
-        setTimeout(function() {
-            me.publish('emit', data, callback);
-        }, me.options.speed * me.options.interval);
+        var timeout = self.calculateTimeout(options);
 
-    }
+        if (timeout) {
+            setTimeout(function() {
+                self.publish('data', data, callback, options);
+            }, timeout);
+        } else {
+            self.publish('data', data, callback, options);
+        }
+
+
+    };
 
 })();
 
-// Source: src/browser/support.js
+// Source: src/core/deferable.js
+
+(function() {
+
+
+    Stimuli.core.Deferable = {
+
+        initScheduler: function(options) {
+            var self = this;
+            options = options || {};
+            options.delay = options.delay || 0;
+            options.speed = options.speed || 1;
+
+            self.scheduler = new Stimuli.core.Scheduler({
+                delay: 0
+            });
+
+            var error = null;
+
+            self.scheduler.subscribe('data', function(fn, callback, options) {
+
+                if (error !== null) {
+                    if (options && options.failure) {
+                        callback(error);
+                        error = null;
+                    }
+                    self.scheduler.skip();
+                    return;
+                }
+
+                try {
+                    fn(callback);
+                } catch(e) {
+                    error = e;
+                    self.scheduler.skip();
+                }
+
+            });
+        },
+
+        attachScheduler: function(scheduler) {
+            this.scheduler = scheduler;
+        },
+
+        defer: function(fn, callback, options) {
+            var self = this;
+            self.scheduler.schedule(fn, callback, options);
+            return self;
+        },
+
+        then: function(fn) {
+            var self = this;
+            self.defer(function(cb) {cb();}, fn, {delay: 0});
+            return self;
+        },
+
+        sleep: function(delay) {
+            var self = this;
+            self.defer(function(cb) {cb();}, null, {delay: delay});
+            return self;
+        },
+
+        onfailure: function(fn) {
+            var self = this;
+            self.defer(function() {}, fn, {delay: 0, failure: true});
+            return self;
+        }
+
+    };
+
+//    Stimuli.core.Object.merge(Stimuli.core.Deferable, Stimuli.core.Observable);
+
+
+})();
+
+// Dependencies
+Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
+
+
+// Source: src/core/ajax.js
+
+(function() {
+
+    Stimuli.core.Ajax = function() {
+        var xhr;
+
+        try {
+            xhr = new XMLHttpRequest();
+        } catch (ex) {
+            xhr = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+
+        this.xhr = xhr;
+    };
+
+    var Ajax = Stimuli.core.Ajax;
+
+    Ajax.prototype.request = function(options) {
+        var xhr = this.xhr,
+            url = options.url,
+            method = options.method || 'get',
+            callback = options.callback,
+            sync = options.sync || false,
+            timeout = options.timeout || 5000,
+            data = options.data;
+
+        if (!sync) {
+            xhr.onload = function() {
+                xhr.onload = null;
+                xhr.onreadystatechange = null;
+                callback(this.responseText);
+            };
+
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState === 4){
+                    xhr.onload = null;
+                    xhr.onreadystatechange = null;
+                    callback(this.responseText);
+                }
+            };
+        }
+
+
+        xhr.open(method, url, !sync);
+        xhr.timeout = timeout;
+        xhr.ontimeout = options.ontimeout;
+        xhr.send();
+
+        if (sync) {
+            callback(xhr.responseText);
+        }
+    };
+
+})();
+
+// Source: src/core/iframe.js
+
+(function() {
+    
+    Stimuli.core.Iframe = function(options) {
+        options = options || {};
+        var self = this,
+            iframe = document.createElement('iframe'),
+            style = iframe.style;
+
+        style.width = options.width ? options.width + 'px' : '100%';
+
+        style.height = options.height ? options.height + 'px' : '100%';
+
+        style.position = 'absolute';
+        style.top = 0;
+        style.left = 0;
+        style.border = 0;
+
+        iframe.id = 'stimuli-iframe';
+        iframe.name = 'stimuli-iframe';
+
+        iframe.frameBorder = 0;
+
+        style.margin = 0;
+        style.padding = 0;
+
+        document.body.appendChild(iframe);
+
+        self.iframeEl = iframe;
+
+        self.iframeObserver = new Stimuli.view.event.Observer(iframe);
+
+        self.iframeObserver.subscribe('load', self.onLoad, self);
+
+    };
+
+    var Iframe = Stimuli.core.Iframe;
+
+    Stimuli.core.Class.mix(Iframe, Stimuli.core.Observable);
+
+    Iframe.prototype.navigateTo = function(options) {
+        
+        if (typeof options === 'string') {
+            options = {
+                url: options
+            };
+        }
+
+
+        this.iframeEl.src = options.url;
+
+//        var self = this;
+//
+//
+//        self.ajax.request({
+//
+//            url: options.url,
+//
+//            callback: function(response) {
+//                var win = self.iframeEl.contentWindow,
+//                    doc = self.iframeEl.contentWindow;
+//
+//                doc.open().write(response);
+//
+//                doc.close()
+//
+//            },
+//
+//            ontimeout: function() {
+//                callback(null);
+//            }
+//        });
+
+//        var self = this,
+//            timeout = options.timeout || 2000,
+//            startingTime = (new Date()).getTime(),
+//            iframe = self.iframeEl;
+//
+//
+//        function waitForReady() {
+//            var win = iframe.contentWindow;
+//
+//
+//        }
+
+
+
+//        iframeObserver.subscribe('unload', function() {
+//            console.log('unload');
+//        });
+
+
+    };
+
+    Iframe.prototype.onLoad = function() {
+        var self = this,
+            win = self.iframeEl.contentWindow;
+
+
+        self.winObserver = new Stimuli.view.event.Observer(win);
+
+        self.winObserver.subscribe('unload', function() {
+            self.winObserver.unsubscribeAll();
+            self.publish('beforerefresh');
+        });
+
+
+        self.publish('refresh', win);
+    };
+
+    Iframe.prototype.destroy = function() {
+        var self = this;
+        if (self.iframeEl) {
+            self.iframeObserver.unsubscribeAll();
+            self.winObserver.unsubscribeAll();
+            document.body.removeChild(self.iframeEl);
+            self.iframeEl = null;
+        }
+    };
+
+})();
+
+// Source: src/view/viewport.js
 
 /**
- * @class Stimuli.browser.Support
- * @singleton
- * This class detects supported browser features.
- */
-
-Stimuli.browser.Support = {
-
-    /**
-     * @property {Boolean}
-     * Is it a modern browser ?
-     */
-    isModern: typeof document.createEvent !== 'undefined'
-
-};
-
-// Source: src/browser/viewport.js
-
-/**
- * @class Stimuli.browser.Viewport
- * Provides methods to deal with the window and the dom elements positioning.
- * @cfg {Window} view A window object 
+ * @class Stimuli.view.Viewport
+ * Provides methods to deal with the visible elements of the viewport,
+ * the page size and scrolling.
+ * @cfg {Window=} view A window object 
  * @constructor
- * Creates a new viewport
  * @param {Object} config The config object
  */
 
 (function() {
 
-    Stimuli.browser.Viewport = function(view) {
+    Stimuli.view.Viewport = function(view) {
 
         this.view = view || window;
 
     };
 
-    var Viewport = Stimuli.browser.Viewport;
-
-    /**
-     * Iterates through all the document visible pixels.
-     * @param {Function} fn The function to call for each visible pixel
-     * @param {HTMLElement} el The element
-     * @param {Number} x The pixel x coordinate
-     * @param {Number} y The pixel y coordinate
-     */
-    Viewport.prototype.traverse = function(fn) {
-        var doc = this.view.document,
-            x = 0,
-            y = 0,
-            el;
-
-        // Scan the entire viewport pixel by pixel
-        while(true) {
-            el = doc.elementFromPoint(x, y);
-            
-            if (!el) {
-                break;
-            }
-
-            while(el) {
-                fn(el, x, y);
-                y++;
-                el = doc.elementFromPoint(x, y);
-            }
-            x++;
-            y = 0;
-        }
-    };
+    var Viewport = Stimuli.view.Viewport;
 
     /**
      * Returns the x coordinate of the window relative to the screen.
@@ -2356,83 +2706,101 @@ Stimuli.browser.Support = {
     };
 
     /**
-     * Returns the element from the document at the specified coordinates.
+     * Returns the a visible element at the specified coordinates.
      * @param {Number} x The x coordinate
      * @param {Number} y The y coordinate
      * @return {HTMLElement}
      */
-    Viewport.prototype.getElementAt = function(x, y) {
-        return this.view.document.elementFromPoint(x, y);
+    Viewport.prototype.getVisibleElementAt = function(x, y) {
+        var self = this,
+            doc = self.view.document;
+
+        if (x < 0 || y < 0) {
+            return null;
+        }
+
+        var ret = doc.elementFromPoint(x, y);
+
+
+        // IE8 hack: When nesting iframes ie8 doesn't layout properly 
+        // freshly inserted elements, so before calling elementFromPoint
+        // we trigger a reflow to force the layout to be recalculated
+        // (Note: that was a tricky one it's 4:39AM)
+        if (Stimuli.core.Support.isIE8 &&
+            ret === null &&
+            self.view.parent && self.view.parent.parent) { // encapsulated iframe check
+            doc.body.getBoundingClientRect();
+            ret = doc.elementFromPoint(x, y);
+        }
+
+        return ret;
     };
 
     /**
-     * Returns the current viewport window.
+     * Returns the viewport window.
      * return {Window}
      */
-    Viewport.prototype.getView = function() {
+    Viewport.prototype.getWindow = function() {
         return this.view;
     };
-    
-})();
 
-// Source: src/device/generic.js
-
-/**
- * @class Stimuli.device.Generic
- * This abstract class provides a standardized way for a device to emit a command.
- * @mixins Stimuli.utils.Observable
- * @private
- */
-
-(function() {
-
-    Stimuli.device.Generic = {
-
-        /**
-         * @protected
-         * @param {String} type The emitted command name
-         * @param {Object} options The emitted command options
-         * @param {Function} callback The callback function
-         */
-        send: function(command, options, callback) {
-
-            var me = this;
-
-            callback = callback || function() {};
-
-            me.publish('command', {
-
-                device: me.name,
-
-                command: command,
-
-                options: options,
-
-                callback: callback
-
-            });
-
-        }
-
+    /**
+     * Sets the viewport window.
+     * return {Window}
+     */
+    Viewport.prototype.setWindow = function(win) {
+        this.view = win;
     };
 
-    Stimuli.utils.Object.merge(Stimuli.device.Generic, Stimuli.utils.Observable);
+    /**
+     * Returns the viewport document.
+     * return {Window}
+     */
+    Viewport.prototype.getDocument = function() {
+        return this.view.document;
+    };
 
+    /**
+     * Returns the first {HTMLElement} matching the css selector.
+     * @param {string} selector The css selector (see http://sizzlejs.com/)
+     * @param {Boolean=} all If set to True all elements matching the css selector will be returned in an {Array}. 
+     * @return {Mixed}
+     */
+
+    Viewport.prototype.$ = function(selector, all) {
+        /* jshint newcap: false */
+        var elements = Sizzle(selector, this.view.document);
+        if (all) {
+            return elements;
+        } else {
+            return elements[0];
+        }
+    };
+
+    
 })();
 
-// Source: src/event/emitter.js
+// Source: src/view/event/emitter.js
 
 /**
- * @class
+ * @private
+ * @class Stimuli.view.event.Emitter
+ * @singleton
+ * Provides an abstraction layer to routes events to their corresponding synthetizers.
  */
 
 (function() {
     
-    var synthetizer = Stimuli.event.synthetizer;
+    var synthetizer = Stimuli.view.event.synthetizer;
 
-    Stimuli.event.Emitter = {
+    Stimuli.view.event.Emitter = {
 
-        isMouseEvent: function(name) {
+        /**
+         * Determines if an event is a mouse event
+         * @param {String} eventType The event type
+         * @retun {Boolean} True if it's a mouse event
+         */
+        isMouseEvent: function(eventType) {
             return {
                 click: true,
                 mousedown: true,
@@ -2444,13 +2812,18 @@ Stimuli.browser.Support = {
                 mouseleave: true,
                 mouseenter: true,
                 contextmenu: true
-            }[name] || false;
+            }[eventType] || false;
         },
 
+        /**
+         * Emits the event and call the callback function
+         * @param {Object} data The event configuration
+         * @param {Function} callback The callback function to be called after the invent is injected.
+         */
         emit: function(data, callback) {
             var result;
 
-            if (this.isMouseEvent(data.name)) {
+            if (this.isMouseEvent(data.type)) {
                 result = synthetizer.Mouse.inject(data);
             }
 
@@ -2462,56 +2835,53 @@ Stimuli.browser.Support = {
 
 })();
 
-// Source: src/event/binder.js
+// Source: src/view/event/observer.js
 
 /**
- * @class
- * Allows to bind/unbind listeners to dom elements.
+ * @class Stimuli.view.event.Observer
+ * Allows to bind/unbind listeners to EventTargets.
  */
 
 (function() {
 
-    Stimuli.event.Binder = function(element) {
-        if (typeof element === 'string') {
-            element = Stimuli.$(element);
-        }
+    Stimuli.view.event.Observer = function(element) {
 
         this.element = element;
 
         this.listeners = {};
     };
 
-    var Binder = Stimuli.event.Binder;
+    var Observer = Stimuli.view.event.Observer;
 
-    Binder.prototype.on = function(type, listener, scope) {
-        var me = this;
+    Observer.prototype.subscribe = function(type, listener, scope) {
+        var self = this;
 
-        scope = scope || me;
+        scope = scope || self;
 
         function wrappedListener() {
             listener.apply(scope, arguments);
         }
 
-        if (Stimuli.browser.Support.isModern) {
-            me.element.addEventListener(type, wrappedListener, false);
+        if (Stimuli.core.Support.documentAddEventListener) {
+            self.element.addEventListener(type, wrappedListener, false);
         } else {
-            me.element.attachEvent('on' + type, wrappedListener);
+            self.element.attachEvent('on' + type, wrappedListener);
         }
 
-        if (!me.listeners[type]) {
-            me.listeners[type] = [];
+        if (!self.listeners[type]) {
+            self.listeners[type] = [];
         }
 
-        me.listeners[type].push({
+        self.listeners[type].push({
             type: type,
             listener: listener,
             wrappedListener: wrappedListener
         });
     };
 
-    Binder.prototype.off = function(type, listener) {
-        var me = this,
-            listeners = me.listeners[type],
+    Observer.prototype.unsubscribe = function(type, listener) {
+        var self = this,
+            listeners = self.listeners[type],
             length = listeners.length,
             i = 0,
             wrappedListener;
@@ -2524,23 +2894,23 @@ Stimuli.browser.Support = {
             }
         }
 
-        if (Stimuli.browser.Support.isModern) {
-            me.element.removeEventListener(type, wrappedListener, false);
+        if (Stimuli.core.Support.documentAddEventListener) {
+            self.element.removeEventListener(type, wrappedListener, false);
         } else {
-            me.element.detachEvent('on' + type, wrappedListener);
+            self.element.detachEvent('on' + type, wrappedListener);
         }
     };
 
-    Binder.prototype.allOff = function() {
-        var me = this,
+    Observer.prototype.unsubscribeAll = function() {
+        var self = this,
             type,
             listeners;
 
-        for (type in me.listeners) {
-            if (me.listeners.hasOwnProperty(type)) {
-                listeners = me.listeners[type];
+        for (type in self.listeners) {
+            if (self.listeners.hasOwnProperty(type)) {
+                listeners = self.listeners[type];
                 while (listeners[0]) {
-                    me.off(type, listeners[0].listener);
+                    self.unsubscribe(type, listeners[0].listener);
                 }
             }
         }
@@ -2549,140 +2919,116 @@ Stimuli.browser.Support = {
 
 })();
 
-// Source: src/device/mouse.js
+// Source: src/view/event/synthetizer/mouse.js
 
 /**
- * @class Stimuli.device.Mouse
- * @alternateClassName Stimuli.Mouse
- * @mixins Stimuli.device.Generic
- * Your virtual mouse.
- * @cfg {Window} [view=window] The target window where events will be injected
- * @constructor
- * @param {Object} The config object
+ * @private
+ * @class Stimuli.view.event.synthetizer.Mouse
+ * @singleton
+ * Abstraction layer for cross-browsers synthetic mouse events injection. 
  */
-
-(function() {
-
-    Stimuli.device.Mouse = function(options) {
-    
-        options = options = {};
-
-        options.view = options.view || window;
-
-        this.viewport = new Stimuli.browser.Viewport(options.view);
-
-        this.name = 'mouse';
-
-    };
-    
-    var Mouse = Stimuli.device.Mouse;
-
-    /**
-     * Executes a simple click.
-     * @param {Object} options
-     */
-    Mouse.prototype.click = function(options, callback) {
-        return this.send('click', options, callback);
-    };
-
-    /**
-     * Executes a double click.
-     * @param {Object} options
-     */
-    Mouse.prototype.dblclick = function(options, callback) {
-        return this.send('dblclick', options, callback);
-    };
-
-    /**
-     * Presses a button.
-     * @param {Object} options
-     */
-    Mouse.prototype.down = function(options, callback) {
-        return this.send('down', options, callback);
-    };
-
-    /**
-     * Releases a button.
-     * @param {Object} options
-     */
-    Mouse.prototype.up = function(options, callback) {
-        return this.send('up', options, callback);
-    };
-
-    // Extends Stimuli.Device.Abstract
-    Stimuli.utils.Object.merge(Mouse.prototype, Stimuli.device.Generic);
-
-})();
-
-// Source: src/event/synthetizer/mouse.js
-
 (function() {
    
-    var ns = Stimuli.event.synthetizer;
-
-    ns.Mouse = {
+    Stimuli.view.event.synthetizer.Mouse = {
  
-        isCancelable: function(name) {
-            return {
-                click: true,
-                dblclick: true,
-                mousedown: true,
-                mouseup: true,
-            }[name] || false;
-        },
+        /**
+         * Injects an a synthetic mouse event into the dom.
+         * @param {Object} eventConfig The mouse event configuration
+         */
 
-
-        inject: function(data) {
-            var cancelable = this.isCancelable(data.name),
-                event,
+        inject: function(eventConfig) {
+            var event,
                 canceled;
 
-            if (Stimuli.browser.Support.isModern) {
+            if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
                 
-                event = data.view.document.createEvent('MouseEvents');
+                event = eventConfig.view.document.createEvent('MouseEvents');
 
                 event.initMouseEvent(
-                    data.name,
-                    data.bubbles,
-                    cancelable,
-                    data.view,
-                    data.detail,
-                    data.screenX,
-                    data.screenY,
-                    data.clientX,
-                    data.clientY,
-                    data.ctrlKey,
-                    data.altKey,
-                    data.shiftKey,
-                    data.metaKey,
-                    data.button,
-                    data.relatedTarget || null //IE 9 throw and Invalid argument if this one is undefined so just in case
+                    eventConfig.type,
+                    eventConfig.bubbles,
+                    eventConfig.cancelable,
+                    eventConfig.view,
+                    eventConfig.detail,
+                    eventConfig.screenX,
+                    eventConfig.screenY,
+                    eventConfig.clientX,
+                    eventConfig.clientY,
+                    eventConfig.ctrlKey,
+                    eventConfig.altKey,
+                    eventConfig.shiftKey,
+                    eventConfig.metaKey,
+                    eventConfig.button,
+                    eventConfig.relatedTarget || null //IE 9 throw and "Invalid Argument" Error if this property is undefined so just in case
                 );
 
-                canceled = !data.target.dispatchEvent(event);
+                canceled = !eventConfig.target.dispatchEvent(event);
             
-            } else {
+            } else { //IE8
+                
+                var eventName = 'on' + eventConfig.type;
+
+                // Regardless of their values specified in the event object,
+                // cancelBubble is automatically initialized by fireEvent. 
+                // (see http://msdn.microsoft.com/en-us/library/ie/ms536423(v=vs.85).aspx)
+                // So to bypass this limitation we create a listener which will be binded expando style,
+                // this way it will be fired before any other listener and the cancelBubble can be fixed.
             
-                event = data.view.document.createEventObject();
+                var currentListener = eventConfig.target[eventName];
 
-                event.bubbles = data.bubbles;
-                event.detail = data.detail;
-                event.screenX = data.screenX;
-                event.screenY = data.screenY;
-                event.clientX = data.clientX;
-                event.clientY = data.clientY;
-                event.ctrlKey = data.ctrlKey;
-                event.altKey = data.altKey;
-                event.shiftKey = data.shiftKey;
-                event.metaKey = data.metaKey;
-                event.button = data.button;
-                event.relatedTarget = data.relatedTarget;
-     
-                canceled = !data.target.fireEvent('on'+ data.name, event);
+                eventConfig.target[eventName] = function() {
+                    var e = eventConfig.view.event;
 
-                // IE8 can cancel mousedown, mouseup, mouseover seriously....
-                canceled = cancelable ? canceled : false;
+                    e.cancelBubble = !eventConfig.bubbles;
 
+                    // A possible hack to force an event to not be cancelable
+                    // we could set the returnValue to readonly...
+                    // But don't think it's a good idea to do that. 
+                    // Leaving this commented code for now.
+                    // if (!eventConfig.cancelable) {
+                    //     Object.defineProperty( e, 'returnValue', {
+                    //         get: function () {
+                    //             return undefined;
+                    //         }
+                    //     });
+                    // }
+
+                    if (currentListener) {
+                        currentListener.apply(this);
+                    } else {
+                        eventConfig.target[eventName] = null;
+                    }
+                };
+    
+                event = eventConfig.view.document.createEventObject();
+                event.detail = eventConfig.detail;
+                event.screenX = eventConfig.screenX;
+                event.screenY = eventConfig.screenY;
+                event.clientX = eventConfig.clientX;
+                event.clientY = eventConfig.clientY;
+                event.ctrlKey = eventConfig.ctrlKey;
+                event.altKey = eventConfig.altKey;
+                event.shiftKey = eventConfig.shiftKey;
+                event.metaKey = eventConfig.metaKey;
+                event.button = eventConfig.button;
+
+                // TODO: the real event flow should be investigated
+                // see http://www.quirksmode.org/js/events_mouse.html#relatedtarget
+                if (eventConfig.relatedTarget) {
+                    if (eventName === 'onmouseover') {
+                        event.fromElement = eventConfig.relatedTarget;
+                        event.toElement = eventConfig.target;
+                    }
+
+                    if (eventName === 'onmouseout') {
+                        event.fromElement = eventConfig.target;
+                        event.toElement = eventConfig.relatedTarget;
+                    }
+
+                }
+
+                eventConfig.target.fireEvent(eventName, event);
+                canceled = event.returnValue === false;
             }
             
             return {
@@ -2695,400 +3041,471 @@ Stimuli.browser.Support = {
 })();
 
 
+// Source: src/virtual/mouse.js
+
+/**
+ * @class Stimuli.virtual.Mouse
+ * @alternateClassName Stimuli.Mouse
+ * @mixins Stimuli.device.Generic
+ * The virtual mouse interface.
+ * @cfg {Stimuli.virtual.Browser} browser The browser to which the mouse is attached to.
+ * @constructor
+ * @param {Object} The config object
+ */
+
+(function() {
+
+    Stimuli.virtual.Mouse = function(options) {
+        this.viewport = options.viewport;
+    };
+    
+    var Mouse = Stimuli.virtual.Mouse;
+
+    // Extends Stimuli.Device.Abstract
+    Stimuli.core.Class.mix(Mouse, Stimuli.core.Deferable);
+
+    /**
+     * Executes a simple click.
+     * @param {Object} options
+     */
+    Mouse.prototype.click = function(options, callback) {
+        return this.defer(this.generateCommand('click', options), callback);
+    };
+
+    /**
+     * Executes a double click.
+     * @param {Object} options
+     */
+    Mouse.prototype.dblclick = function(options, callback) {
+        return this.defer(this.generateCommand('dblclick', options), callback);
+    };
+
+    Mouse.prototype.generateCommand = function(commandName, options) {
+        var viewport = this.viewport;
+
+        return function(callback) {
+            var command = new Stimuli.command.mouse[commandName](options, viewport);
+            command.execute(callback);
+        };
+
+    };
+
+
+
+})();
+
+// Source: src/virtual/browser.js
+
+(function() {
+    
+    Stimuli.virtual.Browser = function(options) {
+        var self = this;
+        self.viewport = options.viewport;
+
+        self.iframe = new Stimuli.core.Iframe();
+
+        self.iframe.subscribe('refresh', function(win){
+            self.win = win;
+            self.viewport.setWindow(self.win);
+        });
+
+        self.iframe.subscribe('beforerefresh', function() {
+            self.win = null;
+            self.viewport.setWindow(null);
+        });
+    };
+
+    var Browser = Stimuli.virtual.Browser;
+
+    // Extends Stimuli.Device.Abstract
+    Stimuli.core.Class.mix(Browser, Stimuli.core.Deferable);
+
+    Browser.prototype.navigateTo = function(options, callback) {
+        var self = this;
+        self.viewport.setWindow(null);
+        self.defer(function(cb) {
+            self.iframe.subscribe('refresh', function(win) {
+                cb(win);
+            });
+            self.iframe.navigateTo(options);
+        }, callback);
+
+        return self;
+    };
+
+    Browser.prototype.close = function() {
+        var self = this;
+
+        return self.defer(function() {
+            self.viewport.setWindow(window);
+            self.iframe.destroy();
+        });
+
+    };
+
+})();
+
 // Source: src/command/generic.js
 
 (function() {
     
-    Stimuli.command.Generic = {
+    Stimuli.command.Generic = function(options, viewport) {
+        var self = this;
+        self.options = {};
+        self.viewport = viewport;
+        Stimuli.core.Object.merge(self.options, options);
+        self.events = [];
+        self.initScheduler();
+    };
 
-        getEvents: function() {
-            return this.events;
-        },
+    var Generic = Stimuli.command.Generic;
 
-        fail: function(message) {
-            this.options.callback(message);
-        },
+    Stimuli.core.Class.mix(Generic, Stimuli.core.Deferable);
 
-        getTarget: function() {
-            
-            var options = this.options,
-                target = null;
+    Generic.prototype.configure = Generic.prototype.then;
 
-            if (options.target === 'function') {
-                target = options.target();
-            } else {
-                target = options.target || this.viewport.getElementAt(options.x, options.y);
+    Generic.prototype.finish = function(callback) {
+        var self = this;
+        self.then(function() {
+            if (callback) {
+                callback(self.events);
             }
+        });
 
-            return target;
-        },
+        return self;
+    };
 
-        getCancelable: function() {
-            return typeof this.options.cancelable === 'boolean' ? this.options.cancelable : true;
-        },
-
-        getBubbles: function() {
-            return typeof this.options.bubbles === 'boolean' ? this.options.bubbles : true;
-        },
-        
-        getAltKey: function() {
-            return this.options.altKey || false;
-        },
-
-        getMetaKey: function() {
-            return this.options.metaKey || false;
-        },
-
-        getCtrlKey: function() {
-            return this.options.ctrlKey || false;
-        },
-
-        getShiftKey: function() {
-            return this.options.shiftKey || false;
-        },
-
-        send: function(data, cb) {
-            var me = this,
-                callback = function(event, canceled) {
-                
-                me.events.push({
+    Generic.prototype.inject =  function(generateEventConfig, delay) {
+        var self = this,
+            callback = function(event, canceled) {
+                self.events.push({
                     src: event,
                     canceled: canceled
                 });
-                
-                if (cb) {
-                    cb(null, event, canceled);
-                }
-            };
-            
-            data.view = this.viewport.getView();
+            },
+            options;
 
-            this.publish('event', data, callback);
-
-            return this;
+        if (!isNaN(delay)) {
+            options = {delay: delay};
         }
-     
+
+        self.defer(function(cb) {
+            var eventConfig = generateEventConfig();
+            eventConfig.view = self.viewport.getWindow();
+            Stimuli.view.event.Emitter.emit(eventConfig, cb);
+        }, callback, options);
+
+        return self;
     };
 
-    Stimuli.utils.Object.merge(Stimuli.command.Generic, Stimuli.utils.Observable);
 
 })();
 
-
-// Source: src/command/mouse/utils/bounding_rectangle.js
+// Source: src/command/mouse/helper.js
 
 (function() {
 
-    var ns = Stimuli.command.mouse.utils;
+    Stimuli.command.mouse.Helper = {
 
-    ns.BoundingRectangle = function(viewport, element) {
-        var me = this;
-        me.element = element;
+        error: {
 
-        me.left = Number.MAX_VALUE;
-        me.right = Number.MIN_VALUE;
-        me.top = Number.MAX_VALUE;
-        me.bottom = Number.MIN_VALUE;
-        me.valid = false;
+            invalidTarget: 'Unable to find target.',
+
+            invalidPosition: 'Unable to calculate the event coordinates. The element is not visible or the specified offset is invalid.'
         
-        viewport.traverse(function(currentElement, x, y) {
-            if (currentElement === element) { // element found
-                me.valid = true;
-                if (!me.targetEdge) {
-                    me.targetEdge = {
-                        x: x,
-                        y: y
-                    };
+        },
+
+        getTarget: function() {
+            var target = this.options.target;
+
+            if (target) {
+                if (typeof target === 'function') {
+                    return target() || null;
+                } else if (typeof target === 'string') {
+                    return this.viewport.$(target) || null;
+                } else if (target.nodeType === 1) { // is an HTMLElement ?
+                    return target || null;
+                } else if (!isNaN(target.x) && !isNaN(target.y)) {
+                    return this.viewport.getVisibleElementAt(target.x, target.y);
                 }
-                me.left = Math.min(me.left, x);
-                me.right = Math.max(me.right, x);
-                me.top = Math.min(me.top, y);
-                me.bottom = Math.max(me.bottom, y);
             }
-        });
-    };
 
-    var BoundingRectangle = ns.BoundingRectangle;
+            return null;
+        },
 
-    BoundingRectangle.prototype.isValid = function() {
-        return this.valid;
-    };
+        getButton: function() {
+                
+            var isIE8 = Stimuli.core.Support.isIE8,
+                buttonsMap = {
+                left: isIE8 ? 0 : 1,
+                middle: isIE8 ? 1 : 4,
+                right: 2,
+                none: undefined
+            };
 
-    BoundingRectangle.prototype.getTargetEdge = function() {
-        var me = this;
-        return {
-            x: me.targetEdge.x - me.left,
-            y: me.targetEdge.y - me.top
-        };
-    };
-
-    BoundingRectangle.prototype.getElement = function() {
-        return this.element;
-    };
-
-    BoundingRectangle.prototype.getTop = function() {
-        return this.top;
-    };
-
-    BoundingRectangle.prototype.getLeft = function() {
-        return this.left;
-    };
-
-    BoundingRectangle.prototype.getBottom = function() {
-        return this.bottom;
-    };
-
-    BoundingRectangle.prototype.getRight = function() {
-        return this.right;
-    };
-
-
-})();
-
-// Source: src/command/mouse/utils/bounding_rectangle_offset.js
-
-(function() {
-
-    var ns = Stimuli.command.mouse.utils;
-
-    ns.BoundingRectangleOffset = function(options, xLimit, yLimit) {
-            
-        this.origin = options.origin || 'center';
-
-        options.x = options.x || 0;
-        options.y = options.y || 0;
-
-        switch(this.origin) {
-            case 'center':
-                this.x = options.x + xLimit/2;
-                this.y = options.y + yLimit/2;
-                break;
-            case 'bl':
-                this.x = options.x;
-                this.y = yLimit - options.y;
-                break;
-            case 'tr':
-                this.x = xLimit - options.x;
-                this.y = options.y;
-                break;
-            case 'br':
-                this.x = xLimit - options.x;
-                this.y = yLimit - options.y;
-                break;
-            default: // 'tl'
-                this.x = options.x;
-                this.y = options.y;
-        }
-
-    };
-
-    var BoundingRectangleOffset = ns.BoundingRectangleOffset;
-
-    BoundingRectangleOffset.prototype.getX = function() {
-        return this.x;
-    };
-
-    BoundingRectangleOffset.prototype.getY = function() {
-        return this.y;
-    };
-
-})();
-
-// Source: src/command/mouse/utils/position.js
-
-(function() {
-
-    var ns = Stimuli.command.mouse.utils;
-
-    ns.Position = function(viewport, element, boundingRectangle, boundingRectangleOffset) {
-        
-        var me = this;
-
-        me.boundingRectangle = boundingRectangle;
-
-        me.boundingRectangleOffset = boundingRectangleOffset;
-
-        me.viewport = viewport;
-
-        me.element = element;
-
-    };
-
-    var Position = ns.Position;
-
-    Position.prototype.isValid = function() {
-        var me = this;
-        return me.viewport.getElementAt(me.getClientX(), me.getClientY()) === me.element;
-    };
-
-    Position.prototype.getClientX = function() {
-        return this.boundingRectangle.getLeft() + this.offset.getX();
-    };
-
-    Position.prototype.getClientY = function() {
-        return this.boundingRectangle.getTop() + this.offset.getY();
-    };
-
-    Position.prototype.getScreenX = function() {
-        return this.viewport.getScreenX() + this.getClientX();
-    };
-
-    Position.prototype.getScreenY = function() {
-        return this.viewport.getScreenY() + this.getClientY();
-    };
-    
-})();
-
-// Source: src/command/mouse/generic.js
-
-(function() {
-
-    var ns = Stimuli.command.mouse;
-
-
-    ns.Generic = {
-        
-        ctor: function(options) {
-
-            this.options = {};
-            
-            Stimuli.utils.Object.merge(this.options, options);
+            return buttonsMap[this.options.button || 'left']; // Default left button
 
         },
 
-        proto: {
+        isElementVisibleAt: function(element, x, y) {
+            return this.viewport.getVisibleElementAt(x, y) === element;
+        },
 
-            getBoundingRectangle: function(element) {
-                return new ns.BoundingRectangle(this.viewport, element);
-            },
+        calculateViewportCoordinates: function(element, offset) {
+            var viewport = this.viewport,
+                coordinates, boundingRectangle, origin, right, left, top, bottom, x, y;
 
-            getBoundingRectangleOffset: function(offset, boundingRectangle) {
-                return new ns.boundingRectangleOffset(offset, boundingRectangle);
-            },
+            offset = offset || {};
 
-            getPosition: function(target, offset) {
-                var me = this,
-                    boundingRectangle,
-                    boundingRectangleOffset,
-                    position;
+            boundingRectangle = element.getBoundingClientRect();
+            right = boundingRectangle.right;
+            left = boundingRectangle.left;
+            top = boundingRectangle.top;
+            bottom = boundingRectangle.bottom;
+
+            // the x offset was a percentage
+            if (typeof offset.x === 'string') {
+                offset.x = Math.round((right - left - 1) * (parseInt(offset.x, 10)/100));
+
+            }
+            // the y offset was a percentage
+            if (typeof offset.y === 'string') {
+                offset.y = Math.round((bottom - top - 1)  * (parseInt(offset.y, 10)/100));
                 
-                if (!target) {
-                    me.fail('Invalid target: not found.');
-                    return null;
-                }
-
-                boundingRectangle = me.getBoundingRectangle(target);
-
-                if (!boundingRectangle.isValid()) {
-                    me.fail('Invalid target: found but not visible in the viewport.');
-                    return null;
-                }
-
-                offset = offset || boundingRectangle.getTargetEdge();
-        
-                boundingRectangleOffset = me.getBoundingRectangleOffset(offset, boundingRectangle.getXLimit(), boundingRectangle.getYLimit());
-
-                position = new ns.Position(this.viewport, target, boundingRectangle, boundingRectangleOffset);
-
-                if (!position.isValid()) {
-                    me.fail('Invalid offset: outside target.');
-                    return null;
-                }
-
-                return position;
-            },
-
-            getButton: function() {
-                
-                var isModern = Stimuli.browser.Support.isModern,
-                    buttonsMap = {
-                    left: isModern ? 0 : 1,
-                    middle: isModern ? 1 : 4,
-                    right: 2,
-                    none: undefined
-                };
-
-                return buttonsMap[this.options.button || 'left']; // Default left button
             }
 
+            // tries to find a correct x offset if it wasn't specified
+            if (isNaN(offset.x)) {
+                for (x = left; x < right && isNaN(offset.x); x++) {
+                    for (y = top; y < bottom && isNaN(offset.x); y++) {
+                        if (viewport.getVisibleElementAt(x, y)) {
+                            offset.x = x - left;
+                            offset.y = offset.y || (y - top);
+                        }
+                    }
+                }
+            }
+
+            // tries to find a valid y offset if it wasn't specified
+            if (isNaN(offset.y)) {
+                for (y = top; y < bottom && isNaN(offset.y); y++) {
+                    for (x = left; x < right && isNaN(offset.y); x++) {
+                        if (viewport.getVisibleElementAt(x, y)) {
+                            offset.y = y - top;
+                        }
+                    }
+                }
+            }
+
+            // translates origin of offset coordinates to the top left corner
+            if (offset.origin) {
+                switch(offset.origin) {
+                    case 'bl':
+                        offset = {
+                            x: offset.x,
+                            y: (bottom - top - 1) + offset.y
+                        };
+                        break;
+                    case 'tr':
+                        offset = {
+                            x: (right - left - 1) + offset.x,
+                            y: offset.y
+                        };
+                        break;
+                    case 'br':
+                        offset = {
+                            x: (right - left - 1) + offset.x,
+                            y: (bottom - top - 1) + offset.y
+                        };
+                        break;
+                }
+            }
+            
+            coordinates = {
+                clientX: left + offset.x,
+                clientY: top + offset.y,
+            };
+
+            coordinates.screenX = viewport.getScreenX() + coordinates.clientX;
+            coordinates.screenY = viewport.getScreenY() + coordinates.clientY;
+
+            // the coordinates is outside the targeted element
+            if (viewport.getVisibleElementAt(coordinates.clientX, coordinates.clientY) !== element) {
+                return null;
+            }
+
+            return coordinates;
+
         }
+        
     };
 
 })();
 
-
-// Source: src/command/mouse/down.js
-
-(function() {
-
-    var ns = Stimuli.command.mouse;
-
-    ns.down = ns.Generic.ctor;
-
-    ns.down.prototype.execute = function() {
-        var me = this,
-            target = me.getTarget(),
-            position = me.calculatePosition(target, me.options.offset);
-
-        if (position === null) {
-            return;
-        }
-
-        me.send({
-            
-            name: 'mousedown',
-
-            button: me.getButton(),
-
-            bubbles: me.getBubbles(),
-
-            altKey: me.getAltKey(),
-
-            ctrlKey: me.getCtrlKey(),
-
-            shiftKey: me.getShiftKey(),
-
-            metaKey: me.getMetaKey(),
-
-            detail: 1,
-
-            target: target,
-
-            clientX: position.getClientX(),
-            
-            clientY: position.getClientY(),
-
-            screenX: position.getScreenX(),
-
-            screenY: position.getScreenY()
-           
-        }, me.options.callback);
-
-    };
-
-    Stimuli.utils.Object.merge(ns.down.prototype, ns.Generic.proto);
-
-})();
-
-// Source: src/command/mouse/up.js
-
-(function() {
-
-
-
-})();
 
 // Source: src/command/mouse/click.js
 
 (function() {
 
+    Stimuli.command.mouse.click = Stimuli.core.Class.inherit(Stimuli.command.Generic);
+
+    var click = Stimuli.command.mouse.click;
+
+    Stimuli.core.Class.mix(click, Stimuli.command.mouse.Helper);
+
+    click.prototype.execute = function(callback) {
+        var self = this,
+            newLocation = null,
+            newHash = null,
+            target, position;
+
+        return self
+
+        .configure(function() {
+            self.options.button = 'left';
+
+            target = self.getTarget();
+
+            if (target === null) {
+                throw 'Stimuli.command.mouse.click: ' + self.error.invalidTarget;
+            }
+
+            position = self.calculateViewportCoordinates(target, self.options.offset);
+
+            if (position === null) {
+                throw 'Stimuli.command.mouse.click: ' + self.error.invalidPosition;
+            }
+
+        })
+
+        .inject(function() {
+
+            return {
+                type: 'mousedown',
+                button: self.getButton(),
+                bubbles: true,
+                cancelable: true,
+                altKey: self.options.alt,
+                ctrlKey: self.options.ctrl,
+                shiftKey: self.options.shift,
+                metaKey: self.options.meta,
+                detail: 1,
+                target: target,
+                clientX: position.clientX,
+                clientY: position.clientY,
+                screenX: position.screenX,
+                screenY: position.screenY
+            };
+
+         })
+
+        .then(function() {
+            if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                throw 'Stimuli.command.mouse.click: target disappeared on mousedown.';
+            }
+        })
+
+        .inject(function() {
+
+            return {
+                type: 'mouseup',
+                button: self.getButton(),
+                bubbles: true,
+                cancelable: true,
+                altKey: self.options.alt,
+                ctrlKey: self.options.ctrl,
+                shiftKey: self.options.shift,
+                metaKey: self.options.meta,
+                detail: 1,
+                target: target,
+                clientX: position.clientX,
+                clientY: position.clientY,
+                screenX: position.screenX,
+                screenY: position.screenY
+            };
+
+        }, 100)
+
+        .then(function() {
+            if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                throw 'Stimuli.command.mouse.click: target disappeared on mouseup.';
+            }
+
+
+            var element = target;
+            while(element) {
+                if (element.href) {
+                    newHash = element.href.split('#')[1];
+                    newLocation = element.href;
+                    break;
+                }
+                element = element.parentNode;
+            }
+
+            if (newLocation && !Stimuli.core.Support.isIE8) {
+                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getWindow());
+                windowObserver.subscribe('click', function(e) {
+                    if (typeof e.preventDefault === 'function') {
+                        e.preventDefault();
+                    }
+                    windowObserver.unsubscribeAll();
+                });
+            }
+
+        })
+
+
+        .inject(function() {
+
+            return {
+                type: 'click',
+                button: self.getButton(),
+                bubbles: true,
+                cancelable: true,
+                altKey: !!self.options.alt,
+                ctrlKey: !!self.options.ctrl,
+                shiftKey: !!self.options.shift,
+                metaKey: !!self.options.meta,
+                detail: 1,
+                target: target,
+                clientX: position.clientX,
+                clientY: position.clientY,
+                screenX: position.screenX,
+                screenY: position.screenY
+            };
+
+        }, 1)
+
+        .finish(function(events) {
+
+            function waitForWindow() {
+                if (self.viewport.getWindow()) {
+                    if (callback) {
+                        callback(events);
+                    }
+                    return;
+                }
+                setTimeout(waitForWindow, 1);
+            }
+
+            if (newHash) {
+                self.viewport.getWindow().hash = newHash;
+            } else if (newLocation) {
+                self.viewport.getWindow().location = newLocation;
+                self.viewport.setWindow(null);
+            }
+
+            waitForWindow();
+        });
+
+    };
 
 })();
 
 // Source: src/command/mouse/dblclick.js
 
 (function() {
-
+    Stimuli.command.mouse.dblclick = Stimuli.core.Class.inherit(Stimuli.command.Generic);
 
 
 })();
