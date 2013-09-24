@@ -10,7 +10,8 @@
 
     click.prototype.execute = function(callback) {
         var self = this,
-            navigationUrl = null,
+            newLocation = null,
+            newHash = null,
             target, position;
 
         return self
@@ -89,13 +90,14 @@
             var element = target;
             while(element) {
                 if (element.href) {
-                    navigationUrl = element.href;
+                    newHash = element.href.split('#')[1];
+                    newLocation = element.href;
                     break;
                 }
                 element = element.parentNode;
             }
 
-            if (navigationUrl && !Stimuli.core.Support.isIE8) {
+            if (newLocation && !Stimuli.core.Support.isIE8) {
                 var windowObserver = new Stimuli.view.event.Observer(self.viewport.getWindow());
                 windowObserver.subscribe('click', function(e) {
                     if (typeof e.preventDefault === 'function') {
@@ -141,8 +143,10 @@
                 setTimeout(waitForWindow, 1);
             }
 
-            if (navigationUrl) {
-                self.viewport.getWindow().location = navigationUrl;
+            if (newHash) {
+                self.viewport.getWindow().hash = newHash;
+            } else if (newLocation) {
+                self.viewport.getWindow().location = newLocation;
                 self.viewport.setWindow(null);
             }
 

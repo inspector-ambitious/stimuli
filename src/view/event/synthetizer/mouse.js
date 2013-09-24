@@ -96,9 +96,11 @@
                 if (eventConfig.relatedTarget) {
                     if (eventName === 'onmouseover') {
                         event.fromElement = eventConfig.relatedTarget;
+                        event.toElement = eventConfig.target;
                     }
 
                     if (eventName === 'onmouseout') {
+                        event.fromElement = eventConfig.target;
                         event.toElement = eventConfig.relatedTarget;
                     }
 

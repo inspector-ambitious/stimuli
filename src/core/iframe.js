@@ -32,7 +32,7 @@
         self.iframeObserver = new Stimuli.view.event.Observer(iframe);
 
         self.iframeObserver.subscribe('load', self.onLoad, self);
-       // this.ajax = new Simuli.core.Ajax();
+
     };
 
     var Iframe = Stimuli.core.Iframe;
@@ -107,10 +107,6 @@
 
 
         self.publish('refresh', win);
-    };
-
-    Iframe.prototype.onUnload = function() {
-
     };
 
     Iframe.prototype.destroy = function() {

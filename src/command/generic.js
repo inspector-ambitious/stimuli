@@ -23,13 +23,9 @@
             if (callback) {
                 callback(self.events);
             }
-        }, {delay: 1});
+        });
 
         return self;
-    };
-
-    Generic.prototype.getLastEvent = function(callback) {
-        return this.events[this.events.length - 1];
     };
 
     Generic.prototype.inject =  function(generateEventConfig, delay) {

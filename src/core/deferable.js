@@ -54,6 +54,12 @@
             return self;
         },
 
+        sleep: function(delay) {
+            var self = this;
+            self.defer(function(cb) {cb();}, null, {delay: delay});
+            return self;
+        },
+
         onfailure: function(fn) {
             var self = this;
             self.defer(function() {}, fn, {delay: 0, failure: true});
