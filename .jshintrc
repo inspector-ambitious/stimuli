@@ -6,6 +6,7 @@
   "dojo": false,
   "jquery": true,
   "devel": true,
+  "wsh": true,
   "globals": {
     "angular": true,
     "Stimuli": true,
