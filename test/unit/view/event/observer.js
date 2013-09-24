@@ -7,9 +7,10 @@ describe('Stimuli.view.event.Observer', function() {
     before(function(done) {
         s = new Stimuli();
         s.navigateTo('/base/test/static/viewport.html',
-        function(win) {
+        function(win, next) {
             viewport = s.viewport;
             TestHelper.loadFixture(viewport, 'textinput', function() {
+                next();
                 done();
             });
         });

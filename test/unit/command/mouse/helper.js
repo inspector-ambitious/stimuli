@@ -5,7 +5,7 @@ describe('Stimuli.command.mouse.Helper', function() {
     before(function(done) {
         s = new Stimuli();
         s.navigateTo('/base/test/static/viewport.html',
-        function(win) {
+        function(win, next) {
             viewport = s.viewport;
             TestHelper.loadFixture(viewport, 'divinfront', function() {
                 helper = {
@@ -18,6 +18,7 @@ describe('Stimuli.command.mouse.Helper', function() {
                 yellow = viewport.$('#yellow');
                 blue = viewport.$('#blue');
                 Stimuli.core.Object.merge(helper, Stimuli.command.mouse.Helper);
+                next();
                 done();
             });
         });
