@@ -2,8 +2,8 @@
 
 (function() {
     
-    Stimuli.virtual.Browser = function(viewport) {
-        this.viewport = viewport;
+    Stimuli.virtual.Browser = function(options) {
+        this.viewport = options.viewport;
         this.iframe = new Stimuli.core.Iframe();
     };
 

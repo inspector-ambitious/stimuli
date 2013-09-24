@@ -4,28 +4,24 @@ describe('Stimuli.command.mouse.Helper', function() {
 
     before(function(done) {
         s = new Stimuli();
-        s.navigateTo('/base/test/static/viewport.html',
-        function(win, next) {
+        s.navigateTo('/base/test/fixtures/divinfront.html',
+        function(win) {
             viewport = s.viewport;
-            TestHelper.loadFixture(viewport, 'divinfront', function() {
-                helper = {
-                    viewport: viewport,
-                    options: {
-                        
-                    }
-                };
-                
-                yellow = viewport.$('#yellow');
-                blue = viewport.$('#blue');
-                Stimuli.core.Object.merge(helper, Stimuli.command.mouse.Helper);
-                next();
-                done();
-            });
+            helper = {
+                viewport: viewport,
+                options: {
+
+                }
+            };
+
+            yellow = viewport.$('#yellow');
+            blue = viewport.$('#blue');
+            Stimuli.core.Object.merge(helper, Stimuli.command.mouse.Helper);
+            done();
         });
     });
 
     after(function() {
-        TestHelper.removeFixture(viewport);
         s.destroy();
         viewport = null;
         position = null;

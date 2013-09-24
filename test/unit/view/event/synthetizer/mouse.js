@@ -10,7 +10,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
 
     before(function(done) {
         s = new Stimuli();
-        s.navigateTo('/base/test/static/viewport.html',
+        s.navigateTo('/base/test/fixtures/simplediv.html',
         function(win) {
             viewport = s.viewport;
             body = viewport.$('body');
@@ -26,7 +26,6 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
 
     beforeEach(function() {
         bodyObserver = new Stimuli.view.event.Observer(body);
-
     });
 
     afterEach(function() {
@@ -77,17 +76,13 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
         var div,
             divObserver;
 
-        beforeEach(function(done) {
-            TestHelper.loadFixture(viewport, 'simplediv', function(){
-                div = viewport.$('#simplediv');
-                divObserver = new Stimuli.view.event.Observer(div);
-                done();
-            });
+        beforeEach(function() {
+            div = viewport.$('#simplediv');
+            divObserver = new Stimuli.view.event.Observer(div);
         });
 
         afterEach(function() {
             divObserver.unsubscribeAll();
-            TestHelper.removeFixture(viewport);
         });
 
         if (Stimuli.core.Support.documentCreateEvent) {

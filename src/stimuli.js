@@ -15,13 +15,16 @@ var Stimuli = function(options) {
 
     me.viewport = new Stimuli.view.Viewport();
 
-    me.browser = new Stimuli.virtual.Browser(me.viewport);
+    me.browser = new Stimuli.virtual.Browser({
+        viewport: me.viewport
+    });
 
-    me.mouse = new Stimuli.virtual.Mouse(me.viewport);
+    me.mouse = new Stimuli.virtual.Mouse({
+        viewport: me.viewport
+    });
 
     me.scheduler = new Stimuli.core.Scheduler({
-        speed: options.speed || 1,
-        interval: options.interval || 1
+        interval: 0
     });
 
     me.browser.subscribe('command', me.scheduler.schedule, me.scheduler);
@@ -75,12 +78,14 @@ Stimuli.prototype.destroy = function() {
 };
 
 /**
- * Destroy the stimuli instance
+ * Finds the dom element matching the css selector.
  * @param {Object} options
  */
 Stimuli.prototype.$ = function(selector) {
     return this.viewport.$(selector);
 };
+
+
 // Namespaces declaration
 Stimuli.view = {
     event: {

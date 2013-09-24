@@ -56,15 +56,6 @@ module.exports = function(grunt) {
         },
 
         {
-            pattern: 'test/helper/**/*.js'
-        },
-
-        {
-            pattern: 'test/static/**/*.*',
-            included: false
-        },
-
-        {
             pattern: 'test/fixtures/**/*.*',
             included: false
         }

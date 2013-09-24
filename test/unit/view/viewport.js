@@ -4,7 +4,7 @@ describe('Stimuli.view.Viewport', function() {
 
     before(function(done) {
         s = new Stimuli();
-        s.navigateTo('/base/test/static/viewport.html',
+        s.navigateTo('/base/test/fixtures/divinfront.html',
         function(win) {
             viewport = s.viewport;
             done();
@@ -17,16 +17,6 @@ describe('Stimuli.view.Viewport', function() {
     });
 
     describe('getVisibleElementAt', function() {
-
-        beforeEach(function(done) {
-            TestHelper.loadFixture(viewport, 'divinfront', function() {
-                done();
-            });
-        });
-
-        afterEach(function() {
-            TestHelper.removeFixture(viewport);
-        });
 
         it('should find the #yellow_10x10_10x10 element at coordinates 19, 19', function() {
             var el = viewport.$('#yellow');

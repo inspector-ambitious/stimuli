@@ -5,7 +5,7 @@ describe('Stimuli.virtual.Browser', function() {
         browser = new Stimuli.virtual.Browser();
 
         browser.navigateTo({
-            url: '/base/test/statict/viewport.html'
+            url: '/base/test/statict/empty.html'
         },
         function(err, view) {
             viewport = new Stimuli.view.Viewport(view);

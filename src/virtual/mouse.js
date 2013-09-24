@@ -12,8 +12,8 @@
 
 (function() {
 
-    Stimuli.virtual.Mouse = function(viewport) {
-        this.viewport = viewport;
+    Stimuli.virtual.Mouse = function(options) {
+        this.viewport = options.viewport;
     };
     
     var Mouse = Stimuli.virtual.Mouse;
