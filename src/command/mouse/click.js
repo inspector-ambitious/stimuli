@@ -85,22 +85,24 @@
                 throw 'Stimuli.command.mouse.click: target disappeared on mouseup.';
             }
 
-            var windowObserver = new Stimuli.view.event.Observer(self.viewport.getWindow()),
-                element = target;
 
-            windowObserver.subscribe('click', function(e) {
-                if (typeof e.preventDefault === 'function') {
-                    e.preventDefault();
-                }
-                windowObserver.unsubscribeAll();
-            });
-
+            var element = target;
             while(element) {
                 if (element.href) {
                     navigationUrl = element.href;
                     break;
                 }
                 element = element.parentNode;
+            }
+
+            if (navigationUrl && !Stimuli.core.Support.isIE8) {
+                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getWindow());
+                windowObserver.subscribe('click', function(e) {
+                    if (typeof e.preventDefault === 'function') {
+                        e.preventDefault();
+                    }
+                    windowObserver.unsubscribeAll();
+                });
             }
 
         })
