@@ -11,9 +11,9 @@
 
 (function() {
 
-    Stimuli.view.Viewport = function(view) {
+    Stimuli.view.Viewport = function(context) {
 
-        this.view = view || window;
+        this.context = context || null;
 
     };
 
@@ -24,7 +24,7 @@
      * @return {Number}
      */
     Viewport.prototype.getScreenX = function() {
-        return this.view.screenX || this.view.screenLeft;
+        return this.context.screenX || this.context.screenLeft;
     };
 
     /**
@@ -32,7 +32,7 @@
      * @return {Number}
      */
     Viewport.prototype.getScreenY = function() {
-        return this.view.screenY || this.view.screenTop;
+        return this.context.screenY || this.context.screenTop;
     };
 
     /**
@@ -43,7 +43,7 @@
      */
     Viewport.prototype.getVisibleElementAt = function(x, y) {
         var self = this,
-            doc = self.view.document;
+            doc = self.context.document;
 
         if (x < 0 || y < 0) {
             return null;
@@ -58,7 +58,7 @@
         // (Note: that was a tricky one it's 4:39AM)
         if (Stimuli.core.Support.isIE8 &&
             ret === null &&
-            self.view.parent && self.view.parent.parent) { // encapsulated iframe check
+            self.context.parent && self.context.parent.parent) { // encapsulated iframe check
             doc.body.getBoundingClientRect();
             ret = doc.elementFromPoint(x, y);
         }
@@ -70,24 +70,48 @@
      * Returns the viewport window.
      * return {Window}
      */
-    Viewport.prototype.getWindow = function() {
-        return this.view;
+    Viewport.prototype.getContext = function() {
+        return this.context;
     };
 
     /**
      * Sets the viewport window.
      * return {Window}
      */
-    Viewport.prototype.setWindow = function(win) {
-        this.view = win;
+    Viewport.prototype.setContext = function(context) {
+        this.context = context;
+    };
+
+
+    Viewport.prototype.destroy = function() {
+        this.context = null;
     };
 
     /**
-     * Returns the viewport document.
-     * return {Window}
+     *
+     * @returns {*}
      */
-    Viewport.prototype.getDocument = function() {
-        return this.view.document;
+
+    Viewport.prototype.waitToBeReady = function(callback) {
+        var self = this;
+
+        function waitFor() {
+            if (!!self.context) {
+                callback();
+                return;
+            }
+            setTimeout(waitFor, 25);
+        }
+        waitFor();
+    };
+
+    Viewport.prototype.updateHash = function(hash) {
+        this.context.location.hash = hash;
+    };
+
+    Viewport.prototype.updateUrl = function(url) {
+        this.context.location = url;
+        this.context = null;
     };
 
     /**
@@ -99,7 +123,7 @@
 
     Viewport.prototype.$ = function(selector, all) {
         /* jshint newcap: false */
-        var elements = Sizzle(selector, this.view.document);
+        var elements = Sizzle(selector, this.context.document);
         if (all) {
             return elements;
         } else {

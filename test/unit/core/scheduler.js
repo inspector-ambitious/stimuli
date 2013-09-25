@@ -27,7 +27,7 @@ describe('Stimuli.core.Scheduler', function() {
 
         var emittedId = null;
 
-        scheduler.subscribe('data', function(data, done) {
+        scheduler.subscribe('event', function(data, done) {
             emittedId = data.id;
             done();
         });
@@ -64,7 +64,7 @@ describe('Stimuli.core.Scheduler', function() {
         it('should execute the data callback after the listener', function(done) {
             var value = null;
 
-            scheduler.subscribe('data', function(data, done) {
+            scheduler.subscribe('event', function(data, done) {
                 value = 1;
                 done();
             });
@@ -84,17 +84,17 @@ describe('Stimuli.core.Scheduler', function() {
         it('should support asynchronous callbacks', function() {
             var step = 0;
 
-            scheduler.subscribe('data', function(data, done) {
+            scheduler.subscribe('event', function(data, done) {
                 done();
             });
 
             scheduler.schedule({
                 id: 1
 
-            }, function(callback) {
+            }, function(done) {
                 step = 1;
                 setTimeout(function() {
-                    callback();
+                    done();
                     step = 2;
                 }, 666);
             });

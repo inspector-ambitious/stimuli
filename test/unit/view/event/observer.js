@@ -1,25 +1,24 @@
 describe('Stimuli.view.event.Observer', function() {
 
-    var s,
-        observer,
-        viewport;
+    var stimuli,
+        observer;
 
     before(function(done) {
-        s = new Stimuli();
-        s.navigateTo('/base/test/fixtures/textinput.html',
-        function(win) {
-                viewport = s.viewport;
-            done();
-        });
+        stimuli = (new Stimuli);
+        stimuli
+        .browser
+            .navigateTo('/base/test/fixtures/textinput.html')
+            .then(function(){
+                done();
+            });
     });
 
     after(function() {
-        s.destroy();
-        viewport = null;
+        stimuli.destroy();
     });
 
     beforeEach(function() {
-        observer = new Stimuli.view.event.Observer(viewport.$('#textinput'));
+        observer = new Stimuli.view.event.Observer(stimuli.$('#textinput'));
     });
 
     afterEach(function() {
@@ -43,10 +42,10 @@ describe('Stimuli.view.event.Observer', function() {
 
 
             Stimuli.view.event.synthetizer.Mouse.inject({
-                target: viewport.$('#textinput'),
+                target: stimuli.$('#textinput'),
                 type: 'mouseover',
                 button: 0,
-                view: viewport.getWindow()
+                view: stimuli.getWindow()
             });
 
             expect(wasCalled).to.be(true);
@@ -71,10 +70,10 @@ describe('Stimuli.view.event.Observer', function() {
 
 
             Stimuli.view.event.synthetizer.Mouse.inject({
-                target: viewport.$('#textinput'),
+                target: stimuli.$('#textinput'),
                 type: 'mouseover',
                 button: 0,
-                view: viewport.getWindow()
+                view: stimuli.getWindow()
             });
 
             expect(wasCalled).to.be(true);
@@ -101,10 +100,10 @@ describe('Stimuli.view.event.Observer', function() {
             observer.unsubscribe('mouseover', listener);
 
             Stimuli.view.event.synthetizer.Mouse.inject({
-                target: viewport.$('#textinput'),
+                target: stimuli.$('#textinput'),
                 type: 'mouseover',
                 button: 0,
-                view: viewport.getWindow()
+                view: stimuli.getWindow()
             });
 
             expect(wasCalled).to.be(false);
@@ -148,17 +147,17 @@ describe('Stimuli.view.event.Observer', function() {
             observer.unsubscribeAll();
 
             Stimuli.view.event.synthetizer.Mouse.inject({
-                target: viewport.$('#textinput'),
+                target: stimuli.$('#textinput'),
                 type: 'mouseover',
                 button: 0,
-                view: viewport.getWindow()
+                view: stimuli.getWindow()
             });
 
             Stimuli.view.event.synthetizer.Mouse.inject({
-                target: viewport.$('#textinput2'),
+                target: stimuli.$('#textinput2'),
                 type: 'mouseover',
                 button: 0,
-                view: viewport.getWindow()
+                view: stimuli.getWindow()
             });
 
             expect(fn1WasCalled).to.be(false);

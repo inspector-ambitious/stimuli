@@ -4,9 +4,9 @@
  * @class Stimuli.core.Scheduler
  * @mixins Stimuli.core.Observable
  * @private
- * Provides a convenient way to "buffer" the emission of data.
- * @cfg {Number} speed The emission speed
- * @cfg {Number} delay The emission delay in ms
+ * Provides a convenient way to "buffer" any data.
+ * @cfg {Number} speed The emission speed.
+ * @cfg {Number} delay The emission delay in ms.
  * @constructor
  * Creates a new scheduler
  * @param {Object} config The config object
@@ -15,11 +15,13 @@
 (function() {
 
     Stimuli.core.Scheduler = function(options) {
-        this.delay = options.delay || 1;
-        this.speed = options.speed || 1;
-
-        this.queue = [];
-        this.locked = false;
+        var self = this;
+        options = options || {};
+        self.delay = !isNaN(options.delay) ? options.delay : 1;
+        self.speed = !isNaN(options.speed) ? options.speed : 1;
+        self.scope = options.scope || self;
+        self.queue = [];
+        self.locked = false;
     };
 
     var Scheduler = Stimuli.core.Scheduler;
@@ -28,47 +30,48 @@
     Stimuli.core.Class.mix(Stimuli.core.Scheduler, Stimuli.core.Observable);
 
     /**
-     * Receives data to emit.
-     * @param {Object} data The data to emit.
+     * Schedules data
+     * @param {Mixed} data The data to schedule.
+     * @param {Function} callback The function to call when the data is ready.
      */
     Scheduler.prototype.schedule = function(data, callback, options) {
         var self = this,
             frame = {data: data, callback: callback, options: options};
 
-        if (options && options.now) {
-            self.queue.splice(0, 0, frame);
-        } else {
-            self.queue.push(frame);
-        }
+        self.queue.push(frame);
 
-        self.emit();
+        self.next();
 
     };
 
     Scheduler.prototype.calculateTimeout = function(options) {
-        var delay = this.delay,
-            speed = this.speed,
-            timeout;
+        var delay, speed;
 
-        if (options) {
-            delay = !isNaN(options.delay) ? options.delay: delay;
-            speed = !isNaN(options.speed) ? options.speed: speed;
-        }
+
+        delay = !isNaN(options.delay) ? options.delay: this.delay;
+        speed = !isNaN(options.speed) ? options.speed: this.speed;
+
 
         return delay/speed;
     };
 
+    
     Scheduler.prototype.skip = function() {
         this.locked = false;
-        this.emit();
+        this.next();
     };
+
 
     /**
      * @private
-     * Schedules emission of received data   
+     * Tries to immediately publish the data.
+     * If it's not possible it returns immediately.
+     * Also it wraps the original callback to provide asynchronous callback support,
+     * this way no data will be published until the callback will
      */
-    Scheduler.prototype.emit = function() {
+    Scheduler.prototype.next = function() {
         var self = this;
+
         if (self.locked || self.queue.length === 0) {
             return;
         }
@@ -76,9 +79,10 @@
         self.locked = true;
 
         var frame = self.queue.shift(),
-            options = frame.options,
+            options = frame.options || {},
             data = frame.data,
-            fn = frame.callback || function() {};
+            fn = frame.callback || function() {},
+            scope = options.scope || self.scope;
 
         var callback = function() {
             var args = Array.prototype.slice.call(arguments, 0);
@@ -89,15 +93,15 @@
                 // of the next device action
                 args.push(function() {
                     self.locked = false;
-                    self.emit();
+                    self.next();
                 });
 
-                fn.apply(self, args);
+                fn.apply(scope, args);
                 // synchronous action callback
             } else {
-                fn.apply(self, args);
+                fn.apply(scope, args);
                 self.locked = false;
-                self.emit();
+                self.next();
             }
 
         };
@@ -106,10 +110,10 @@
 
         if (timeout) {
             setTimeout(function() {
-                self.publish('data', data, callback, options);
+                self.publish('event', data, callback, options);
             }, timeout);
         } else {
-            self.publish('data', data, callback, options);
+            self.publish('event', data, callback, options);
         }
 
 

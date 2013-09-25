@@ -12,19 +12,27 @@ var Stimuli = function(options) {
 
     options = options || {};
 
+    self.initScheduler();
+
     self.viewport = new Stimuli.view.Viewport();
 
-    self.browser = new Stimuli.virtual.Browser({
-        viewport: self.viewport
-    });
+    self.browser = new Stimuli.virtual.Browser();
 
-    self.mouse = new Stimuli.virtual.Mouse({
-        viewport: self.viewport
-    });
+    self.mouse = new Stimuli.virtual.Mouse();
 
-    self.initScheduler();
-    self.browser.attachScheduler(self.scheduler);
-    self.mouse.attachScheduler(self.scheduler);
+    function mix(obj) {
+        obj.scheduler = self.scheduler;
+        obj.browser = self.browser;
+        obj.viewport = self.viewport;
+        obj.mouse = self.mouse;
+    }
+
+
+    mix(self.browser);
+
+    mix(self.mouse);
+
+    self.mouse.destroy = self.destroy;
 
 };
 
@@ -48,44 +56,15 @@ Stimuli.command = {
 };
 
 
-/**
- * Navigates to an url
- * @param {Object} options
- */
-Stimuli.prototype.navigateTo = function() {
-    var browser = this.browser;
-    browser.navigateTo.apply(browser, arguments);
-    return this;
-};
 
-/**
- * Executes a mouse click.
- * @param {Object} options
- */
-Stimuli.prototype.click = function() {
-    var mouse = this.mouse;
-    mouse.click.apply(mouse, arguments);
-    return this;
-};
-
-/**
- * Executes a mouse double click.
- * @param {Object} options
- */
-Stimuli.prototype.dblclick = function() {
-    var mouse = this.mouse;
-    mouse.dblclick.apply(mouse, arguments);
-    return this;
-};
 
 /**
  * Destroy the stimuli instance
  * @param {Object} options
  */
 Stimuli.prototype.destroy = function() {
-    var browser = this.browser;
-    browser.close();
-    return this;
+    this.browser.destroy();
+    return true;
 };
 
 /**
@@ -96,13 +75,11 @@ Stimuli.prototype.$ = function(selector) {
     return this.viewport.$(selector);
 };
 
-/**
- * Returns the browser window
- * @return {window}
- */
 Stimuli.prototype.getWindow = function() {
-    return this.viewport.getWindow();
+    return this.viewport.getContext();
 };
 
-
+Stimuli.prototype.getDocument = function() {
+    return this.viewport.getContext().document;
+};
 

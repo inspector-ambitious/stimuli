@@ -2,33 +2,41 @@
 
 (function() {
 
+    function MyError(message){
+        this.message = message;
+    }
+
+    MyError.prototype = new Error();
+
     Stimuli.command.mouse.click = Stimuli.core.Class.inherit(Stimuli.command.Generic);
 
     var click = Stimuli.command.mouse.click;
 
     Stimuli.core.Class.mix(click, Stimuli.command.mouse.Helper);
 
-    click.prototype.execute = function(callback) {
+    click.prototype.execute = function(done) {
+
         var self = this,
-            newLocation = null,
+            newUrl = null,
             newHash = null,
             target, position;
 
         return self
 
         .configure(function() {
+
             self.options.button = 'left';
 
             target = self.getTarget();
 
             if (target === null) {
-                throw 'Stimuli.command.mouse.click: ' + self.error.invalidTarget;
+                throw new Error('Stimuli.command.mouse.click: invalid target.');
             }
 
-            position = self.calculateViewportCoordinates(target, self.options.offset);
+            position = self.calculateViewportCoordinates(target, self.options);
 
             if (position === null) {
-                throw 'Stimuli.command.mouse.click: ' + self.error.invalidPosition;
+                throw new Error('Stimuli.command.mouse.click: invalid position.');
             }
 
         })
@@ -86,19 +94,18 @@
                 throw 'Stimuli.command.mouse.click: target disappeared on mouseup.';
             }
 
-
             var element = target;
             while(element) {
                 if (element.href) {
                     newHash = element.href.split('#')[1];
-                    newLocation = element.href;
+                    newUrl = element.href;
                     break;
                 }
                 element = element.parentNode;
             }
 
-            if (newLocation && !Stimuli.core.Support.isIE8) {
-                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getWindow());
+            if (newUrl && !Stimuli.core.Support.isIE8) {
+                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getContext());
                 windowObserver.subscribe('click', function(e) {
                     if (typeof e.preventDefault === 'function') {
                         e.preventDefault();
@@ -131,26 +138,16 @@
 
         }, 1)
 
-        .finish(function(events) {
 
-            function waitForWindow() {
-                if (self.viewport.getWindow()) {
-                    if (callback) {
-                        callback(events);
-                    }
-                    return;
-                }
-                setTimeout(waitForWindow, 1);
-            }
+        .then(function() {
 
             if (newHash) {
-                self.viewport.getWindow().hash = newHash;
-            } else if (newLocation) {
-                self.viewport.getWindow().location = newLocation;
-                self.viewport.setWindow(null);
+                self.viewport.updateHash(newHash);
+            } else if (newUrl) {
+                self.viewport.updateUrl(newUrl);
             }
 
-            waitForWindow();
+            self.viewport.waitToBeReady(done);
         });
 
     };

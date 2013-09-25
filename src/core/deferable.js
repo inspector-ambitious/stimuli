@@ -8,61 +8,39 @@
         initScheduler: function(options) {
             var self = this;
             options = options || {};
-            options.delay = options.delay || 0;
-            options.speed = options.speed || 1;
+            options.delay = !isNaN(options.delay) ? options.delay : 0;
+            options.scope = options.scope || self;
 
-            self.scheduler = new Stimuli.core.Scheduler({
-                delay: 0
-            });
+            self.scheduler = new Stimuli.core.Scheduler(options);
 
             var error = null;
 
-            self.scheduler.subscribe('data', function(fn, callback, options) {
-
-                if (error !== null) {
-                    if (options && options.failure) {
-                        callback(error);
-                        error = null;
-                    }
-                    self.scheduler.skip();
-                    return;
-                }
-
-                try {
-                    fn(callback);
-                } catch(e) {
-                    error = e;
-                    self.scheduler.skip();
-                }
-
+            self.scheduler.subscribe('event', function(fn, callback, options) {
+                fn.call(self, callback);
             });
-        },
-
-        attachScheduler: function(scheduler) {
-            this.scheduler = scheduler;
         },
 
         defer: function(fn, callback, options) {
             var self = this;
+            fn = fn || function(done) {done();};
+
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+
             self.scheduler.schedule(fn, callback, options);
             return self;
         },
 
-        then: function(fn) {
+        then: function(callback) {
             var self = this;
-            self.defer(function(cb) {cb();}, fn, {delay: 0});
+            self.defer(null, callback, {delay: 0});
             return self;
         },
 
-        sleep: function(delay) {
+        sleep: function(delay, callback) {
             var self = this;
-            self.defer(function(cb) {cb();}, null, {delay: delay});
-            return self;
-        },
-
-        onfailure: function(fn) {
-            var self = this;
-            self.defer(function() {}, fn, {delay: 0, failure: true});
+            self.defer(null, callback, {delay: delay});
             return self;
         }
 

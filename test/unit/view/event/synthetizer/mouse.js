@@ -3,25 +3,24 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
     var inject = function() {
             return Stimuli.view.event.synthetizer.Mouse.inject.apply(Stimuli.view.event.synthetizer.Mouse, arguments);
         },
-        s,
-        viewport,
+        stimuli,
         body,
         bodyObserver;
 
     before(function(done) {
-        s = new Stimuli();
-        s.navigateTo('/base/test/fixtures/simplediv.html',
-        function(win) {
-            viewport = s.viewport;
-            body = viewport.$('body');
+        stimuli = new Stimuli();
+        stimuli
+        .browser
+        .navigateTo('/base/test/fixtures/simplediv.html')
+        .then(function() {
+            body = stimuli.$('body');
             done();
         });
         
     });
 
     after(function() {
-        s.destroy();
-        viewport = null;
+        stimuli.destroy();
     });
 
     beforeEach(function() {
@@ -44,8 +43,8 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
             inject({
                 type: 'mousedown',
                 button: 0,
-                view: viewport.getWindow(),
-                target: viewport.getDocument().body
+                view: stimuli.getWindow(),
+                target: stimuli.$('body')
             });
 
             expect(i).to.be(1);
@@ -61,8 +60,8 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
             var ret = inject({
                 type: 'mousedown',
                 button: 0,
-                view: viewport.getWindow(),
-                target: viewport.getDocument().body
+                view: stimuli.getWindow(),
+                target: stimuli.$('body')
             });
 
             expect(ret.event).to.be(receivedEvent);
@@ -77,7 +76,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
             divObserver;
 
         beforeEach(function() {
-            div = viewport.$('#simplediv');
+            div = stimuli.$('#simplediv');
             divObserver = new Stimuli.view.event.Observer(div);
         });
 
@@ -103,7 +102,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                             type: 'mousedown',
                             button: 0,
                             bubbles: true,
-                            view: viewport.getWindow(),
+                            view: stimuli.getWindow(),
                             target: div
                         });
 
@@ -122,7 +121,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                             type: 'mousedown',
                             button: 0,
                             bubbles: false,
-                            view: viewport.getWindow(),
+                            view: stimuli.getWindow(),
                             target: div
                         });
 
@@ -144,7 +143,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                             type: 'mousedown',
                             button: 0,
                             cancelable: true,
-                            view: viewport.getWindow(),
+                            view: stimuli.getWindow(),
                             target: div
                         });
 
@@ -166,7 +165,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                             type: 'mousedown',
                             button: 0,
                             cancelable: false,
-                            view: viewport.getWindow(),
+                            view: stimuli.getWindow(),
                             target: div
                         });
 
@@ -187,7 +186,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
 
                             expect(e.cancelBubble).to.be(false);
            
-                            expect(e.view).to.be(viewport.getWindow());
+                            expect(e.view).to.be(stimuli.getWindow());
                             expect(e.target).to.be(div);
                             expect(e.type).to.be('mousedown');
                             expect(e.button).to.be(0);
@@ -206,7 +205,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                         var injection = inject({
                             bubbles: false,
                             cancelable: true,
-                            view: viewport.getWindow(),
+                            view: stimuli.getWindow(),
                             target: div,
                             type: 'mousedown',
                             button: 0,
@@ -248,7 +247,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                             type: 'mousedown',
                             button: 1,
                             bubbles: true,
-                            view: viewport.getWindow(),
+                            view: stimuli.getWindow(),
                             target: div
                         });
 
@@ -266,7 +265,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                             type: 'click',
                             button: 1,
                             bubbles: false,
-                            view: viewport.getWindow(),
+                            view: stimuli.getWindow(),
                             target: div
                         });
 
@@ -285,7 +284,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                             wasListenerCalled = true;
 
                             expect(e.canBubble).to.be(false);
-                            expect(e.view).to.be(viewport.getWindow());
+                            expect(e.view).to.be(stimuli.getWindow());
                             expect(e.srcElement).to.be(div);
                             expect(e.type).to.be('mousedown');
                             expect(e.button).to.be(0);
@@ -304,7 +303,7 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
                         var injection = inject({
                             bubbles: false,
                             cancelable: true,
-                            view: viewport.getWindow(),
+                            view: stimuli.getWindow(),
                             target: div,
                             type: 'mousedown',
                             button: 1,

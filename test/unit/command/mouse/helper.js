@@ -1,29 +1,26 @@
 describe('Stimuli.command.mouse.Helper', function() {
     
-    var s, helper, viewport, position, options, yellow, blue;
+    var stimuli, helper, position, options, yellow, blue;
 
     before(function(done) {
-        s = new Stimuli();
-        s.navigateTo('/base/test/fixtures/divinfront.html',
-        function(win) {
-            viewport = s.viewport;
-            helper = {
-                viewport: viewport,
-                options: {
-
-                }
-            };
-
-            yellow = viewport.$('#yellow');
-            blue = viewport.$('#blue');
-            Stimuli.core.Object.merge(helper, Stimuli.command.mouse.Helper);
-            done();
-        });
+        stimuli = new Stimuli();
+        stimuli
+            .browser
+            .navigateTo('/base/test/fixtures/divinfront.html')
+            .then(function() {
+                helper = {
+                    viewport: this.viewport,
+                    options: {}
+                };
+                yellow = this.$('#yellow');
+                blue = this.$('#blue');
+                Stimuli.core.Object.merge(helper, Stimuli.command.mouse.Helper);
+                done();
+            });
     });
 
     after(function() {
-        s.destroy();
-        viewport = null;
+        stimuli.destroy();
         position = null;
     });
 
@@ -87,7 +84,7 @@ describe('Stimuli.command.mouse.Helper', function() {
 
             it('should return null', function() {
     
-                options.target = viewport.getWindow();
+                options.target = stimuli.getWindow();
 
                 expect(helper.getTarget()).to.be(null);
             });

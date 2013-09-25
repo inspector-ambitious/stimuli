@@ -12,9 +12,7 @@
 
 (function() {
 
-    Stimuli.virtual.Mouse = function(options) {
-        this.viewport = options.viewport;
-    };
+    Stimuli.virtual.Mouse = function() {};
     
     var Mouse = Stimuli.virtual.Mouse;
 
@@ -25,26 +23,26 @@
      * Executes a simple click.
      * @param {Object} options
      */
-    Mouse.prototype.click = function(options, callback) {
-        return this.defer(this.generateCommand('click', options), callback);
+    Mouse.prototype.click = function(options) {
+        return this.then(this.generateCommand('click', options));
     };
 
     /**
      * Executes a double click.
      * @param {Object} options
      */
-    Mouse.prototype.dblclick = function(options, callback) {
-        return this.defer(this.generateCommand('dblclick', options), callback);
+    Mouse.prototype.dblclick = function(options) {
+        return this.then(this.generateCommand('dblclick', options));
     };
 
+
     Mouse.prototype.generateCommand = function(commandName, options) {
-        var viewport = this.viewport;
-
-        return function(callback) {
-            var command = new Stimuli.command.mouse[commandName](options, viewport);
-            command.execute(callback);
+        var self = this;
+        return function(done) {
+            var command = new Stimuli.command.mouse[commandName](options);
+            command.viewport = self.viewport;
+            command.execute(done);
         };
-
     };
 
 

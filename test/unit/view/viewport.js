@@ -1,18 +1,20 @@
 describe('Stimuli.view.Viewport', function() {
 
-    var s, viewport;
+    var stimuli, viewport;
 
     before(function(done) {
-        s = new Stimuli();
-        s.navigateTo('/base/test/fixtures/divinfront.html',
-        function(win) {
-            viewport = s.viewport;
-            done();
-        });
+        stimuli = (new Stimuli);
+        stimuli
+        .browser
+            .navigateTo('/base/test/fixtures/divinfront.html')
+            .then(function() {
+                viewport = this.viewport;
+                done();
+            });
     });
 
     after(function() {
-        s.destroy();
+        stimuli.destroy();
         viewport = null;
     });
 
