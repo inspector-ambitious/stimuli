@@ -1,4 +1,4 @@
-/*! stimuli - v0.0.1 - 2013-09-24 */
+/*! stimuli - v0.0.1 - 2013-09-25 */
 'use strict';
 
 // Source: lib/sizzle/sizzle.js
@@ -2011,19 +2011,27 @@ var Stimuli = function(options) {
 
     options = options || {};
 
+    self.initScheduler();
+
     self.viewport = new Stimuli.view.Viewport();
 
-    self.browser = new Stimuli.virtual.Browser({
-        viewport: self.viewport
-    });
+    self.browser = new Stimuli.virtual.Browser();
 
-    self.mouse = new Stimuli.virtual.Mouse({
-        viewport: self.viewport
-    });
+    self.mouse = new Stimuli.virtual.Mouse();
 
-    self.initScheduler();
-    self.browser.attachScheduler(self.scheduler);
-    self.mouse.attachScheduler(self.scheduler);
+    function mix(obj) {
+        obj.scheduler = self.scheduler;
+        obj.browser = self.browser;
+        obj.viewport = self.viewport;
+        obj.mouse = self.mouse;
+    }
+
+
+    mix(self.browser);
+
+    mix(self.mouse);
+
+    self.mouse.destroy = self.destroy;
 
 };
 
@@ -2047,44 +2055,15 @@ Stimuli.command = {
 };
 
 
-/**
- * Navigates to an url
- * @param {Object} options
- */
-Stimuli.prototype.navigateTo = function() {
-    var browser = this.browser;
-    browser.navigateTo.apply(browser, arguments);
-    return this;
-};
 
-/**
- * Executes a mouse click.
- * @param {Object} options
- */
-Stimuli.prototype.click = function() {
-    var mouse = this.mouse;
-    mouse.click.apply(mouse, arguments);
-    return this;
-};
-
-/**
- * Executes a mouse double click.
- * @param {Object} options
- */
-Stimuli.prototype.dblclick = function() {
-    var mouse = this.mouse;
-    mouse.dblclick.apply(mouse, arguments);
-    return this;
-};
 
 /**
  * Destroy the stimuli instance
  * @param {Object} options
  */
 Stimuli.prototype.destroy = function() {
-    var browser = this.browser;
-    browser.close();
-    return this;
+    this.browser.destroy();
+    return true;
 };
 
 /**
@@ -2095,15 +2074,13 @@ Stimuli.prototype.$ = function(selector) {
     return this.viewport.$(selector);
 };
 
-/**
- * Returns the browser window
- * @return {window}
- */
 Stimuli.prototype.getWindow = function() {
-    return this.viewport.getWindow();
+    return this.viewport.getContext();
 };
 
-
+Stimuli.prototype.getDocument = function() {
+    return this.viewport.getContext().document;
+};
 
 
 
@@ -2297,9 +2274,9 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
  * @class Stimuli.core.Scheduler
  * @mixins Stimuli.core.Observable
  * @private
- * Provides a convenient way to "buffer" the emission of data.
- * @cfg {Number} speed The emission speed
- * @cfg {Number} delay The emission delay in ms
+ * Provides a convenient way to "buffer" any data.
+ * @cfg {Number} speed The emission speed.
+ * @cfg {Number} delay The emission delay in ms.
  * @constructor
  * Creates a new scheduler
  * @param {Object} config The config object
@@ -2308,11 +2285,13 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
 (function() {
 
     Stimuli.core.Scheduler = function(options) {
-        this.delay = options.delay || 1;
-        this.speed = options.speed || 1;
-
-        this.queue = [];
-        this.locked = false;
+        var self = this;
+        options = options || {};
+        self.delay = !isNaN(options.delay) ? options.delay : 1;
+        self.speed = !isNaN(options.speed) ? options.speed : 1;
+        self.scope = options.scope || self;
+        self.queue = [];
+        self.locked = false;
     };
 
     var Scheduler = Stimuli.core.Scheduler;
@@ -2321,47 +2300,48 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
     Stimuli.core.Class.mix(Stimuli.core.Scheduler, Stimuli.core.Observable);
 
     /**
-     * Receives data to emit.
-     * @param {Object} data The data to emit.
+     * Schedules data
+     * @param {Mixed} data The data to schedule.
+     * @param {Function} callback The function to call when the data is ready.
      */
     Scheduler.prototype.schedule = function(data, callback, options) {
         var self = this,
             frame = {data: data, callback: callback, options: options};
 
-        if (options && options.now) {
-            self.queue.splice(0, 0, frame);
-        } else {
-            self.queue.push(frame);
-        }
+        self.queue.push(frame);
 
-        self.emit();
+        self.next();
 
     };
 
     Scheduler.prototype.calculateTimeout = function(options) {
-        var delay = this.delay,
-            speed = this.speed,
-            timeout;
+        var delay, speed;
 
-        if (options) {
-            delay = !isNaN(options.delay) ? options.delay: delay;
-            speed = !isNaN(options.speed) ? options.speed: speed;
-        }
+
+        delay = !isNaN(options.delay) ? options.delay: this.delay;
+        speed = !isNaN(options.speed) ? options.speed: this.speed;
+
 
         return delay/speed;
     };
 
+    
     Scheduler.prototype.skip = function() {
         this.locked = false;
-        this.emit();
+        this.next();
     };
+
 
     /**
      * @private
-     * Schedules emission of received data   
+     * Tries to immediately publish the data.
+     * If it's not possible it returns immediately.
+     * Also it wraps the original callback to provide asynchronous callback support,
+     * this way no data will be published until the callback will
      */
-    Scheduler.prototype.emit = function() {
+    Scheduler.prototype.next = function() {
         var self = this;
+
         if (self.locked || self.queue.length === 0) {
             return;
         }
@@ -2369,9 +2349,10 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
         self.locked = true;
 
         var frame = self.queue.shift(),
-            options = frame.options,
+            options = frame.options || {},
             data = frame.data,
-            fn = frame.callback || function() {};
+            fn = frame.callback || function() {},
+            scope = options.scope || self.scope;
 
         var callback = function() {
             var args = Array.prototype.slice.call(arguments, 0);
@@ -2382,15 +2363,15 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
                 // of the next device action
                 args.push(function() {
                     self.locked = false;
-                    self.emit();
+                    self.next();
                 });
 
-                fn.apply(self, args);
+                fn.apply(scope, args);
                 // synchronous action callback
             } else {
-                fn.apply(self, args);
+                fn.apply(scope, args);
                 self.locked = false;
-                self.emit();
+                self.next();
             }
 
         };
@@ -2399,10 +2380,10 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
 
         if (timeout) {
             setTimeout(function() {
-                self.publish('data', data, callback, options);
+                self.publish('event', data, callback, options);
             }, timeout);
         } else {
-            self.publish('data', data, callback, options);
+            self.publish('event', data, callback, options);
         }
 
 
@@ -2420,61 +2401,39 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
         initScheduler: function(options) {
             var self = this;
             options = options || {};
-            options.delay = options.delay || 0;
-            options.speed = options.speed || 1;
+            options.delay = !isNaN(options.delay) ? options.delay : 0;
+            options.scope = options.scope || self;
 
-            self.scheduler = new Stimuli.core.Scheduler({
-                delay: 0
-            });
+            self.scheduler = new Stimuli.core.Scheduler(options);
 
             var error = null;
 
-            self.scheduler.subscribe('data', function(fn, callback, options) {
-
-                if (error !== null) {
-                    if (options && options.failure) {
-                        callback(error);
-                        error = null;
-                    }
-                    self.scheduler.skip();
-                    return;
-                }
-
-                try {
-                    fn(callback);
-                } catch(e) {
-                    error = e;
-                    self.scheduler.skip();
-                }
-
+            self.scheduler.subscribe('event', function(fn, callback, options) {
+                fn.call(self, callback);
             });
-        },
-
-        attachScheduler: function(scheduler) {
-            this.scheduler = scheduler;
         },
 
         defer: function(fn, callback, options) {
             var self = this;
+            fn = fn || function(done) {done();};
+
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+
             self.scheduler.schedule(fn, callback, options);
             return self;
         },
 
-        then: function(fn) {
+        then: function(callback) {
             var self = this;
-            self.defer(function(cb) {cb();}, fn, {delay: 0});
+            self.defer(null, callback, {delay: 0});
             return self;
         },
 
-        sleep: function(delay) {
+        sleep: function(delay, callback) {
             var self = this;
-            self.defer(function(cb) {cb();}, null, {delay: delay});
-            return self;
-        },
-
-        onfailure: function(fn) {
-            var self = this;
-            self.defer(function() {}, fn, {delay: 0, failure: true});
+            self.defer(null, callback, {delay: delay});
             return self;
         }
 
@@ -2493,30 +2452,18 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
 (function() {
 
-    Stimuli.core.Ajax = function() {
-        var xhr;
+    var xhr;
 
-        try {
-            xhr = new XMLHttpRequest();
-        } catch (ex) {
-            xhr = new ActiveXObject("Microsoft.XMLHTTP");
-        }
+    try {
+        xhr = new XMLHttpRequest();
+    } catch (ex) {
+        xhr = new ActiveXObject("Microsoft.XMLHTTP");
+    }
 
-        this.xhr = xhr;
-    };
+    Stimuli.core.Ajax = {
 
-    var Ajax = Stimuli.core.Ajax;
+        get: function(url, callback) {
 
-    Ajax.prototype.request = function(options) {
-        var xhr = this.xhr,
-            url = options.url,
-            method = options.method || 'get',
-            callback = options.callback,
-            sync = options.sync || false,
-            timeout = options.timeout || 5000,
-            data = options.data;
-
-        if (!sync) {
             xhr.onload = function() {
                 xhr.onload = null;
                 xhr.onreadystatechange = null;
@@ -2530,17 +2477,11 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
                     callback(this.responseText);
                 }
             };
+
+            xhr.open('get', url, true);
+            xhr.send();
         }
 
-
-        xhr.open(method, url, !sync);
-        xhr.timeout = timeout;
-        xhr.ontimeout = options.ontimeout;
-        xhr.send();
-
-        if (sync) {
-            callback(xhr.responseText);
-        }
     };
 
 })();
@@ -2550,6 +2491,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 (function() {
     
     Stimuli.core.Iframe = function(options) {
+
         options = options || {};
         var self = this,
             iframe = document.createElement('iframe'),
@@ -2564,9 +2506,6 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
         style.left = 0;
         style.border = 0;
 
-        iframe.id = 'stimuli-iframe';
-        iframe.name = 'stimuli-iframe';
-
         iframe.frameBorder = 0;
 
         style.margin = 0;
@@ -2578,7 +2517,9 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
         self.iframeObserver = new Stimuli.view.event.Observer(iframe);
 
-        self.iframeObserver.subscribe('load', self.onLoad, self);
+        self.iframeObserver.subscribe('load', function() {
+            self.publish('loaded',self.iframeEl.contentWindow);
+        }, self);
 
     };
 
@@ -2594,73 +2535,15 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
             };
         }
 
-
         this.iframeEl.src = options.url;
 
-//        var self = this;
-//
-//
-//        self.ajax.request({
-//
-//            url: options.url,
-//
-//            callback: function(response) {
-//                var win = self.iframeEl.contentWindow,
-//                    doc = self.iframeEl.contentWindow;
-//
-//                doc.open().write(response);
-//
-//                doc.close()
-//
-//            },
-//
-//            ontimeout: function() {
-//                callback(null);
-//            }
-//        });
-
-//        var self = this,
-//            timeout = options.timeout || 2000,
-//            startingTime = (new Date()).getTime(),
-//            iframe = self.iframeEl;
-//
-//
-//        function waitForReady() {
-//            var win = iframe.contentWindow;
-//
-//
-//        }
-
-
-
-//        iframeObserver.subscribe('unload', function() {
-//            console.log('unload');
-//        });
-
-
-    };
-
-    Iframe.prototype.onLoad = function() {
-        var self = this,
-            win = self.iframeEl.contentWindow;
-
-
-        self.winObserver = new Stimuli.view.event.Observer(win);
-
-        self.winObserver.subscribe('unload', function() {
-            self.winObserver.unsubscribeAll();
-            self.publish('beforerefresh');
-        });
-
-
-        self.publish('refresh', win);
     };
 
     Iframe.prototype.destroy = function() {
         var self = this;
+
         if (self.iframeEl) {
             self.iframeObserver.unsubscribeAll();
-            self.winObserver.unsubscribeAll();
             document.body.removeChild(self.iframeEl);
             self.iframeEl = null;
         }
@@ -2681,9 +2564,9 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
 (function() {
 
-    Stimuli.view.Viewport = function(view) {
+    Stimuli.view.Viewport = function(context) {
 
-        this.view = view || window;
+        this.context = context || null;
 
     };
 
@@ -2694,7 +2577,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
      * @return {Number}
      */
     Viewport.prototype.getScreenX = function() {
-        return this.view.screenX || this.view.screenLeft;
+        return this.context.screenX || this.context.screenLeft;
     };
 
     /**
@@ -2702,7 +2585,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
      * @return {Number}
      */
     Viewport.prototype.getScreenY = function() {
-        return this.view.screenY || this.view.screenTop;
+        return this.context.screenY || this.context.screenTop;
     };
 
     /**
@@ -2713,7 +2596,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
      */
     Viewport.prototype.getVisibleElementAt = function(x, y) {
         var self = this,
-            doc = self.view.document;
+            doc = self.context.document;
 
         if (x < 0 || y < 0) {
             return null;
@@ -2728,7 +2611,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
         // (Note: that was a tricky one it's 4:39AM)
         if (Stimuli.core.Support.isIE8 &&
             ret === null &&
-            self.view.parent && self.view.parent.parent) { // encapsulated iframe check
+            self.context.parent && self.context.parent.parent) { // encapsulated iframe check
             doc.body.getBoundingClientRect();
             ret = doc.elementFromPoint(x, y);
         }
@@ -2740,24 +2623,48 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
      * Returns the viewport window.
      * return {Window}
      */
-    Viewport.prototype.getWindow = function() {
-        return this.view;
+    Viewport.prototype.getContext = function() {
+        return this.context;
     };
 
     /**
      * Sets the viewport window.
      * return {Window}
      */
-    Viewport.prototype.setWindow = function(win) {
-        this.view = win;
+    Viewport.prototype.setContext = function(context) {
+        this.context = context;
+    };
+
+
+    Viewport.prototype.destroy = function() {
+        this.context = null;
     };
 
     /**
-     * Returns the viewport document.
-     * return {Window}
+     *
+     * @returns {*}
      */
-    Viewport.prototype.getDocument = function() {
-        return this.view.document;
+
+    Viewport.prototype.waitToBeReady = function(callback) {
+        var self = this;
+
+        function waitFor() {
+            if (!!self.context) {
+                callback();
+                return;
+            }
+            setTimeout(waitFor, 25);
+        }
+        waitFor();
+    };
+
+    Viewport.prototype.updateHash = function(hash) {
+        this.context.location.hash = hash;
+    };
+
+    Viewport.prototype.updateUrl = function(url) {
+        this.context.location = url;
+        this.context = null;
     };
 
     /**
@@ -2769,7 +2676,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
     Viewport.prototype.$ = function(selector, all) {
         /* jshint newcap: false */
-        var elements = Sizzle(selector, this.view.document);
+        var elements = Sizzle(selector, this.context.document);
         if (all) {
             return elements;
         } else {
@@ -3055,9 +2962,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
 (function() {
 
-    Stimuli.virtual.Mouse = function(options) {
-        this.viewport = options.viewport;
-    };
+    Stimuli.virtual.Mouse = function() {};
     
     var Mouse = Stimuli.virtual.Mouse;
 
@@ -3068,26 +2973,26 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
      * Executes a simple click.
      * @param {Object} options
      */
-    Mouse.prototype.click = function(options, callback) {
-        return this.defer(this.generateCommand('click', options), callback);
+    Mouse.prototype.click = function(options) {
+        return this.then(this.generateCommand('click', options));
     };
 
     /**
      * Executes a double click.
      * @param {Object} options
      */
-    Mouse.prototype.dblclick = function(options, callback) {
-        return this.defer(this.generateCommand('dblclick', options), callback);
+    Mouse.prototype.dblclick = function(options) {
+        return this.then(this.generateCommand('dblclick', options));
     };
 
+
     Mouse.prototype.generateCommand = function(commandName, options) {
-        var viewport = this.viewport;
-
-        return function(callback) {
-            var command = new Stimuli.command.mouse[commandName](options, viewport);
-            command.execute(callback);
+        var self = this;
+        return function(done) {
+            var command = new Stimuli.command.mouse[commandName](options);
+            command.viewport = self.viewport;
+            command.execute(done);
         };
-
     };
 
 
@@ -3098,49 +3003,37 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
 (function() {
     
-    Stimuli.virtual.Browser = function(options) {
-        var self = this;
-        self.viewport = options.viewport;
-
-        self.iframe = new Stimuli.core.Iframe();
-
-        self.iframe.subscribe('refresh', function(win){
-            self.win = win;
-            self.viewport.setWindow(self.win);
-        });
-
-        self.iframe.subscribe('beforerefresh', function() {
-            self.win = null;
-            self.viewport.setWindow(null);
-        });
-    };
+    Stimuli.virtual.Browser = function() {};
 
     var Browser = Stimuli.virtual.Browser;
 
     // Extends Stimuli.Device.Abstract
     Stimuli.core.Class.mix(Browser, Stimuli.core.Deferable);
 
-    Browser.prototype.navigateTo = function(options, callback) {
+
+    Browser.prototype.navigateTo = function(options) {
         var self = this;
-        self.viewport.setWindow(null);
-        self.defer(function(cb) {
-            self.iframe.subscribe('refresh', function(win) {
-                cb(win);
+
+        if (!self.iframe) {
+            self.iframe = new Stimuli.core.Iframe();
+            self.iframe.subscribe('loaded', function(context) {
+                self.viewport.setContext(context);
             });
+        }
+
+        return self.then(function(done) {
             self.iframe.navigateTo(options);
-        }, callback);
 
-        return self;
-    };
-
-    Browser.prototype.close = function() {
-        var self = this;
-
-        return self.defer(function() {
-            self.viewport.setWindow(window);
-            self.iframe.destroy();
+            self.viewport.waitToBeReady(done);
         });
 
+    };
+
+    Browser.prototype.destroy = function() {
+        var iframe = this.iframe;
+        if (iframe) {
+            iframe.destroy();
+        }
     };
 
 })();
@@ -3149,13 +3042,11 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
 (function() {
     
-    Stimuli.command.Generic = function(options, viewport) {
+    Stimuli.command.Generic = function(options) {
         var self = this;
         self.options = {};
-        self.viewport = viewport;
         Stimuli.core.Object.merge(self.options, options);
         self.events = [];
-        self.initScheduler();
     };
 
     var Generic = Stimuli.command.Generic;
@@ -3164,18 +3055,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
     Generic.prototype.configure = Generic.prototype.then;
 
-    Generic.prototype.finish = function(callback) {
-        var self = this;
-        self.then(function() {
-            if (callback) {
-                callback(self.events);
-            }
-        });
-
-        return self;
-    };
-
-    Generic.prototype.inject =  function(generateEventConfig, delay) {
+    Generic.prototype.inject = function(generateEventConfig, delay) {
         var self = this,
             callback = function(event, canceled) {
                 self.events.push({
@@ -3189,15 +3069,13 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
             options = {delay: delay};
         }
 
-        self.defer(function(cb) {
+        return self.defer(function(next) {
             var eventConfig = generateEventConfig();
-            eventConfig.view = self.viewport.getWindow();
-            Stimuli.view.event.Emitter.emit(eventConfig, cb);
+            eventConfig.view = self.viewport.getContext();
+            Stimuli.view.event.Emitter.emit(eventConfig, next);
         }, callback, options);
 
-        return self;
     };
-
 
 })();
 
@@ -3216,17 +3094,18 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
         },
 
         getTarget: function() {
-            var target = this.options.target;
+            var viewport = this.viewport,
+                target = this.options.target;
 
             if (target) {
                 if (typeof target === 'function') {
                     return target() || null;
                 } else if (typeof target === 'string') {
-                    return this.viewport.$(target) || null;
+                    return viewport.$(target) || null;
                 } else if (target.nodeType === 1) { // is an HTMLElement ?
                     return target || null;
                 } else if (!isNaN(target.x) && !isNaN(target.y)) {
-                    return this.viewport.getVisibleElementAt(target.x, target.y);
+                    return viewport.getVisibleElementAt(target.x, target.y);
                 }
             }
 
@@ -3347,33 +3226,41 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
 (function() {
 
+    function MyError(message){
+        this.message = message;
+    }
+
+    MyError.prototype = new Error();
+
     Stimuli.command.mouse.click = Stimuli.core.Class.inherit(Stimuli.command.Generic);
 
     var click = Stimuli.command.mouse.click;
 
     Stimuli.core.Class.mix(click, Stimuli.command.mouse.Helper);
 
-    click.prototype.execute = function(callback) {
+    click.prototype.execute = function(done) {
+
         var self = this,
-            newLocation = null,
+            newUrl = null,
             newHash = null,
             target, position;
 
         return self
 
         .configure(function() {
+
             self.options.button = 'left';
 
             target = self.getTarget();
 
             if (target === null) {
-                throw 'Stimuli.command.mouse.click: ' + self.error.invalidTarget;
+                throw new Error('Stimuli.command.mouse.click: invalid target.');
             }
 
-            position = self.calculateViewportCoordinates(target, self.options.offset);
+            position = self.calculateViewportCoordinates(target, self.options);
 
             if (position === null) {
-                throw 'Stimuli.command.mouse.click: ' + self.error.invalidPosition;
+                throw new Error('Stimuli.command.mouse.click: invalid position.');
             }
 
         })
@@ -3431,19 +3318,18 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
                 throw 'Stimuli.command.mouse.click: target disappeared on mouseup.';
             }
 
-
             var element = target;
             while(element) {
                 if (element.href) {
                     newHash = element.href.split('#')[1];
-                    newLocation = element.href;
+                    newUrl = element.href;
                     break;
                 }
                 element = element.parentNode;
             }
 
-            if (newLocation && !Stimuli.core.Support.isIE8) {
-                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getWindow());
+            if (newUrl && !Stimuli.core.Support.isIE8) {
+                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getContext());
                 windowObserver.subscribe('click', function(e) {
                     if (typeof e.preventDefault === 'function') {
                         e.preventDefault();
@@ -3476,26 +3362,16 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
         }, 1)
 
-        .finish(function(events) {
 
-            function waitForWindow() {
-                if (self.viewport.getWindow()) {
-                    if (callback) {
-                        callback(events);
-                    }
-                    return;
-                }
-                setTimeout(waitForWindow, 1);
-            }
+        .then(function() {
 
             if (newHash) {
-                self.viewport.getWindow().hash = newHash;
-            } else if (newLocation) {
-                self.viewport.getWindow().location = newLocation;
-                self.viewport.setWindow(null);
+                self.viewport.updateHash(newHash);
+            } else if (newUrl) {
+                self.viewport.updateUrl(newUrl);
             }
 
-            waitForWindow();
+            self.viewport.waitToBeReady(done);
         });
 
     };

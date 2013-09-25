@@ -30,17 +30,18 @@
         },
 
         getTarget: function() {
-            var target = this.options.target;
+            var viewport = this.viewport,
+                target = this.options.target;
 
             if (target) {
                 if (typeof target === 'function') {
                     return target() || null;
                 } else if (typeof target === 'string') {
-                    return this.viewport.$(target) || null;
+                    return viewport.$(target) || null;
                 } else if (target.nodeType === 1) { // is an HTMLElement ?
                     return target || null;
                 } else if (!isNaN(target.x) &amp;&amp; !isNaN(target.y)) {
-                    return this.viewport.getVisibleElementAt(target.x, target.y);
+                    return viewport.getVisibleElementAt(target.x, target.y);
                 }
             }
 
