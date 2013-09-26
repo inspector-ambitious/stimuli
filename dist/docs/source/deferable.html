@@ -32,9 +32,22 @@
 
             var error = null;
 
-            self.scheduler.subscribe('event', function(fn, callback, options) {
-                fn.call(self, callback);
+            self.scheduler.subscribe('event', function(fn, callback) {
+                fn.call(options.scope, callback);
             });
+
+        },
+
+        sneak: function(fn, callback, options) {
+            var self = this;
+            fn = fn || function(done) {done();};
+
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+
+            self.scheduler.schedule(fn, callback, options, 0);
+            return self;
         },
 
         defer: function(fn, callback, options) {
@@ -55,6 +68,14 @@
 
         sleep: function(delay) {
             return this.defer(null, null, {delay: delay});
+        },
+
+        synchronize: function(obj) {
+            var self = this;
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+            obj.scheduler = this.scheduler;
         }
 
     };

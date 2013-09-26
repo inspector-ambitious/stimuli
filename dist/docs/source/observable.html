@@ -58,22 +58,29 @@ Stimuli.core.Observable = {
      * @param {Function} fn The listener to bind.
      * @param {Object=} scope The listener execution scope.
      */
-    subscribe: function(eventName, fn, scope) {
-        var me = this;
+    subscribe: function(eventName, fn, scope, sneak) {
+        var self = this,
+            options;
 
-        scope = scope || me;
+        scope = scope || self;
 
-        me.listeners = me.listeners || {};
+        self.listeners = self.listeners || {};
 
-        me.listeners[eventName] = me.listeners[eventName] || [];
+        self.listeners[eventName] = self.listeners[eventName] || [];
 
-        me.listeners[eventName].push({
+        options = {
 
             fn: fn,
 
             scope: scope
 
-        });
+        };
+
+        if (sneak) {
+            self.listeners[eventName].splice(0, 0, options);
+        } else {
+            self.listeners[eventName].push(options);
+        }
 
     },
 

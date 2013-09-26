@@ -51,15 +51,19 @@
      * @param {Mixed} data The data to schedule.
      * @param {Function} callback The function to call when the data is ready.
      */
-    Scheduler.prototype.schedule = function(data, callback, options) {
+    Scheduler.prototype.schedule = function(data, callback, options, position) {
         var self = this,
             frame = {data: data, callback: callback, options: options};
 
-        self.queue.push(frame);
-
+        if (typeof position === 'undefined') {
+            self.queue.push(frame);
+        } else {
+            self.queue.splice(position, 0, frame);
+        }
         self.next();
 
     };
+
 
     Scheduler.prototype.calculateTimeout = function(options) {
         var delay, speed;

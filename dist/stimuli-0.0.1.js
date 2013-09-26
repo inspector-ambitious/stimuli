@@ -2011,7 +2011,6 @@ var Stimuli = function(options) {
 
     options = options || {};
 
-    self.initScheduler();
 
     self.viewport = new Stimuli.view.Viewport();
 
@@ -2019,17 +2018,30 @@ var Stimuli = function(options) {
 
     self.mouse = new Stimuli.virtual.Mouse();
 
+    self.recorder = new Stimuli.core.Recorder();
+
+    self.synchronize(self.viewport);
+
+    self.synchronize(self.recorder);
+
+    self.synchronize(self.browser);
+
+    self.synchronize(self.mouse);
+
     function mix(obj) {
-        obj.scheduler = self.scheduler;
         obj.browser = self.browser;
         obj.viewport = self.viewport;
         obj.mouse = self.mouse;
+        obj.recorder = self.recorder;
     }
 
+    mix(self.viewport);
 
     mix(self.browser);
 
     mix(self.mouse);
+
+    mix(self.recorder);
 
     self.mouse.destroy = self.destroy;
 
@@ -2230,22 +2242,29 @@ Stimuli.core.Observable = {
      * @param {Function} fn The listener to bind.
      * @param {Object=} scope The listener execution scope.
      */
-    subscribe: function(eventName, fn, scope) {
-        var me = this;
+    subscribe: function(eventName, fn, scope, sneak) {
+        var self = this,
+            options;
 
-        scope = scope || me;
+        scope = scope || self;
 
-        me.listeners = me.listeners || {};
+        self.listeners = self.listeners || {};
 
-        me.listeners[eventName] = me.listeners[eventName] || [];
+        self.listeners[eventName] = self.listeners[eventName] || [];
 
-        me.listeners[eventName].push({
+        options = {
 
             fn: fn,
 
             scope: scope
 
-        });
+        };
+
+        if (sneak) {
+            self.listeners[eventName].splice(0, 0, options);
+        } else {
+            self.listeners[eventName].push(options);
+        }
 
     },
 
@@ -2310,15 +2329,19 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
      * @param {Mixed} data The data to schedule.
      * @param {Function} callback The function to call when the data is ready.
      */
-    Scheduler.prototype.schedule = function(data, callback, options) {
+    Scheduler.prototype.schedule = function(data, callback, options, position) {
         var self = this,
             frame = {data: data, callback: callback, options: options};
 
-        self.queue.push(frame);
-
+        if (typeof position === 'undefined') {
+            self.queue.push(frame);
+        } else {
+            self.queue.splice(position, 0, frame);
+        }
         self.next();
 
     };
+
 
     Scheduler.prototype.calculateTimeout = function(options) {
         var delay, speed;
@@ -2414,9 +2437,22 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
 
             var error = null;
 
-            self.scheduler.subscribe('event', function(fn, callback, options) {
-                fn.call(self, callback);
+            self.scheduler.subscribe('event', function(fn, callback) {
+                fn.call(options.scope, callback);
             });
+
+        },
+
+        sneak: function(fn, callback, options) {
+            var self = this;
+            fn = fn || function(done) {done();};
+
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+
+            self.scheduler.schedule(fn, callback, options, 0);
+            return self;
         },
 
         defer: function(fn, callback, options) {
@@ -2437,6 +2473,14 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
 
         sleep: function(delay) {
             return this.defer(null, null, {delay: delay});
+        },
+
+        synchronize: function(obj) {
+            var self = this;
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+            obj.scheduler = this.scheduler;
         }
 
     };
@@ -2449,6 +2493,88 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
 // Dependencies
 Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
+
+// Source: src/core/recorder.js
+
+(function() {
+
+    Stimuli.core.Recorder = function() {
+        var self = this;
+        self.tracks = {};
+        self.recordingTracks = {};
+        self.initialized = false;
+    };
+
+    var Recorder = Stimuli.core.Recorder;
+
+    Stimuli.core.Class.mix(Recorder, Stimuli.core.Deferable);
+
+    Recorder.prototype.init = function() {
+        var self = this;
+
+        self.scheduler.subscribe('event', function(fn, callback, options) {
+            if (!options.recorder) {
+                var tracks = this.recordingTracks,
+                    trackName;
+
+                for (trackName in tracks) {
+                    if (tracks.hasOwnProperty(trackName) && tracks[trackName]) {
+                        tracks[trackName].push({
+                            fn: fn,
+                            callback: callback,
+                            options: options
+                        });
+                    }
+                }
+            }
+
+        }, self, true);
+
+        self.initialized = true;
+    };
+
+    Recorder.prototype.start = function(trackName) {
+        var self = this;
+        if (!self.initialized) {
+            self.init();
+        }
+        return self.defer(null, function() {
+            self.recordingTracks[trackName] = [];
+        }, {recorder: true});
+    };
+
+
+    Recorder.prototype.stop = function(trackName) {
+        var self = this;
+        return self.defer(null, function() {
+            self.tracks[trackName] = self.recordingTracks[trackName];
+            delete self.recordingTracks[trackName];
+        }, {recorder: true});
+    };
+
+
+    Recorder.prototype.replay = function(trackName, times) {
+        var self = this;
+
+        return self.defer(null, function() {
+
+            var tracks = self.tracks[trackName],
+                length = tracks.length,
+                i,
+                track;
+
+            times = times || 1;
+
+            while(times--) {
+                for (i = length - 1; i >= 0; i--) {
+                    track = tracks[i];
+                    self.sneak(track.fn, track.callback, track.options);
+                }
+            }
+        }, {recorder: true});
+    };
+
+})();
 
 // Source: src/core/ajax.js
 
