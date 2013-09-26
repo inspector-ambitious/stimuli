@@ -85,7 +85,7 @@ describe('Stimuli.core.Recorder', function() {
             .stop('foobar')
             .stop('foobar2')
             .replay('foobar', 2)
-            .replay('foobar2', 2)
+            .replay('foobar2', 2);
 
 
         clock.tick(13);
