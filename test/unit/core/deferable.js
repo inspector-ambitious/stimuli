@@ -164,7 +164,7 @@ describe('Stimuli.core.Deferable', function() {
                     str += '3';
                     done();
                 }, 500);
-            })
+            });
 
             a
             .then(function(done) {
