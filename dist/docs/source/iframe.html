@@ -56,24 +56,23 @@
 
     Stimuli.core.Class.mix(Iframe, Stimuli.core.Observable);
 
-    Iframe.prototype.navigateTo = function(options) {
-        
-        if (typeof options === 'string') {
-            options = {
-                url: options
-            };
-        }
 
-        this.iframeEl.src = options.url;
+    Iframe.prototype.load = function(url) {
+        var self = this;
+
+        self.iframeEl.src = url;
 
     };
 
     Iframe.prototype.destroy = function() {
         var self = this;
 
-        if (self.iframeEl) {
+        if (self.iframeObserver) {
             self.iframeObserver.unsubscribeAll();
-            document.body.removeChild(self.iframeEl);
+        }
+
+        if (self.iframeEl) {
+            self.iframeEl.parentNode.removeChild(self.iframeEl);
             self.iframeEl = null;
         }
     };

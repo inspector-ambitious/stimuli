@@ -1,4 +1,4 @@
-/*! stimuli - v0.0.1 - 2013-09-25 */
+/*! stimuli - v0.0.1 - 2013-09-26 */
 'use strict';
 
 // Source: lib/sizzle/sizzle.js
@@ -2137,28 +2137,34 @@ Stimuli.core.Support = {
  * A set of useful methods to deal with objects.
  */
 
-Stimuli.core.Object = {
+(function() {
 
-    /**
-     * Merge objects properties.
-     * @param {Object} dest The destination object
-     * @param {Object=} src The source object
-     * @return {Object} dest
-     */
-    merge: function(dest, src) {
-        if (!src) {
+
+
+    Stimuli.core.Object = {
+
+        /**
+         * Merge objects properties.
+         * @param {Object} dest The destination object
+         * @param {Object=} src The source object
+         * @return {Object} dest
+         */
+        merge: function(dest, src) {
+            if (!src) {
+                return dest;
+            }
+            for (var prop in src) {
+                if (src.hasOwnProperty(prop)) {
+                    dest[prop] = src[prop];
+                }
+            }
+
             return dest;
         }
-        for (var prop in src) {
-            if (src.hasOwnProperty(prop)) {
-                dest[prop] = src[prop];
-            }
-        }
 
-        return dest;
-    }
+    };
 
-};
+})();
 
 // Source: src/core/class.js
 
@@ -2426,15 +2432,11 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Observable);
         },
 
         then: function(callback) {
-            var self = this;
-            self.defer(null, callback, {delay: 0});
-            return self;
+            return this.defer(null, callback);
         },
 
-        sleep: function(delay, callback) {
-            var self = this;
-            self.defer(null, callback, {delay: delay});
-            return self;
+        sleep: function(delay) {
+            return this.defer(null, null, {delay: delay});
         }
 
     };
@@ -2527,24 +2529,23 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
     Stimuli.core.Class.mix(Iframe, Stimuli.core.Observable);
 
-    Iframe.prototype.navigateTo = function(options) {
-        
-        if (typeof options === 'string') {
-            options = {
-                url: options
-            };
-        }
 
-        this.iframeEl.src = options.url;
+    Iframe.prototype.load = function(url) {
+        var self = this;
+
+        self.iframeEl.src = url;
 
     };
 
     Iframe.prototype.destroy = function() {
         var self = this;
 
-        if (self.iframeEl) {
+        if (self.iframeObserver) {
             self.iframeObserver.unsubscribeAll();
-            document.body.removeChild(self.iframeEl);
+        }
+
+        if (self.iframeEl) {
+            self.iframeEl.parentNode.removeChild(self.iframeEl);
             self.iframeEl = null;
         }
     };
@@ -2675,7 +2676,6 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
      */
 
     Viewport.prototype.$ = function(selector, all) {
-        /* jshint newcap: false */
         var elements = Sizzle(selector, this.context.document);
         if (all) {
             return elements;
@@ -3003,7 +3003,9 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 
 (function() {
     
-    Stimuli.virtual.Browser = function() {};
+    Stimuli.virtual.Browser = function(options) {
+        this.options = options || {};
+    };
 
     var Browser = Stimuli.virtual.Browser;
 
@@ -3011,18 +3013,18 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
     Stimuli.core.Class.mix(Browser, Stimuli.core.Deferable);
 
 
-    Browser.prototype.navigateTo = function(options) {
+    Browser.prototype.navigateTo = function(url) {
         var self = this;
 
         if (!self.iframe) {
-            self.iframe = new Stimuli.core.Iframe();
+            self.iframe = new Stimuli.core.Iframe(self.options);
             self.iframe.subscribe('loaded', function(context) {
                 self.viewport.setContext(context);
             });
         }
 
         return self.then(function(done) {
-            self.iframe.navigateTo(options);
+            self.iframe.load(url);
 
             self.viewport.waitToBeReady(done);
         });
@@ -3046,7 +3048,6 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
         var self = this;
         self.options = {};
         Stimuli.core.Object.merge(self.options, options);
-        self.events = [];
     };
 
     var Generic = Stimuli.command.Generic;
@@ -3058,6 +3059,9 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
     Generic.prototype.inject = function(generateEventConfig, delay) {
         var self = this,
             callback = function(event, canceled) {
+                if (!self.events) {
+                    self.events = [];
+                }
                 self.events.push({
                     src: event,
                     canceled: canceled
@@ -3225,12 +3229,6 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Deferable);
 // Source: src/command/mouse/click.js
 
 (function() {
-
-    function MyError(message){
-        this.message = message;
-    }
-
-    MyError.prototype = new Error();
 
     Stimuli.command.mouse.click = Stimuli.core.Class.inherit(Stimuli.command.Generic);
 

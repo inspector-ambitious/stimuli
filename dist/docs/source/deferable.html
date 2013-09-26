@@ -50,15 +50,11 @@
         },
 
         then: function(callback) {
-            var self = this;
-            self.defer(null, callback, {delay: 0});
-            return self;
+            return this.defer(null, callback);
         },
 
-        sleep: function(delay, callback) {
-            var self = this;
-            self.defer(null, callback, {delay: delay});
-            return self;
+        sleep: function(delay) {
+            return this.defer(null, null, {delay: delay});
         }
 
     };
