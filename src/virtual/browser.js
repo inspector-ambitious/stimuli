@@ -2,7 +2,9 @@
 
 (function() {
     
-    Stimuli.virtual.Browser = function() {};
+    Stimuli.virtual.Browser = function(options) {
+        this.options = options || {};
+    };
 
     var Browser = Stimuli.virtual.Browser;
 
@@ -10,18 +12,18 @@
     Stimuli.core.Class.mix(Browser, Stimuli.core.Deferable);
 
 
-    Browser.prototype.navigateTo = function(options) {
+    Browser.prototype.navigateTo = function(url) {
         var self = this;
 
         if (!self.iframe) {
-            self.iframe = new Stimuli.core.Iframe();
+            self.iframe = new Stimuli.core.Iframe(self.options);
             self.iframe.subscribe('loaded', function(context) {
                 self.viewport.setContext(context);
             });
         }
 
         return self.then(function(done) {
-            self.iframe.navigateTo(options);
+            self.iframe.load(url);
 
             self.viewport.waitToBeReady(done);
         });

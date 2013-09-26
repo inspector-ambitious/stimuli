@@ -61,7 +61,7 @@ describe('Stimuli.core.Scheduler', function() {
 
     describe('emitted data callbacks', function() {
 
-        it('should execute the data callback after the listener', function(done) {
+        it('should execute the data callback after the listener', function() {
             var value = null;
 
             scheduler.subscribe('event', function(data, done) {
@@ -77,7 +77,7 @@ describe('Stimuli.core.Scheduler', function() {
             });
 
             clock.tick(100);
-            done();
+
 
         });
 

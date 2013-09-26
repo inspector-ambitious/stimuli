@@ -6,7 +6,6 @@
         var self = this;
         self.options = {};
         Stimuli.core.Object.merge(self.options, options);
-        self.events = [];
     };
 
     var Generic = Stimuli.command.Generic;
@@ -18,6 +17,9 @@
     Generic.prototype.inject = function(generateEventConfig, delay) {
         var self = this,
             callback = function(event, canceled) {
+                if (!self.events) {
+                    self.events = [];
+                }
                 self.events.push({
                     src: event,
                     canceled: canceled

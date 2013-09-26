@@ -122,7 +122,6 @@
      */
 
     Viewport.prototype.$ = function(selector, all) {
-        /* jshint newcap: false */
         var elements = Sizzle(selector, this.context.document);
         if (all) {
             return elements;

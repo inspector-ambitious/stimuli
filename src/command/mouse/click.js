@@ -2,12 +2,6 @@
 
 (function() {
 
-    function MyError(message){
-        this.message = message;
-    }
-
-    MyError.prototype = new Error();
-
     Stimuli.command.mouse.click = Stimuli.core.Class.inherit(Stimuli.command.Generic);
 
     var click = Stimuli.command.mouse.click;
