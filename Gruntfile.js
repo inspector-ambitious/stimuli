@@ -23,6 +23,7 @@ module.exports = function(grunt) {
 
         'src/core/scheduler.js',
         'src/core/deferable.js',
+        'src/core/recorder.js',
 
         'src/core/ajax.js',
         'src/core/iframe.js',

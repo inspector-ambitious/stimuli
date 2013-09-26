@@ -12,7 +12,6 @@ var Stimuli = function(options) {
 
     options = options || {};
 
-    self.initScheduler();
 
     self.viewport = new Stimuli.view.Viewport();
 
@@ -20,17 +19,30 @@ var Stimuli = function(options) {
 
     self.mouse = new Stimuli.virtual.Mouse();
 
+    self.recorder = new Stimuli.core.Recorder();
+
+    self.synchronize(self.viewport);
+
+    self.synchronize(self.recorder);
+
+    self.synchronize(self.browser);
+
+    self.synchronize(self.mouse);
+
     function mix(obj) {
-        obj.scheduler = self.scheduler;
         obj.browser = self.browser;
         obj.viewport = self.viewport;
         obj.mouse = self.mouse;
+        obj.recorder = self.recorder;
     }
 
+    mix(self.viewport);
 
     mix(self.browser);
 
     mix(self.mouse);
+
+    mix(self.recorder);
 
     self.mouse.destroy = self.destroy;
 
