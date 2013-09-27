@@ -55,7 +55,8 @@ describe('Stimuli.core.History', function() {
             it('should not throw an error if you try to go backward when only two navigations have occurred', function(done) {
                 iframe
                     .load('/base/test/fixtures/divinfront.html')
-                    .load('/base/test/fixtures/links.html')
+                    .load('/base/test/fixtures/links.html');
+
                 history
                     .sleep(500)
                     .go(-1)
@@ -86,7 +87,7 @@ describe('Stimuli.core.History', function() {
 
                 iframe
                     .load('/base/test/fixtures/divinfront.html')
-                    .load('/base/test/fixtures/links.html')
+                    .load('/base/test/fixtures/links.html');
                 history
                     .go(-1)
                     .go(-1);
@@ -131,7 +132,7 @@ describe('Stimuli.core.History', function() {
             it('should not throw an error if you went backward one time', function(done) {
                 iframe
                     .load('/base/test/fixtures/divinfront.html')
-                    .load('/base/test/fixtures/links.html')
+                    .load('/base/test/fixtures/links.html');
                 history
                     .go(-1)
                     .go(1)
@@ -146,7 +147,7 @@ describe('Stimuli.core.History', function() {
                 iframe
                     .load('/base/test/fixtures/divinfront.html')
                     .load('/base/test/fixtures/links.html')
-                    .load('/base/test/fixtures/empty.html')
+                    .load('/base/test/fixtures/empty.html');
                 history
                     .go(-1)
                     .go(-1)
