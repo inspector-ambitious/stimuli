@@ -4,15 +4,15 @@ describe('Stimuli.command.mouse.click', function() {
     var stimuli,
         click;
 
-    before(function() {
+    beforeEach(function() {
         stimuli = new Stimuli();
     });
 
-    after(function() {
+    afterEach(function() {
         stimuli.destroy();
     });
 
-    describe('link to another page', function() {
+    describe('click on a link to another page', function() {
 
         it('should load the other page', function(done) {
 
@@ -25,6 +25,23 @@ describe('Stimuli.command.mouse.click', function() {
                     expect(/simplediv\.html$/.test(this.getWindow().location + '')).to.be(true);
                     done();
                 });
+        });
+
+    });
+
+    describe('click on a link with a hashtag', function() {
+
+        it('should update the current hash', function(done) {
+
+            stimuli
+                .browser
+                    .navigateTo('/base/test/fixtures/links.html')
+                .mouse
+                    .click({target: '#hashtag_link'})
+                    .then(function() {
+                        expect(this.getWindow().location.hash + '').to.be('#hashtaglink');
+                        done();
+                    });
         });
 
     });

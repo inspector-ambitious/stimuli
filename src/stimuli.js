@@ -44,8 +44,6 @@ var Stimuli = function(options) {
 
     mix(self.recorder);
 
-    self.mouse.destroy = self.destroy;
-
 };
 
 // Namespaces declaration
@@ -68,15 +66,16 @@ Stimuli.command = {
 };
 
 
-
-
 /**
  * Destroy the stimuli instance
  * @param {Object} options
  */
-Stimuli.prototype.destroy = function() {
-    this.browser.destroy();
-    return true;
+Stimuli.prototype.destroy = function(callback) {
+    var self = this;
+    return self.defer(function(next) {
+        self.browser.destroy();
+        next();
+    }, callback);
 };
 
 /**

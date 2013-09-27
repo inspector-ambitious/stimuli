@@ -30,7 +30,7 @@
         self.iframeObserver = new Stimuli.view.event.Observer(iframe);
 
         self.iframeObserver.subscribe('load', function() {
-            self.publish('loaded',self.iframeEl.contentWindow);
+            self.publish('loaded', self.iframeEl.contentWindow);
         }, self);
 
     };
@@ -43,7 +43,13 @@
     Iframe.prototype.load = function(url) {
         var self = this;
 
-        self.iframeEl.src = url;
+        Stimuli.core.Ajax.get(url, function(response, status, statusText) {
+            if (status !== 200) {
+                self.publish('error', status, statusText);
+            }
+
+            self.iframeEl.src = url;
+        });
 
     };
 

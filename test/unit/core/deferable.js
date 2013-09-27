@@ -8,7 +8,6 @@ describe('Stimuli.core.Deferable', function() {
 
         var DeferableClass = function() {};
 
-
         Stimuli.core.Class.mix(DeferableClass, Stimuli.core.Deferable);
 
         a = new DeferableClass();
@@ -136,16 +135,14 @@ describe('Stimuli.core.Deferable', function() {
 
     });
 
-    describe('shared scheduler', function() {
+    describe('synchronize', function() {
 
-        it('should be possible to share a scheduler accross two deferables', function() {
+        it('should synchronize two deferables', function() {
             var str =  '';
 
             var clock = sinon.useFakeTimers();
 
-            a.initScheduler();
-
-            b.scheduler = a.scheduler;
+            a.synchronize(b);
 
             a
             .then(function(done) {
