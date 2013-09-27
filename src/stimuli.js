@@ -13,15 +13,15 @@ var Stimuli = function(options) {
     options = options || {};
 
 
-    self.viewport = new Stimuli.view.Viewport();
+    self.context = new Stimuli.core.Context();
 
-    self.browser = new Stimuli.virtual.Browser();
+    self.browser = new Stimuli.virtual.Browser(self.context);
 
-    self.mouse = new Stimuli.virtual.Mouse();
+    self.viewport = new Stimuli.view.Viewport(self.context);
+
+    self.mouse = new Stimuli.virtual.Mouse(self.viewport);
 
     self.recorder = new Stimuli.core.Recorder();
-
-    self.synchronize(self.viewport);
 
     self.synchronize(self.recorder);
 
@@ -31,12 +31,9 @@ var Stimuli = function(options) {
 
     function mix(obj) {
         obj.browser = self.browser;
-        obj.viewport = self.viewport;
         obj.mouse = self.mouse;
         obj.recorder = self.recorder;
     }
-
-    mix(self.viewport);
 
     mix(self.browser);
 
@@ -71,11 +68,7 @@ Stimuli.command = {
  * @param {Object} options
  */
 Stimuli.prototype.destroy = function(callback) {
-    var self = this;
-    return self.defer(function(next) {
-        self.browser.destroy();
-        next();
-    }, callback);
+    return this.browser.destroy(callback);
 };
 
 /**
@@ -87,10 +80,10 @@ Stimuli.prototype.$ = function(selector) {
 };
 
 Stimuli.prototype.getWindow = function() {
-    return this.viewport.getContext();
+    return this.context.get();
 };
 
 Stimuli.prototype.getDocument = function() {
-    return this.viewport.getContext().document;
+    return this.viewport.getDocument();
 };
 

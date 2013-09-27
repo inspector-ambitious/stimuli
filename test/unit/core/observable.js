@@ -67,6 +67,44 @@ describe('Stimuli.core.Observable', function() {
 
     });
 
+    describe('once', function() {
+
+        it('should fire the listener only once', function() {
+            var i = 0;
+
+            var listener = function() {
+                i++;
+            };
+
+            observable.once('event1', listener);
+
+            observable.publish('event1');
+            observable.publish('event1');
+            expect(i).to.be(1);
+        });
+
+        it('should not throw an error if called many times', function() {
+            var str = '';
+
+            var listener1 = function() {
+                str += '1';
+            };
+
+            var listener2 = function() {
+                str += '2';
+            };
+
+            observable.once('event1', listener1);
+            observable.once('event1', listener2);
+
+            observable.publish('event1');
+            observable.publish('event1');
+            observable.publish('event1');
+            expect(str).to.be('12');
+        });
+
+    });
+
     describe('unsubscribe', function() {
 
         it('should not call the listener if the listener is unsubscribed', function() {

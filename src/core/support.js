@@ -40,4 +40,5 @@ Stimuli.core.Support = {
      * Is true if browser is ie8
      */
     isIE8: typeof document.addEventListener === 'undefined'
+
 };

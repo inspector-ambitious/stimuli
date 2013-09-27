@@ -24,7 +24,8 @@
      * @return {Number}
      */
     Viewport.prototype.getScreenX = function() {
-        return this.context.screenX || this.context.screenLeft;
+        var win = this.context.get();
+        return win.screenX || win.screenLeft;
     };
 
     /**
@@ -32,7 +33,8 @@
      * @return {Number}
      */
     Viewport.prototype.getScreenY = function() {
-        return this.context.screenY || this.context.screenTop;
+        var win = this.context.get();
+        return win.screenY || win.screenTop;
     };
 
     /**
@@ -42,8 +44,8 @@
      * @return {HTMLElement}
      */
     Viewport.prototype.getVisibleElementAt = function(x, y) {
-        var self = this,
-            doc = self.context.document;
+        var context = this.context.get(),
+            doc = context.document;
 
         if (x < 0 || y < 0) {
             return null;
@@ -56,9 +58,11 @@
         // freshly inserted elements, so before calling elementFromPoint
         // we trigger a reflow to force the layout to be recalculated
         // (Note: that was a tricky one it's 4:39AM)
+        // TODO:(yhwh) Try to set the iframe in position relative
+        // see http://stackoverflow.com/questions/4444014/blank-iframe-in-ie
         if (Stimuli.core.Support.isIE8 &&
             ret === null &&
-            self.context.parent && self.context.parent.parent) { // encapsulated iframe check
+            context.parent && context.parent.parent) { // encapsulated iframe check
             doc.body.getBoundingClientRect();
             ret = doc.elementFromPoint(x, y);
         }
@@ -70,49 +74,38 @@
      * Returns the viewport window.
      * return {Window}
      */
-    Viewport.prototype.getContext = function() {
-        return this.context;
+    Viewport.prototype.getWindow = function() {
+        return this.context.get();
     };
 
-    /**
-     * Sets the viewport window.
-     * return {Window}
-     */
-    Viewport.prototype.setContext = function(context) {
-        this.context = context;
+    Viewport.prototype.getDocument = function() {
+        return this.context.get().document;
     };
 
-
-    Viewport.prototype.destroy = function() {
-        this.context = null;
-    };
-
-    /**
-     *
-     * @returns {*}
-     */
-
-    Viewport.prototype.waitToBeReady = function(callback) {
-        var self = this;
-
-        function waitFor() {
-            if (!!self.context) {
-                callback();
-                return;
-            }
-            setTimeout(waitFor, 25);
-        }
-        waitFor();
-    };
 
     Viewport.prototype.updateHash = function(hash) {
-        this.context.location.hash = hash;
+        this.context.get().location.hash = hash;
     };
 
     Viewport.prototype.updateUrl = function(url) {
-        this.context.location = url;
-        this.context = null;
+        this.context.get().location = url;
     };
+
+
+    Viewport.prototype.waitForReady = function(callback) {
+        var self = this;
+
+        function waitFor() {
+            if (self.context.isLoading()) {
+                setTimeout(waitFor, 1);
+                return;
+            }
+            callback();
+        }
+
+        setTimeout(waitFor, 1);
+    };
+
 
     /**
      * Returns the first {HTMLElement} matching the css selector.
@@ -122,7 +115,7 @@
      */
 
     Viewport.prototype.$ = function(selector, all) {
-        var elements = Sizzle(selector, this.context.document);
+        var elements = Sizzle(selector, this.context.get().document);
         if (all) {
             return elements;
         } else {

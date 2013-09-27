@@ -99,7 +99,7 @@
             }
 
             if (newUrl && !Stimuli.core.Support.isIE8) {
-                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getContext());
+                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getWindow());
                 windowObserver.subscribe('click', function(e) {
                     if (typeof e.preventDefault === 'function') {
                         e.preventDefault();
@@ -134,14 +134,12 @@
 
 
         .then(function() {
-
             if (newHash) {
                 self.viewport.updateHash(newHash);
             } else if (newUrl) {
                 self.viewport.updateUrl(newUrl);
             }
-
-            self.viewport.waitToBeReady(done);
+            self.viewport.waitForReady(done);
         });
 
     };

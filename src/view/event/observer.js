@@ -16,6 +16,17 @@
 
     var Observer = Stimuli.view.event.Observer;
 
+    Observer.prototype.once = function(type, listener, scope) {
+        var self = this;
+
+        function listenerWrap() {
+            self.unsubscribe(type, listenerWrap);
+            listener.apply(scope, arguments);
+        }
+
+        self.subscribe(type, listenerWrap, scope);
+    };
+
     Observer.prototype.subscribe = function(type, listener, scope) {
         var self = this;
 

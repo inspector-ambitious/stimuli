@@ -1,69 +1,30 @@
 describe('Stimuli.virtual.Browser', function() {
 
+    var context;
+
+    beforeEach(function() {
+        context = new Stimuli.core.Context();
+    });
+
+    afterEach(function() {
+        context = null;
+    });
+
+
     describe('navigateTo', function() {
 
         it('should be able to navigate to several urls in sequence', function(done) {
-            var browser = new Stimuli.virtual.Browser();
-            var viewport = new Stimuli.view.Viewport();
-            browser.viewport = viewport;
+            var browser = new Stimuli.virtual.Browser(context);
+
 
             browser
                 .navigateTo('/base/test/fixtures/empty.html')
                 .then(function() {
-                    expect(/empty\.html$/.test(viewport.getContext().location + '')).to.be(true);
+                    expect(context.get().location + '').to.contain('/base/test/fixtures/empty.html');
                 })
                 .navigateTo('/base/test/fixtures/links.html')
                 .then(function() {
-                    expect(/links\.html$/.test(viewport.getContext().location + '')).to.be(true);
-
-                })
-                .destroy(function() {
-                    done();
-                });
-        });
-
-        it('should throw an error if the page doesn\'t exist', function(done) {
-                var browser = new Stimuli.virtual.Browser();
-                browser.viewport = new Stimuli.view.Viewport();
-
-                var backupOnError = window.onerror;
-                window.onerror = function(e) {
-                    window.onerror = backupOnError;
-                    setTimeout(function() { // the expectation test will be executed outside onerror
-                        browser.destroy();
-                        expect(e.toString()).to.contain('Stimuli.browser: Unable to navigate to url. (404) Not Found');
-                        done();
-                    }, 1);
-                };
-
-                browser.navigateTo('/undefined.undefined');
-        });
-
-    });
-
-    describe('back and forward', function() {
-
-        it('should be able to navigate to go back in history', function(done) {
-            var browser = new Stimuli.virtual.Browser();
-            var viewport = new Stimuli.view.Viewport();
-            browser.viewport = viewport;
-
-            browser
-                .navigateTo('/base/test/fixtures/empty.html')
-                .then(function() {
-                    expect(/empty\.html$/.test(viewport.getContext().location + '')).to.be(true);
-                })
-                .navigateTo('/base/test/fixtures/links.html')
-                .then(function() {
-                    expect(/links\.html$/.test(viewport.getContext().location + '')).to.be(true);
-                })
-                .back()
-                .then(function() {
-                    expect(/empty\.html$/.test(viewport.getContext().location + '')).to.be(true);
-                })
-                .forward()
-                .then(function() {
-                    expect(/links\.html$/.test(viewport.getContext().location + '')).to.be(true);
+                    expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
                 })
                 .destroy(function() {
                     done();
@@ -72,70 +33,38 @@ describe('Stimuli.virtual.Browser', function() {
 
     });
 
-    describe('back only', function() {
+    describe('back, forward, reload', function() {
 
-        it('should throw an error if it\'s impossible to go back', function(done) {
-            var browser = new Stimuli.virtual.Browser();
-            var lastBackBeforeError = false;
+        it('should not throw any error while navigating', function(done) {
+            var browser = new Stimuli.virtual.Browser(context);
 
-            browser.viewport = new Stimuli.view.Viewport();
-
-            var backupOnError = window.onerror;
-            window.onerror = function(e) {
-                window.onerror = backupOnError;
-                setTimeout(function() {  // the expectation test will be executed outside onerror
-                    browser.destroy();
-                    expect(e.toString()).to.contain('Stimuli.browser: Can\'t go back there is no history.');
-                    expect(lastBackBeforeError).to.be(true);
-                    done();
-                }, 1);
-            };
 
             browser
                 .navigateTo('/base/test/fixtures/empty.html')
+                .then(function() {
+                    expect(context.get().location + '').to.contain('/base/test/fixtures/empty.html');
+                })
                 .navigateTo('/base/test/fixtures/links.html')
-                .back()
-                .forward()
+                .then(function() {
+                    expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                })
                 .back()
                 .then(function() {
-                    lastBackBeforeError = true;
+                    expect(context.get().location + '').to.contain('/base/test/fixtures/empty.html');
                 })
-                .back();
-
-        });
-
-    });
-
-    describe('forward only', function() {
-
-        it('should throw an error if it\'s impossible to go forward', function(done) {
-            var browser = new Stimuli.virtual.Browser();
-            var lastForwardBeforeError = false;
-            browser.viewport = new Stimuli.view.Viewport();
-
-            var backupOnError = window.onerror;
-
-            window.onerror = function(e) {
-                window.onerror = backupOnError;
-                setTimeout(function() { // the expectation test will be executed outside onerror
-                    browser.destroy();
-                    expect(e.toString()).to.contain('Stimuli.browser: Can\'t go forward there is no history.');
-                    expect(lastForwardBeforeError).to.be(true);
+                .forward()
+                .then(function() {
+                    expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                })
+                .reload()
+                .then(function() {
+                    expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                })
+                .destroy(function() {
                     done();
-                }, 1);
-            };
-
-            browser
-                .navigateTo('/base/test/fixtures/empty.html')
-                .navigateTo('/base/test/fixtures/links.html')
-                .back()
-                .forward()
-                .then(function() {
-                    lastForwardBeforeError = true;
-                })
-                .forward();
-
+                });
         });
+
     });
 
 });

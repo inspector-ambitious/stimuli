@@ -11,11 +11,11 @@ describe('Stimuli.view.event.synthetizer.Mouse', function() {
         stimuli = new Stimuli();
         stimuli
         .browser
-        .navigateTo('/base/test/fixtures/simplediv.html')
-        .then(function() {
-            body = stimuli.$('body');
-            done();
-        });
+            .navigateTo('/base/test/fixtures/simplediv.html')
+            .then(function() {
+                body = stimuli.$('body');
+                done();
+            });
         
     });
 

@@ -12,7 +12,9 @@
 
 (function() {
 
-    Stimuli.virtual.Mouse = function() {};
+    Stimuli.virtual.Mouse = function(viewport) {
+        this.viewport = viewport;
+    };
     
     var Mouse = Stimuli.virtual.Mouse;
 
@@ -39,8 +41,7 @@
     Mouse.prototype.generateCommand = function(commandName, options) {
         var self = this;
         return function(done) {
-            var command = new Stimuli.command.mouse[commandName](options);
-            command.viewport = self.viewport;
+            var command = new Stimuli.command.mouse[commandName](self.viewport, options);
             command.execute(done);
         };
     };

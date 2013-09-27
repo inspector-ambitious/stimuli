@@ -63,9 +63,6 @@
 
     };
 
-//    Stimuli.core.Object.merge(Stimuli.core.Deferable, Stimuli.core.Observable);
-
-
 })();
 
 // Dependencies

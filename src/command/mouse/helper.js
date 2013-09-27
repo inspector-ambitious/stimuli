@@ -4,13 +4,6 @@
 
     Stimuli.command.mouse.Helper = {
 
-        error: {
-
-            invalidTarget: 'Unable to find target.',
-
-            invalidPosition: 'Unable to calculate the event coordinates. The element is not visible or the specified offset is invalid.'
-        
-        },
 
         getTarget: function() {
             var viewport = this.viewport,

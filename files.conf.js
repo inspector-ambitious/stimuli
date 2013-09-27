@@ -17,12 +17,16 @@ var stimuliFiles = [
     'src/core/class.js',
     'src/core/observable.js',
 
+
     'src/core/scheduler.js',
     'src/core/deferable.js',
     'src/core/recorder.js',
 
+    'src/core/context.js',
+
     'src/core/ajax.js',
     'src/core/iframe.js',
+    'src/core/history.js',
 
     'src/view/viewport.js',
     'src/view/event/emitter.js',

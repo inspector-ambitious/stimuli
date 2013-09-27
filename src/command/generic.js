@@ -2,9 +2,10 @@
 
 (function() {
     
-    Stimuli.command.Generic = function(options) {
+    Stimuli.command.Generic = function(viewport, options) {
         var self = this;
         self.options = {};
+        self.viewport = viewport;
         Stimuli.core.Object.merge(self.options, options);
     };
 
@@ -33,7 +34,7 @@
 
         return self.defer(function(next) {
             var eventConfig = generateEventConfig();
-            eventConfig.view = self.viewport.getContext();
+            eventConfig.view = self.viewport.getWindow();
             Stimuli.view.event.Emitter.emit(eventConfig, next);
         }, callback, options);
 

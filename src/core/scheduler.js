@@ -60,11 +60,14 @@
     };
 
     
-    Scheduler.prototype.skip = function() {
+    Scheduler.prototype.unlock = function() {
         this.locked = false;
-        this.next();
     };
 
+
+    Scheduler.prototype.lock = function() {
+        this.locked = true;
+    };
 
     /**
      * @private
@@ -80,7 +83,7 @@
             return;
         }
 
-        self.locked = true;
+        self.lock();
 
         var frame = self.queue.shift(),
             options = frame.options || {},
@@ -96,7 +99,7 @@
                 // adding a function as last argument to allow the execution
                 // of the next device action
                 args.push(function() {
-                    self.locked = false;
+                    self.unlock();
                     self.next();
                 });
 
@@ -104,7 +107,7 @@
                 // synchronous action callback
             } else {
                 fn.apply(scope, args);
-                self.locked = false;
+                self.unlock();
                 self.next();
             }
 

@@ -22,7 +22,7 @@ Stimuli.core.Observable = {
         }
 
         var args = Array.prototype.slice.call(arguments, 1),
-            listeners = self.listeners[eventName],
+            listeners = self.listeners[eventName].slice(0),
             length = listeners.length,
             i = 0,
             listener;
@@ -32,6 +32,17 @@ Stimuli.core.Observable = {
             listener.fn.apply(listener.scope, args);
         }
 
+    },
+
+    once: function(eventName, fn, scope, sneak) {
+        var self = this;
+
+        function fnWrap() {
+            self.unsubscribe(eventName, fnWrap);
+            fn.apply(scope, arguments);
+        }
+
+        self.subscribe(eventName, fnWrap, scope, sneak);
     },
 
     /**
