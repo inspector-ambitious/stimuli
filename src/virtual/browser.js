@@ -25,11 +25,12 @@
 
             self.iframe.subscribe('loaded', function(context) {
                 self.viewport.setContext(context);
-                if (!self.isBack && !self.isForward) {
-                    self.backHistory.push(context.location + '');
-                } else {
+
+                if (self.isBack || self.isForward) {
                     self.isBack = false;
                     self.isForward = false;
+                } else {
+                    self.backHistory.push(context.location + '');
                     self.forwardHistory = [];
                 }
             });
@@ -54,7 +55,7 @@
         return self.then(function(done) {
             var context = self.viewport.getContext();
             self.viewport.setContext(null);
-            if (self.backHistory.length > 0) {
+            if (self.backHistory.length > 1) {
                 self.forwardHistory.push(self.backHistory.pop());
                 self.isBack = true;
                 context.history.back();

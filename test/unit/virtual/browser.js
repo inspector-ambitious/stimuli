@@ -76,8 +76,9 @@ describe('Stimuli.virtual.Browser', function() {
 
         it('should throw an error if it\'s impossible to go back', function(done) {
             var browser = new Stimuli.virtual.Browser();
-            var viewport = new Stimuli.view.Viewport();
-            browser.viewport = viewport;
+            var lastBackBeforeError = false;
+
+            browser.viewport = new Stimuli.view.Viewport();
 
             var backupOnError = window.onerror;
             window.onerror = function(e) {
@@ -85,15 +86,20 @@ describe('Stimuli.virtual.Browser', function() {
                 setTimeout(function() {  // the expectation test will be executed outside onerror
                     browser.destroy();
                     expect(e.toString()).to.contain('Stimuli.browser: Can\'t go back there is no history.');
+                    expect(lastBackBeforeError).to.be(true);
                     done();
                 }, 1);
             };
 
             browser
                 .navigateTo('/base/test/fixtures/empty.html')
+                .navigateTo('/base/test/fixtures/links.html')
                 .back()
                 .forward()
                 .back()
+                .then(function() {
+                    lastBackBeforeError = true;
+                })
                 .back();
 
         });
@@ -104,8 +110,8 @@ describe('Stimuli.virtual.Browser', function() {
 
         it('should throw an error if it\'s impossible to go forward', function(done) {
             var browser = new Stimuli.virtual.Browser();
-            var viewport = new Stimuli.view.Viewport();
-            browser.viewport = viewport;
+            var lastForwardBeforeError = false;
+            browser.viewport = new Stimuli.view.Viewport();
 
             var backupOnError = window.onerror;
 
@@ -114,16 +120,19 @@ describe('Stimuli.virtual.Browser', function() {
                 setTimeout(function() { // the expectation test will be executed outside onerror
                     browser.destroy();
                     expect(e.toString()).to.contain('Stimuli.browser: Can\'t go forward there is no history.');
+                    expect(lastForwardBeforeError).to.be(true);
                     done();
                 }, 1);
             };
 
             browser
                 .navigateTo('/base/test/fixtures/empty.html')
-                .back()
                 .navigateTo('/base/test/fixtures/links.html')
                 .back()
                 .forward()
+                .then(function() {
+                    lastForwardBeforeError = true;
+                })
                 .forward();
 
         });
