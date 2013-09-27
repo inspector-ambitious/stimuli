@@ -29,11 +29,11 @@ describe('Stimuli.virtual.Browser', function() {
                 var backupOnError = window.onerror;
                 window.onerror = function(e) {
                     window.onerror = backupOnError;
-                    setTimeout(function() {
+                    setTimeout(function() { // the expectation test will be executed outside onerror
                         browser.destroy();
                         expect(e.toString()).to.contain('Stimuli.browser: Unable to navigate to url. (404) Not Found');
                         done();
-                    }, 1)
+                    }, 1);
                 };
 
                 browser.navigateTo('/undefined.undefined');
@@ -82,11 +82,11 @@ describe('Stimuli.virtual.Browser', function() {
             var backupOnError = window.onerror;
             window.onerror = function(e) {
                 window.onerror = backupOnError;
-                setTimeout(function() {
+                setTimeout(function() {  // the expectation test will be executed outside onerror
                     browser.destroy();
                     expect(e.toString()).to.contain('Stimuli.browser: Can\'t go back there is no history.');
                     done();
-                }, 1)
+                }, 1);
             };
 
             browser
@@ -111,11 +111,11 @@ describe('Stimuli.virtual.Browser', function() {
 
             window.onerror = function(e) {
                 window.onerror = backupOnError;
-                setTimeout(function() {
+                setTimeout(function() { // the expectation test will be executed outside onerror
                     browser.destroy();
                     expect(e.toString()).to.contain('Stimuli.browser: Can\'t go forward there is no history.');
                     done();
-                }, 1)
+                }, 1);
             };
 
             browser
