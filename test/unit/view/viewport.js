@@ -1,5 +1,5 @@
 describe('Stimuli.view.Viewport', function() {
-
+    this.timeout(5000);
     var stimuli, viewport;
 
     before(function(done) {
