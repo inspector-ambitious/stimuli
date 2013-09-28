@@ -1,4 +1,5 @@
 describe('Stimuli.virtual.Browser', function() {
+    this.timeout(5000);
 
     var context;
 
