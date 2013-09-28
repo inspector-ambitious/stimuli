@@ -1,12 +1,15 @@
 // Karma configuration
 // Generated on Tue Sep 10 2013 18:12:14 GMT+0200 (CEST)
 
+var conf = require('./files.conf.js');
+
 module.exports = function(config) {
   config.set({
 
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
+    files: conf.testFilesDev,
 
     // frameworks to use
     frameworks: ['mocha'],
@@ -19,9 +22,10 @@ module.exports = function(config) {
 
 
     preprocessors: {
-        'src/**/*.js': 'coverage'
+        '**/src/**/*.js': 'coverage'
     },
 
+    browsers: ['PhantomJS'],
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
@@ -29,9 +33,10 @@ module.exports = function(config) {
 
     coverageReporter: {
         type: 'lcovonly',
-        dir : './coverage/'
+        dir : 'coverage/'
         
     },
+
 
     sauceLabs: {
                  
@@ -140,7 +145,7 @@ module.exports = function(config) {
     // if true, it capture browsers, run tests and exit
     singleRun: true,
     
-    reportSlowerThan: 500
+    reportSlowerThan: 2000
     
   });
 };

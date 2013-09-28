@@ -1,113 +1,14 @@
 'use strict';
 
+var conf = require('./files.conf.js');
+
+
 module.exports = function(grunt) {
-
-    // Distribution folder
-    var distFolder = './dist/';
-
-    // import package.json
-    var pkg = grunt.file.readJSON('package.json');
-
-    // StimuliFiles
-    var stimuliFiles = [
-        // dependencies
-        'lib/sizzle/sizzle.js',
-
-        // core
-        'src/stimuli.js',
-        'src/utils/object.js',
-        'src/utils/observable.js',
-        'src/utils/scheduler.js',
-        'src/browser/support.js',
-        'src/browser/viewport.js',
-        'src/device/generic.js',
-        'src/event/emitter.js',
-        'src/event/binder.js',
-
-        // mouse
-        'src/device/mouse.js',
-        'src/event/synthetizer/mouse.js',
-        'src/command/generic.js',
-        'src/command/mouse/utils/bounding_rectangle.js',
-        'src/command/mouse/utils/bounding_rectangle_offset.js',
-        'src/command/mouse/utils/position.js',
-        'src/command/mouse/generic.js',
-        'src/command/mouse/down.js',
-        'src/command/mouse/up.js',
-        'src/command/mouse/click.js',
-        'src/command/mouse/dblclick.js'
-
-    ];
-
-
-    // GENERATE FILES CONFIGURATION FOR KARMA (DEV AND CI MODE)
-
-    // Shared files loaded by karma test runner
-    var sharedTestFiles = [
-
-        {
-            pattern: 'node_modules/expect.js/expect.js',
-            watched: false
-        },
-
-        {
-            pattern: 'node_modules/sinon/pkg/sinon.js',
-            watched: false
-        },
-
-        {
-            pattern: 'node_modules/sinon/pkg/sinon-ie.js',
-            watched: false
-        },
-
-        {
-            pattern: 'test/helper/**/*.js'
-        }
-
-    ];
-
-    // Files loaded by karma test runner for development
-    var testFilesDev = [];
-
-    // Files loaded by karma test runner for continuous integration (build)
-    var testFilesBuild = [];
-
-    // add shared files
-    sharedTestFiles.forEach(function(shared) {
-        testFilesDev.push(shared);
-        testFilesBuild.push(shared);
-    });
-
-    // Add all stimulis sources for development
-    stimuliFiles.forEach(function(stimuliFile) {
-        testFilesDev.push({
-            pattern: stimuliFile
-        });
-    });
-
-    // Add freshly build stimuli
-    testFilesBuild.push({
-        pattern: distFolder + pkg.name + '-' + pkg.version + '.js'
-    });
-
-
-    // test specs
-    var specs = [{
-        pattern: 'test/unit/**/*.js'
-    }, {
-        pattern: 'test/integration/**/*.js'
-    }];
-
-    // add specs to both mode
-    specs.forEach(function(spec) {
-        testFilesDev.push(spec);
-        testFilesBuild.push(spec);
-    });
 
     // GRUNT CONFIGURATION
     grunt.initConfig({
 
-        pkg: pkg,
+        pkg: conf.pkg,
 
         jshint: {
 
@@ -147,7 +48,7 @@ module.exports = function(grunt) {
 
                 configFile: 'karma.conf.js',
 
-                files: testFilesDev,
+                files: conf.testFilesDev,
 
                 browsers: ['Android_2.3']
             },
@@ -156,7 +57,7 @@ module.exports = function(grunt) {
 
                 configFile: 'karma.conf.js',
 
-                files: testFilesDev,
+                files: conf.testFilesDev,
 
                 browsers: ['iOS']
             },
@@ -165,7 +66,7 @@ module.exports = function(grunt) {
 
                 configFile: 'karma.conf.js',
 
-                files: testFilesDev,
+                files: conf.testFilesDev,
 
                 browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
 
@@ -179,7 +80,7 @@ module.exports = function(grunt) {
 
                 autoWatch: true,
 
-                files: testFilesDev,
+                files: conf.testFilesDev,
 
                 browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
 
@@ -189,9 +90,10 @@ module.exports = function(grunt) {
 
                 configFile: 'karma.conf.js',
 
-                files: testFilesDev,
+                files: conf.testFilesDev,
 
-                browsers: ['PhantomJS']
+                reporter: ['dots'],
+
 
             },
 
@@ -203,9 +105,7 @@ module.exports = function(grunt) {
 
                 autoWatch: true,
 
-                files: testFilesDev,
-
-                browsers: ['PhantomJS']
+                files: conf.testFilesDev
 
             },
 
@@ -213,9 +113,8 @@ module.exports = function(grunt) {
 
                 configFile: 'karma.conf.js',
 
-                files: testFilesDev,
+                files: conf.testFilesDev,
 
-                browsers: ['PhantomJS'],
 
                 reporters: ['coverage']
 
@@ -225,7 +124,7 @@ module.exports = function(grunt) {
 
                 configFile: 'karma.conf.js',
 
-                files: testFilesDev,
+                files: conf.testFilesDev,
 
                 reporters: ['coverage'],
 
@@ -237,7 +136,7 @@ module.exports = function(grunt) {
 
                 configFile: 'karma.conf.js',
 
-                files: testFilesBuild,
+                files: conf.testFilesBuild,
 
                 browsers: ['PhantomJS', 'SL_Chrome', 'SL_Firefox', 'SL_Safari', 'SL_IE8', 'SL_IE9', 'SL_IE10']
 
@@ -272,9 +171,9 @@ module.exports = function(grunt) {
 
             dist: {
 
-                src: stimuliFiles,
+                src: conf.stimuliFiles,
 
-                dest: distFolder + '<%= pkg.name %>-<%= pkg.version %>.js'
+                dest: conf.distFolder + '<%= pkg.name %>-<%= pkg.version %>.js'
 
             }
         },
@@ -285,7 +184,7 @@ module.exports = function(grunt) {
                 
                 src: 'LICENSE',
 
-                dest: distFolder
+                dest: conf.distFolder
 
             },
 
@@ -293,7 +192,7 @@ module.exports = function(grunt) {
 
                 src: 'README.md',
 
-                dest: distFolder
+                dest: conf.distFolder
             }
 
         },
@@ -318,7 +217,7 @@ module.exports = function(grunt) {
                 ],
 
                 // docs output dir
-                dest: distFolder + 'docs',
+                dest: conf.distFolder + 'docs',
 
                 // extra options
                 options: {
@@ -351,6 +250,6 @@ module.exports = function(grunt) {
     grunt.registerTask('test', ['karma:quick']);
     grunt.registerTask('test.watch', ['karma:quickwatch']);
     grunt.registerTask('test.full', ['karma:full']);
-    grunt.registerTask('test.full.watch', ['karma:watchall']);
+    grunt.registerTask('test.full.watch', ['karma:fullwatch']);
     grunt.registerTask('test.sauce', ['karma:travis']);
 };

@@ -138,20 +138,20 @@ function MainCtrl($scope, $http, $location, $templateCache) {
     $scope.startCapture = function() {
 
         if ($scope.capture) {
-            
-            var elements = Stimuli.$$($scope.selector),
+            var viewport = new Stimuli.view.Viewport();
+            var elements = viewport.$($scope.selector, true),
                 elementsLength = elements.length,
                 domEvents = $scope.domEvents,
                 domEventslength  = domEvents.length,
                 i, j, domListener, domEvent;
 
             for (i = 0; i < elementsLength; i++) {
-                domListener = new Stimuli.event.Binder(elements[i]);
+                domListener = new Stimuli.view.event.Observer(elements[i]);
                 capturedElements.push(domListener);
                 for (j = 0; j < domEventslength; j++) {
                     domEvent = domEvents[j];
                     if (domEvent.capture) {
-                        domListener.on(domEvent.name, updateEventsList);
+                        domListener.subscribe(domEvent.name, updateEventsList);
                     }
                 }
             }
@@ -169,7 +169,7 @@ function MainCtrl($scope, $http, $location, $templateCache) {
             i = 0;
 
         for(; i < length; i++) {
-            capturedElements[i].allOff();
+            capturedElements[i].unsubscribeAll();
         }
 
         capturedElements = [];

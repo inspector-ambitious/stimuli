@@ -2,77 +2,42 @@
 
 (function() {
     
-    Stimuli.command.Generic = {
+    Stimuli.command.Generic = function(viewport, options) {
+        var self = this;
+        self.options = {};
+        self.viewport = viewport;
+        Stimuli.core.Object.merge(self.options, options);
+    };
 
-        getEvents: function() {
-            return this.events;
-        },
+    var Generic = Stimuli.command.Generic;
 
-        fail: function(message) {
-            this.options.callback(message);
-        },
+    Stimuli.core.Class.mix(Generic, Stimuli.core.Deferable);
 
-        getTarget: function() {
-            
-            var options = this.options,
-                target = null;
+    Generic.prototype.configure = Generic.prototype.then;
 
-            if (options.target === 'function') {
-                target = options.target();
-            } else {
-                target = options.target || this.viewport.getElementAt(options.x, options.y);
-            }
-
-            return target;
-        },
-
-        getCancelable: function() {
-            return typeof this.options.cancelable === 'boolean' ? this.options.cancelable : true;
-        },
-
-        getBubbles: function() {
-            return typeof this.options.bubbles === 'boolean' ? this.options.bubbles : true;
-        },
-        
-        getAltKey: function() {
-            return this.options.altKey || false;
-        },
-
-        getMetaKey: function() {
-            return this.options.metaKey || false;
-        },
-
-        getCtrlKey: function() {
-            return this.options.ctrlKey || false;
-        },
-
-        getShiftKey: function() {
-            return this.options.shiftKey || false;
-        },
-
-        send: function(data, cb) {
-            var me = this,
-                callback = function(event, canceled) {
-                
-                me.events.push({
+    Generic.prototype.inject = function(generateEventConfig, delay) {
+        var self = this,
+            callback = function(event, canceled) {
+                if (!self.events) {
+                    self.events = [];
+                }
+                self.events.push({
                     src: event,
                     canceled: canceled
                 });
-                
-                if (cb) {
-                    cb(null, event, canceled);
-                }
-            };
-            
-            data.view = this.viewport.getView();
+            },
+            options;
 
-            this.publish('event', data, callback);
-
-            return this;
+        if (!isNaN(delay)) {
+            options = {delay: delay};
         }
-     
-    };
 
-    Stimuli.utils.Object.merge(Stimuli.command.Generic, Stimuli.utils.Observable);
+        return self.defer(function(next) {
+            var eventConfig = generateEventConfig();
+            eventConfig.view = self.viewport.getWindow();
+            Stimuli.view.event.Emitter.emit(eventConfig, next);
+        }, callback, options);
+
+    };
 
 })();
