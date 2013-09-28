@@ -1,6 +1,8 @@
 'use strict';
 
 describe('Stimuli.command.mouse.click', function() {
+    this.timeout(5000);
+
     var stimuli,
         click;
 

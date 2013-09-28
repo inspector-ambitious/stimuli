@@ -82,12 +82,16 @@ module.exports = function(config) {
 
         'SL_Chrome': {
             base: 'SauceLabs',
-            browserName: 'chrome'
+            browserName: 'chrome',
+            platform: 'Windows 7'
         },
 
         'SL_Firefox': {
             base: 'SauceLabs',
-            browserName: 'firefox'
+            browserName: 'firefox',
+            platform: 'Windows 7',
+            version: '23'
+
         },
 
         'SL_Safari': {
@@ -107,14 +111,14 @@ module.exports = function(config) {
         'SL_IE9': {
             base: 'SauceLabs',
             browserName: 'internet explorer',
-            platform: 'Windows 2008',
+            platform: 'Windows 7',
             version: '9'
         },
 
         'SL_IE10': {
             base: 'SauceLabs',
             browserName: 'internet explorer',
-            platform: 'Windows 2012',
+            platform: 'Windows 8',
             version: '10'
         }
       
@@ -138,7 +142,7 @@ module.exports = function(config) {
 
 
     // If browser does not capture in given timeout [ms], kill it
-    captureTimeout: 30000,
+    captureTimeout: 60000,
 
 
     // Continuous Integration mode
