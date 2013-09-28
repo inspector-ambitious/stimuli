@@ -58,7 +58,6 @@
         // freshly inserted elements, so before calling elementFromPoint
         // we trigger a reflow to force the layout to be recalculated
         // (Note: that was a tricky one it's 4:39AM)
-        // TODO:(yhwh) Try to set the iframe in position relative
         // see http://stackoverflow.com/questions/4444014/blank-iframe-in-ie
         if (Stimuli.core.Support.isIE8 &&
             ret === null &&

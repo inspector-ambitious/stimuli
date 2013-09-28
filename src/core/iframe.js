@@ -51,9 +51,20 @@
         document.body.appendChild(iframe);
 
         self.iframeObserver.subscribe('load', function() {
+            var win = self.iframeEl.contentWindow;
             // by default ie and firefox fires load on about:blank so we skip this window to keep consistenty with other browsers
-            if ((self.iframeEl.contentWindow.location + '') !== 'about:blank') {
-                self.context.set(self.iframeEl.contentWindow);
+            if ((win.location + '') !== 'about:blank') {
+                var doc = win.document;
+
+                var checkBodyReadyState = function() {
+                    if (doc && doc.body && doc.readyState === 'complete') {
+                        self.context.set(win);
+                    } else {
+                        setTimeout(checkBodyReadyState, 20);
+                    }
+                };
+
+                checkBodyReadyState();
             }
         });
 
