@@ -145,7 +145,7 @@ module.exports = function(config) {
     // if true, it capture browsers, run tests and exit
     singleRun: true,
     
-    reportSlowerThan: 500
+    reportSlowerThan: 2000
     
   });
 };
