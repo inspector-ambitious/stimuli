@@ -50,6 +50,14 @@
 
         document.body.appendChild(iframe);
 
+
+        // IE hack: allow to wait for the iframe to load
+        self.iframeObserver.subscribe('readystatechange', function() {
+            if (iframe.readyState === 'loading') {
+                self.context.loading = true;
+            }
+        });
+
         self.iframeObserver.subscribe('load', function() {
             var win = self.iframeEl.contentWindow;
             // by default ie and firefox fires load on about:blank so we skip this window to keep consistenty with other browsers
