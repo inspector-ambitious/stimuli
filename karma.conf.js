@@ -120,6 +120,20 @@ module.exports = function(config) {
             browserName: 'internet explorer',
             platform: 'Windows 8',
             version: '10'
+        },
+
+        SL_IOS6: {
+            base: 'SauceLabs',
+            browserName: 'iphone',
+            platform: 'OS X 10.8',
+            version: '6'
+        },
+
+        SL_ANDROID4: {
+            base: 'SauceLabs',
+            browserName: 'android',
+            platform: 'Linux',
+            version: '4.0'
         }
       
     },

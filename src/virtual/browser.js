@@ -1,5 +1,15 @@
 'use strict';
 
+/**
+ * @class Stimuli.virtual.Browser
+ * @mixins Stimuli.core.Chainable
+ * A virtual browser implementation.
+ * @constructor
+ * @param {Stimuli.core.Context} context The browser context.
+ * @param {Object=} options
+ * @param {Number/String} options.width The iframe width in px (Number) or in % (String)
+ * @param {Number/String} options.height The iframe height in px (Number) or in % (String)
+ */
 (function() {
     
     Stimuli.virtual.Browser = function(context, options) {
@@ -17,8 +27,13 @@
 
     var Browser = Stimuli.virtual.Browser;
 
-    Stimuli.core.Class.mix(Browser, Stimuli.core.Deferable);
+    Stimuli.core.Class.mix(Browser, Stimuli.core.Chainable);
 
+    /**
+     * @chainable
+     * Navigates to the specified url.
+     * @param {String} url The page url to load.
+     */
     Browser.prototype.navigateTo = function(url) {
         var self = this;
 
@@ -28,6 +43,10 @@
 
     };
 
+    /**
+     * @chainable
+     * Goes back to the previously visited page.
+     */
     Browser.prototype.back = function() {
         var self = this;
 
@@ -36,6 +55,10 @@
         });
     };
 
+    /**
+     * @chainable
+     * Goes forward a page, if you have gone back first.
+     */
     Browser.prototype.forward = function() {
         var self = this;
 
@@ -44,6 +67,10 @@
         });
     };
 
+    /**
+     * @chainable
+     * Reloads current page.
+     */
     Browser.prototype.reload = function() {
         var self = this;
 
@@ -52,6 +79,10 @@
         });
     };
 
+    /**
+     * @chainable
+     * Destroys the virtual browser.
+     */
     Browser.prototype.destroy = function(callback) {
         var self = this;
         return self.defer(function(done) {

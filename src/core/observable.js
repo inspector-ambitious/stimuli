@@ -3,15 +3,12 @@
 /**
  * @class Stimuli.core.Observable
  * @singleton
- * @private
- * Base class that provides a common interface for publishing events.
+ * This mixin provides a common interface to publish and to listen to events on objects.
  */
-
 Stimuli.core.Observable = {
 
     /**
-     * @protected
-     * Publishes an event.
+     * Publishes an event, which will result in a call to all suscribed listeners.
      * @param {String} eventName The event name.
      * @param {Mixed} [data] the data to be emitted.
      */
@@ -34,23 +31,12 @@ Stimuli.core.Observable = {
 
     },
 
-    once: function(eventName, fn, scope, sneak) {
-        var self = this;
-
-        function fnWrap() {
-            self.unsubscribe(eventName, fnWrap);
-            fn.apply(scope, arguments);
-        }
-
-        self.subscribe(eventName, fnWrap, scope, sneak);
-    },
-
     /**
-     * @protected
-     * Subscribes to an event.
+     * Attaches a listener to an event.
      * @param {String} eventName The event name.
-     * @param {Function} fn The listener to bind.
+     * @param {Function} fn The listener to attach.
      * @param {Object=} scope The listener execution scope.
+     * @param {Boolean=} sneak If true the listener will be called first.
      */
     subscribe: function(eventName, fn, scope, sneak) {
         var self = this,
@@ -79,10 +65,27 @@ Stimuli.core.Observable = {
     },
 
     /**
-     * @protected
-     * Unsubscribes to an event.
+     * Attaches a listener to an event, but it will be called only once.
      * @param {String} eventName The event name.
-     * @param {Function} fn The listener to unbind.
+     * @param {Function} fn The listener to attach.
+     * @param {Object=} scope The listener execution scope.
+     * @param {Boolean=} sneak If true the listener will be called first.
+     */
+    once: function(eventName, fn, scope, sneak) {
+        var self = this;
+
+        function fnWrap() {
+            self.unsubscribe(eventName, fnWrap);
+            fn.apply(scope, arguments);
+        }
+
+        self.subscribe(eventName, fnWrap, scope, sneak);
+    },
+
+    /**
+     * Detaches a listener on a specifi event.
+     * @param {String} eventName The event name.
+     * @param {Function} fn The listener to detach.
      */
     unsubscribe: function(eventName, fn) {
         var listeners = this.listeners[eventName],

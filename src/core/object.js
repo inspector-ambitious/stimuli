@@ -3,13 +3,9 @@
 /**
  * @class Stimuli.core.Object
  * @singleton
- * @private
  * A set of useful methods to deal with objects.
  */
-
 (function() {
-
-
 
     Stimuli.core.Object = {
 

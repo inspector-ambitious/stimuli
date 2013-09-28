@@ -1,7 +1,6 @@
 'use strict';
 
 /**
- * @private
  * @class Stimuli.view.event.synthetizer.Mouse
  * @singleton
  * Abstraction layer for cross-browsers synthetic mouse events injection. 

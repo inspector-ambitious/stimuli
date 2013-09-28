@@ -2,31 +2,29 @@
 
 /**
  * @class Stimuli.view.event.Observer
- * Allows to bind/unbind listeners to EventTargets.
+ * This class makes a the events on a target observable, and event target could be a dom element, the browser window,
+ * an ajax request etc...
+ * @constructor
+ * @param {Mixed} eventTarget The event target
  */
 
 (function() {
 
-    Stimuli.view.event.Observer = function(element) {
+    Stimuli.view.event.Observer = function(eventTarget) {
 
-        this.element = element;
+        this.eventTarget = eventTarget;
 
         this.listeners = {};
     };
 
     var Observer = Stimuli.view.event.Observer;
 
-    Observer.prototype.once = function(type, listener, scope) {
-        var self = this;
-
-        function listenerWrap() {
-            self.unsubscribe(type, listenerWrap);
-            listener.apply(scope, arguments);
-        }
-
-        self.subscribe(type, listenerWrap, scope);
-    };
-
+    /**
+     * Attaches a listener to an event.
+     * @param {String} type The event type.
+     * @param {Function} listener The listener to attach.
+     * @param {Object=} scope The listener execution scope.
+     */
     Observer.prototype.subscribe = function(type, listener, scope) {
         var self = this;
 
@@ -37,9 +35,9 @@
         }
 
         if (Stimuli.core.Support.documentAddEventListener) {
-            self.element.addEventListener(type, wrappedListener, false);
+            self.eventTarget.addEventListener(type, wrappedListener, false);
         } else {
-            self.element.attachEvent('on' + type, wrappedListener);
+            self.eventTarget.attachEvent('on' + type, wrappedListener);
         }
 
         if (!self.listeners[type]) {
@@ -53,6 +51,28 @@
         });
     };
 
+    /**
+     * Attaches a listener to an event, but it will be called only once.
+     * @param {String} type The event type.
+     * @param {Function} listener The listener to attach.
+     * @param {Object=} scope The listener execution scope.
+     */
+    Observer.prototype.once = function(type, listener, scope) {
+        var self = this;
+
+        function listenerWrap() {
+            self.unsubscribe(type, listenerWrap);
+            listener.apply(scope, arguments);
+        }
+
+        self.subscribe(type, listenerWrap, scope);
+    };
+
+    /**
+     * Detaches a listener on a specific event.
+     * @param {String} type The event type.
+     * @param {Function} listener The listener to detach.
+     */
     Observer.prototype.unsubscribe = function(type, listener) {
         var self = this,
             listeners = self.listeners[type],
@@ -69,12 +89,15 @@
         }
 
         if (Stimuli.core.Support.documentAddEventListener) {
-            self.element.removeEventListener(type, wrappedListener, false);
+            self.eventTarget.removeEventListener(type, wrappedListener, false);
         } else {
-            self.element.detachEvent('on' + type, wrappedListener);
+            self.eventTarget.detachEvent('on' + type, wrappedListener);
         }
     };
 
+    /**
+     * Detaches all listeners on all observed events.
+     */
     Observer.prototype.unsubscribeAll = function() {
         var self = this,
             type,

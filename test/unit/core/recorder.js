@@ -5,12 +5,12 @@ describe('Stimuli.core.Recorder', function() {
     var a, recorder, clock;
 
     beforeEach(function(){
-        var DeferableClass = function() {};
+        var ChainableClass = function() {};
 
 
-        Stimuli.core.Class.mix(DeferableClass, Stimuli.core.Deferable);
+        Stimuli.core.Class.mix(ChainableClass, Stimuli.core.Chainable);
 
-        a = new DeferableClass();
+        a = new ChainableClass();
 
         recorder = new Stimuli.core.Recorder();
 

@@ -2,7 +2,7 @@
 
 /**
  * @class Stimuli
- * Creates a new stimuli
+ * This class stimulates your browser! it's the entry point of all the framework.
  * @constructor
  * @param {Object} options
  */
@@ -72,18 +72,26 @@ Stimuli.prototype.destroy = function(callback) {
 };
 
 /**
- * Finds the dom element matching the css selector.
+ * Finds the dom element matching the css selector in the current virtual browser viewport.
  * @param {Object} options
+ * @return {HTMLElement} The element.
  */
 Stimuli.prototype.$ = function(selector) {
     return this.viewport.$(selector);
 };
 
+/**
+ * Returns the current virtual browser window object.
+ * @return {Window}
+ */
 Stimuli.prototype.getWindow = function() {
     return this.context.get();
 };
 
+/**
+ * Returns the current virtual browser document object.
+ * @return {Object}
+ */
 Stimuli.prototype.getDocument = function() {
     return this.viewport.getDocument();
 };
-

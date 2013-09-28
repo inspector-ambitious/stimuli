@@ -3,15 +3,12 @@
 /**
  * @class Stimuli.core.Scheduler
  * @mixins Stimuli.core.Observable
- * @private
- * Provides a convenient way to "buffer" any data.
+ * Provides a convenient way to "buffer" data.
  * @cfg {Number} speed The emission speed.
  * @cfg {Number} delay The emission delay in ms.
  * @constructor
- * Creates a new scheduler
  * @param {Object} config The config object
  */
-
 (function() {
 
     Stimuli.core.Scheduler = function(options) {
@@ -48,6 +45,9 @@
     };
 
 
+    /**
+     * Calculates the timeout for asynchronous event publishing.
+     */
     Scheduler.prototype.calculateTimeout = function(options) {
         var delay, speed;
 
@@ -59,22 +59,22 @@
         return delay/speed;
     };
 
-    
+    /**
+     * Unlocks the execution flow.
+     */
     Scheduler.prototype.unlock = function() {
         this.locked = false;
     };
 
-
+    /**
+     * Locks the execution flow.
+     */
     Scheduler.prototype.lock = function() {
         this.locked = true;
     };
 
     /**
-     * @private
-     * Tries to immediately publish the data.
-     * If it's not possible it returns immediately.
-     * Also it wraps the original callback to provide asynchronous callback support,
-     * this way no data will be published until the callback will
+     * Tries to immediately publish the data. If it's not possible it returns immediately.
      */
     Scheduler.prototype.next = function() {
         var self = this;

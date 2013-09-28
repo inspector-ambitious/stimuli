@@ -1,17 +1,17 @@
 'use strict';
 
-describe('Stimuli.core.Deferable', function() {
+describe('Stimuli.core.Chainable', function() {
 
     var a, b;
 
     beforeEach(function(){
 
-        var DeferableClass = function() {};
+        var ChainableClass = function() {};
 
-        Stimuli.core.Class.mix(DeferableClass, Stimuli.core.Deferable);
+        Stimuli.core.Class.mix(ChainableClass, Stimuli.core.Chainable);
 
-        a = new DeferableClass();
-        b = new DeferableClass();
+        a = new ChainableClass();
+        b = new ChainableClass();
 
     });
 
@@ -137,7 +137,7 @@ describe('Stimuli.core.Deferable', function() {
 
     describe('synchronize', function() {
 
-        it('should synchronize two deferables', function() {
+        it('should synchronize two chainables', function() {
             var str =  '';
 
             var clock = sinon.useFakeTimers();

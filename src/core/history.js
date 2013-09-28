@@ -1,4 +1,12 @@
 'use strict';
+
+/**
+ * @class Stimuli.core.History
+ * @mixins Stimuli.core.Chainable
+ * This class provides an abstraction layer to handle {Stimuli.virtual.Browser} History.
+ * @constructor
+ * @param {Stimuli.core.Context} The browser context.
+ */
 (function() {
 
     Stimuli.core.History = function(context) {
@@ -11,12 +19,22 @@
 
     var History = Stimuli.core.History;
 
-    Stimuli.core.Class.mix(History, Stimuli.core.Deferable);
+    Stimuli.core.Class.mix(History, Stimuli.core.Chainable);
 
+    /**
+     * Called each time the context is updated to update the backward pages list.
+     */
     History.prototype.updateBackwardPagesList = function() {
         this.backwardPagesList.push(this.context.get().location + '');
     };
 
+    /**
+     * @chainable
+     * Navigates to a specified index in history (0 reload, -n backward, +n forward).
+     * @param {Number} index The history index.
+     * @param {Function} callback The function to call after the navigation has occured (block until page is fully
+     * loaded).
+     */
     History.prototype.go = function(index, callback) {
         var self = this;
 
@@ -56,6 +74,11 @@
 
     };
 
+    /**
+     * @chainable
+     * Destroys the saved history.
+     * @param {Function} callback The function to call after history is destroyed.
+     */
     History.prototype.destroy = function(callback) {
         var self = this;
 

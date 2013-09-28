@@ -1,6 +1,6 @@
 'use strict';
 
-/**
+/*
  * @class Stimuli.virtual.Mouse
  * @alternateClassName Stimuli.Mouse
  * @mixins Stimuli.device.Generic
@@ -19,9 +19,9 @@
     var Mouse = Stimuli.virtual.Mouse;
 
     // Extends Stimuli.Device.Abstract
-    Stimuli.core.Class.mix(Mouse, Stimuli.core.Deferable);
+    Stimuli.core.Class.mix(Mouse, Stimuli.core.Chainable);
 
-    /**
+    /*
      * Executes a simple click.
      * @param {Object} options
      */
@@ -29,7 +29,7 @@
         return this.then(this.generateCommand('click', options));
     };
 
-    /**
+    /*
      * Executes a double click.
      * @param {Object} options
      */

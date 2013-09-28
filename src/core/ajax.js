@@ -1,7 +1,11 @@
 'use strict';
 
+/**
+ * @class Stimuli.core.Ajax
+ * @singleton
+ * This singleton provides communications with a remote server. Requests are asynchronous, and will return immediately.
+ */
 (function() {
-
     var xhr;
 
     try {
@@ -12,6 +16,11 @@
 
     Stimuli.core.Ajax = {
 
+        /**
+         * Sends a HTTP GET requests to a remote server.
+         * @param {String} url The remote server url.
+         * @param {Function} callback The function to call when the request is complete.
+         */
         get: function(url, callback) {
 
             if (Stimuli.core.Support.isIE8)  {

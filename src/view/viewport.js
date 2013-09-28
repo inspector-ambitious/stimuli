@@ -2,11 +2,10 @@
 
 /**
  * @class Stimuli.view.Viewport
- * Provides methods to deal with the visible elements of the viewport,
- * the page size and scrolling.
+ * A viewport abstraction layer to be used by virtual devices.
  * @cfg {Window=} view A window object 
  * @constructor
- * @param {Object} config The config object
+ * @param {Stimuli.core.Context} context The current browser context this viewport depends on.
  */
 
 (function() {
@@ -38,7 +37,7 @@
     };
 
     /**
-     * Returns the a visible element at the specified coordinates.
+     * Returns a visible element at the specified coordinates.
      * @param {Number} x The x coordinate
      * @param {Number} y The y coordinate
      * @return {HTMLElement}
@@ -70,27 +69,42 @@
     };
 
     /**
-     * Returns the viewport window.
-     * return {Window}
+     * Returns the current window.
+     * @return {Window}
      */
     Viewport.prototype.getWindow = function() {
         return this.context.get();
     };
 
+    /**
+     * Returns the current document.
+     * @return {Object}
+     */
     Viewport.prototype.getDocument = function() {
         return this.context.get().document;
     };
 
-
+    /**
+     * Updates window hash.
+     * @param {String} hash The new hash.
+     */
     Viewport.prototype.updateHash = function(hash) {
         this.context.get().location.hash = hash;
     };
 
+    /**
+     * Updates the current window url.
+     * @param {String} url The new url.
+     */
     Viewport.prototype.updateUrl = function(url) {
         this.context.get().location = url;
     };
 
-
+    /**
+     * Waits for the viewport to be ready, it allows to block while a stimulus caused
+     * a navigation to another page.
+     * @param {Function} callback The function to call when the viewport is ready.
+     */
     Viewport.prototype.waitForReady = function(callback) {
         var self = this;
 
@@ -112,7 +126,6 @@
      * @param {Boolean=} all If set to True all elements matching the css selector will be returned in an {Array}. 
      * @return {Mixed}
      */
-
     Viewport.prototype.$ = function(selector, all) {
         var elements = Sizzle(selector, this.context.get().document);
         if (all) {

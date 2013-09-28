@@ -19,7 +19,7 @@ var stimuliFiles = [
 
 
     'src/core/scheduler.js',
-    'src/core/deferable.js',
+    'src/core/chainable.js',
     'src/core/recorder.js',
 
     'src/core/context.js',

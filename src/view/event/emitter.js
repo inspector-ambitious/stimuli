@@ -1,12 +1,10 @@
 'use strict';
 
 /**
- * @private
  * @class Stimuli.view.event.Emitter
  * @singleton
  * Provides an abstraction layer to routes events to their corresponding synthetizers.
  */
-
 (function() {
     
     var synthetizer = Stimuli.view.event.synthetizer;
@@ -16,7 +14,7 @@
         /**
          * Determines if an event is a mouse event
          * @param {String} eventType The event type
-         * @retun {Boolean} True if it's a mouse event
+         * @return {Boolean} True if it's a mouse event
          */
         isMouseEvent: function(eventType) {
             return {

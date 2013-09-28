@@ -24,7 +24,7 @@ before_script:
 
 script:
   - grunt jshint && 
-    grunt build && 
-    grunt test.sauce && 
-    grunt coverage && 
+    grunt build &&
+    grunt test.travis &&
+    grunt test.sauce &&
     .travis/ghpages-deploy.sh
