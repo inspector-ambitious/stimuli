@@ -149,9 +149,7 @@ module.exports = function(config) {
     // if true, it capture browsers, run tests and exit
     singleRun: true,
     
-    transports: ['xhr-polling']  // the most reliable  (flashsockets are really buggy on ie8-9)!
+    transports: ['websocket', 'xhr-polling']  // (flashsockets are buggy on ie8-9)
 
-
-    
   });
 };
