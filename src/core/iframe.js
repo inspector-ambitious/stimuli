@@ -64,15 +64,21 @@
             if ((win.location + '') !== 'about:blank') {
                 var doc = win.document;
 
-                var checkBodyReadyState = function() {
+                // IE hack: onload event is not extremely reliable so we need to do an additional check here
+                // to ensure the document is truly ready.
+                var checkDocReadyState = function() {
                     if (doc && doc.body && doc.readyState === 'complete') {
+                        // IE10 hack: forcing iframe reflow, because the iframe could be loaded but not yet painted !
+                        if (Stimuli.core.Support.isIE10) {
+                            self.iframeEl.getBoundingClientRect();
+                        }
                         self.context.set(win);
                     } else {
-                        setTimeout(checkBodyReadyState, 20);
+                        setTimeout(checkDocReadyState, 20);
                     }
                 };
 
-                checkBodyReadyState();
+                checkDocReadyState();
             }
         });
 

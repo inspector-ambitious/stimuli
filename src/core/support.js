@@ -6,6 +6,25 @@
  * This class detects supported browser features.
  */
 
+(function() {
+
+    var isIE = false,
+        IEVersion = 0,
+        jscriptMap = {
+            "5.8": 8,
+            "9": 9,
+            "10": 10
+        },
+        jscriptVersion = 'none';
+
+    /*@cc_on
+     jscriptVersion = @_jscript_version;
+     @*/
+    IEVersion = jscriptMap[jscriptVersion];
+   if (IEVersion) {
+       isIE = true;
+
+   }
 Stimuli.core.Support = {
 
     /**
@@ -39,6 +58,20 @@ Stimuli.core.Support = {
      * @property {Boolean}
      * Is true if browser is ie8
      */
-    isIE8: typeof document.addEventListener === 'undefined'
+    isIE8: isIE && IEVersion === 8,
+
+    /**
+     * @property {Boolean}
+     * Is true if browser is ie9
+     */
+    isIE9: isIE && IEVersion === 9,
+
+    /**
+     * @property {Boolean}
+     * Is true if browser is ie10
+     */
+    isIE10: isIE && IEVersion === 10
 
 };
+
+})();

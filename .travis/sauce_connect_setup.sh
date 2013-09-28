@@ -23,7 +23,7 @@ unzip $CONNECT_DOWNLOAD
 java -jar Sauce-Connect.jar --readyfile $READY_FILE \
     --logfile $LOG_FILE \
     $TUNNEL_IDENTIFIER \
-    $SAUCE_USERNAME $SAUCE_ACCESS_KEY 1> /dev/null &
+    $SAUCE_USERNAME $SAUCE_ACCESS_KEY > /dev/null 2>&1l &
 
 # Wait for Connect to be ready before exiting
 while [ ! -f $READY_FILE ]; do

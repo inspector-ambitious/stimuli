@@ -2,6 +2,8 @@
 
 describe('Stimuli.core.Iframe', function() {
 
+    this.timeout(5000);
+
     var iframe, context;
 
     beforeEach(function() {
