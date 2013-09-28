@@ -103,7 +103,7 @@
             callback();
         }
 
-        setTimeout(waitFor, 1);
+        setTimeout(waitFor, 50);
     };
 
 
