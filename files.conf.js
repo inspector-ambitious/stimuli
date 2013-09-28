@@ -93,7 +93,7 @@ testFilesBuild.push({
 
 // test specs
 var specs = [{
-    pattern: 'test/unit/core/history.js'
+    pattern: 'test/unit/command/mouse/click.js'
 }];
 
 // add specs to both mode

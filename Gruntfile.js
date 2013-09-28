@@ -138,7 +138,9 @@ module.exports = function(grunt) {
 
                 files: conf.testFilesBuild,
 
-                browsers: ['PhantomJS', 'SL_Chrome', 'SL_Firefox', 'SL_Safari', 'SL_IE8', 'SL_IE9', 'SL_IE10']
+                reporters: ['progress'],
+
+                browsers: ['SL_IE8']
 
             },
 
