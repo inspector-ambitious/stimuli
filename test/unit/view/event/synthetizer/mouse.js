@@ -1,7 +1,7 @@
 'use strict';
-
 describe('Stimuli.view.event.synthetizer.Mouse', function() {
     this.timeout(10000);
+
     var inject = function() {
             return Stimuli.view.event.synthetizer.Mouse.inject.apply(Stimuli.view.event.synthetizer.Mouse, arguments);
         },

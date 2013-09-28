@@ -1,5 +1,7 @@
-describe('Stimuli.view.event.Observer', function() {
+'use strict';
 
+describe('Stimuli.view.event.Observer', function() {
+    this.timeout(10000);
     var stimuli,
         observer;
 
