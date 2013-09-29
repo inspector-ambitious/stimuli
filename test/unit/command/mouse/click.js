@@ -1,6 +1,6 @@
 'use strict';
 
-xdescribe('Stimuli.command.mouse.click', function() {
+describe('Stimuli.command.mouse.click', function() {
     this.timeout(10000);
 
     var stimuli,

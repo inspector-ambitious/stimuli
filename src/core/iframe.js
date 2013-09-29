@@ -56,13 +56,6 @@
 
         document.body.appendChild(iframe);
 
-        // IE hack: allow to wait for the iframe to load
-        self.iframeObserver.subscribe('readystatechange', function() {
-            if (iframe.readyState === 'loading') {
-                self.context.loading = true;
-            }
-        });
-
         self.iframeObserver.subscribe('load', function() {
             var win = self.iframeEl.contentWindow;
             // by default ie and firefox fires load on about:blank so we skip this window to keep consistenty with other
@@ -74,11 +67,17 @@
                 // the document is truly ready.
                 var checkDocReadyState = function() {
                     if (doc && doc.body && doc.readyState === 'complete') {
-                        // IE10 hack: forcing iframe reflow, because the iframe could be loaded but not yet painted !
+                        // IE10 hack: forcing iframe reflow, because the iframe could be loaded but not painted !
                         if (Stimuli.core.Support.isIE10) {
                             self.iframeEl.getBoundingClientRect();
                         }
-                        self.context.set(win);
+                        var winObserver = new Stimuli.view.event.Observer(win);
+                        winObserver.once('beforeunload', function() {
+                            self.context.setLoading();
+                            winObserver = null;
+                        });
+
+                        self.context.setNew(win);
                     } else {
                         setTimeout(checkDocReadyState, 20);
                     }
@@ -109,7 +108,7 @@
                     throw new Error('Stimuli.core.Iframe: Failed to load url (' + status + ' ' + statusText +')');
                 }
 
-                self.context.once('update', done);
+                self.context.once('new', done);
 
                 self.iframeEl.src = url;
 
@@ -137,7 +136,7 @@
                 self.iframeEl = null;
             }
 
-            self.context.set(null);
+            self.context.destroy();
             done();
         }, callback);
     };

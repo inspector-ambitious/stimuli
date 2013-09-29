@@ -21,11 +21,11 @@ describe('Stimuli.virtual.Browser', function() {
             browser
                 .navigateTo('/base/test/fixtures/empty.html')
                 .then(function() {
-                    expect(context.get().location + '').to.contain('/base/test/fixtures/empty.html');
+                    expect(context.getWindow().location + '').to.contain('/base/test/fixtures/empty.html');
                 })
                 .navigateTo('/base/test/fixtures/links.html')
                 .then(function() {
-                    expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                    expect(context.getWindow().location + '').to.contain('/base/test/fixtures/links.html');
                 })
                 .destroy(function() {
                     done();
@@ -43,23 +43,23 @@ describe('Stimuli.virtual.Browser', function() {
             browser
                 .navigateTo('/base/test/fixtures/empty.html')
                 .then(function() {
-                    expect(context.get().location + '').to.contain('/base/test/fixtures/empty.html');
+                    expect(context.getWindow().location + '').to.contain('/base/test/fixtures/empty.html');
                 })
                 .navigateTo('/base/test/fixtures/links.html')
                 .then(function() {
-                    expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                    expect(context.getWindow().location + '').to.contain('/base/test/fixtures/links.html');
                 })
                 .back()
                 .then(function() {
-                    expect(context.get().location + '').to.contain('/base/test/fixtures/empty.html');
+                    expect(context.getWindow().location + '').to.contain('/base/test/fixtures/empty.html');
                 })
                 .forward()
                 .then(function() {
-                    expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                    expect(context.getWindow().location + '').to.contain('/base/test/fixtures/links.html');
                 })
                 .reload()
                 .then(function() {
-                    expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                    expect(context.getWindow().location + '').to.contain('/base/test/fixtures/links.html');
                 })
                 .destroy(function() {
                     done();

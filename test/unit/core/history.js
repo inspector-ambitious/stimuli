@@ -62,7 +62,7 @@ describe('Stimuli.core.History', function() {
                     .sleep(500)
                     .go(-1)
                     .then(function() {
-                        expect(context.get().location + '').to.contain('/base/test/fixtures/divinfront.html');
+                        expect(context.getWindow().location + '').to.contain('/base/test/fixtures/divinfront.html');
                         done();
                     });
 
@@ -138,7 +138,7 @@ describe('Stimuli.core.History', function() {
                     .go(-1)
                     .go(1)
                     .then(function() {
-                        expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                        expect(context.getWindow().location + '').to.contain('/base/test/fixtures/links.html');
                         done();
                     });
 
@@ -154,11 +154,11 @@ describe('Stimuli.core.History', function() {
                     .go(-1)
                     .go(1)
                     .then(function() {
-                        expect(context.get().location + '').to.contain('/base/test/fixtures/links.html');
+                        expect(context.getWindow().location + '').to.contain('/base/test/fixtures/links.html');
                     })
                     .go(1)
                     .then(function() {
-                        expect(context.get().location + '').to.contain('/base/test/fixtures/empty.html');
+                        expect(context.getWindow().location + '').to.contain('/base/test/fixtures/empty.html');
                         done();
                     });
 

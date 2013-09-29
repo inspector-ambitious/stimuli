@@ -39,6 +39,7 @@
 
 
             xhr.open('get', url, true);
+
             xhr.send();
         }
 

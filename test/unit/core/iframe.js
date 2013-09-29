@@ -2,7 +2,7 @@
 
 describe('Stimuli.core.Iframe', function() {
 
-    this.timeout(5000);
+    this.timeout(10000);
 
     var iframe, context;
 
@@ -18,10 +18,10 @@ describe('Stimuli.core.Iframe', function() {
 
     describe('load', function() {
 
-        it('should update the context', function(done) {
+        it('should update the context and block until the page is fully loaded', function(done) {
             iframe
             .load('/base/test/fixtures/divinfront.html', function() {
-                expect(context.get().location + '').to.contain('/base/test/fixtures/divinfront.html');
+                expect(context.getWindow().location + '').to.contain('/base/test/fixtures/divinfront.html');
             })
             .destroy(function() {
                 done();
@@ -56,7 +56,7 @@ describe('Stimuli.core.Iframe', function() {
             iframe
             .load('/base/test/fixtures/divinfront.html')
             .destroy(function() {
-                expect(context.get()).to.be(null);
+                expect(context.getWindow()).to.be(null);
                 expect(document.getElementsByTagName('iframe').length).to.be(0);
                 done();
             });

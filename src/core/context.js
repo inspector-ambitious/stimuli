@@ -9,7 +9,6 @@
 
     Stimuli.core.Context = function() {
         this.win = null;
-        this.winObserver = null;
         this.loading = false;
     };
 
@@ -18,43 +17,48 @@
     Stimuli.core.Class.mix(Context, Stimuli.core.Observable);
 
     /**
-     * Sets the current context.
+     * Sets a new context.
      * @param {Window} win The window object used as a context.
      */
-    Context.prototype.set = function(win) {
+    Context.prototype.setNew = function(win) {
         var self = this;
         self.win = win;
-
-        if (win) {
-            self.winObserver = new Stimuli.view.event.Observer(win);
-            self.winObserver.once('beforeunload', function() {
-                self.loading = true;
-
-            });
-            self.winObserver.once('unload', function() {
-                self.winObserver = null;
-                self.win = null;
-
-            });
-            self.loading = false;
-            self.publish('update');
-        }
-
+        self.loading = false;
+        self.publish('new');
     };
 
     /**
-     * Retrieves the current context.
-     * @return {Window} The current context.
+     * Returns the current browser window.
+     * @return {Window} The current window.
      */
-    Context.prototype.get = function() {
+    Context.prototype.getWindow = function() {
         return this.win;
     };
 
     /**
-     * Determines is the current context has changed and a new one is loading.
+     * Sets the context in a loading state.
+     */
+    Context.prototype.setLoading = function() {
+        var self = this;
+        self.loading = true;
+        self.win = null;
+        self.publish('loading');
+    };
+
+    /**
+     * Determines if the browser window is currently loading.
      * @return {Boolean} True if the a new context is loading.
      */
     Context.prototype.isLoading = function() {
         return this.loading;
     };
+
+
+    /**
+     * Destroys the current context.
+     */
+    Context.prototype.destroy = function() {
+        this.win = null;
+    };
+
 })();

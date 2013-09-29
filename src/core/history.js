@@ -14,7 +14,7 @@
         self.backwardPagesList = [];
         self.forwardPagesList = [];
         self.context = context;
-        self.context.subscribe('update', self.updateBackwardPagesList, self, true);
+        self.context.subscribe('new', self.updateBackwardPagesList, self, true);
     };
 
     var History = Stimuli.core.History;
@@ -25,7 +25,7 @@
      * Called each time the context is updated to update the backward pages list.
      */
     History.prototype.updateBackwardPagesList = function() {
-        this.backwardPagesList.push(this.context.get().location + '');
+        this.backwardPagesList.push(this.context.getWindow().location + '');
     };
 
     /**
@@ -59,15 +59,15 @@
                 }
 
             } else {
-                url = self.context.get().location.href;
+                url = self.context.getWindow().location.href;
             }
-            self.context.unsubscribe('update', self.updateBackwardPagesList);
+            self.context.unsubscribe('new', self.updateBackwardPagesList);
 
             // the global history.go doesn't work on firefox inside an iframe
-            self.context.get().location = url;
+            self.context.getWindow().location = url;
 
-            self.context.once('update', function() {
-                self.context.subscribe('update', self.updateBackwardPagesList, self);
+            self.context.once('new', function() {
+                self.context.subscribe('new', self.updateBackwardPagesList, self);
                 done();
             });
         }, callback);

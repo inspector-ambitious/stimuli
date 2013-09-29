@@ -85,7 +85,7 @@ Stimuli.prototype.$ = function(selector) {
  * @return {Window}
  */
 Stimuli.prototype.getWindow = function() {
-    return this.context.get();
+    return this.context.getWindow();
 };
 
 /**

@@ -23,7 +23,7 @@
      * @return {Number}
      */
     Viewport.prototype.getScreenX = function() {
-        var win = this.context.get();
+        var win = this.context.getWindow();
         return win.screenX || win.screenLeft;
     };
 
@@ -32,7 +32,7 @@
      * @return {Number}
      */
     Viewport.prototype.getScreenY = function() {
-        var win = this.context.get();
+        var win = this.context.getWindow();
         return win.screenY || win.screenTop;
     };
 
@@ -43,7 +43,7 @@
      * @return {HTMLElement}
      */
     Viewport.prototype.getVisibleElementAt = function(x, y) {
-        var context = this.context.get(),
+        var context = this.context.getWindow(),
             doc = context.document;
 
         if (x < 0 || y < 0) {
@@ -73,7 +73,7 @@
      * @return {Window}
      */
     Viewport.prototype.getWindow = function() {
-        return this.context.get();
+        return this.context.getWindow();
     };
 
     /**
@@ -81,7 +81,7 @@
      * @return {Object}
      */
     Viewport.prototype.getDocument = function() {
-        return this.context.get().document;
+        return this.context.getWindow().document;
     };
 
     /**
@@ -89,7 +89,7 @@
      * @param {String} hash The new hash.
      */
     Viewport.prototype.updateHash = function(hash) {
-        this.context.get().location.hash = hash;
+        this.context.getWindow().location.hash = hash;
     };
 
     /**
@@ -97,7 +97,7 @@
      * @param {String} url The new url.
      */
     Viewport.prototype.updateUrl = function(url) {
-        this.context.get().location = url;
+        this.context.getWindow().location = url;
     };
 
     /**
@@ -127,7 +127,7 @@
      * @return {Mixed}
      */
     Viewport.prototype.$ = function(selector, all) {
-        var elements = Sizzle(selector, this.context.get().document);
+        var elements = Sizzle(selector, this.context.getWindow().document);
         if (all) {
             return elements;
         } else {
