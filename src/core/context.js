@@ -22,6 +22,7 @@
      */
     Context.prototype.setNew = function(win) {
         var self = this;
+        // TODO: (yhwh) reroute onerror, alert to current window etc...
         self.win = win;
         self.loading = false;
         self.publish('new');
@@ -46,11 +47,28 @@
     };
 
     /**
-     * Determines if the browser window is currently loading.
-     * @return {Boolean} True if the a new context is loading.
+     * Waits for the context to be ready (generally used after a navigation change).
+     * @param {Function} callback The function to call when the context is ready.
      */
-    Context.prototype.isLoading = function() {
-        return this.loading;
+    Context.prototype.waitForReady = function(callback) {
+        var self = this,
+            tmp = [];
+
+        function waitFor() {
+            tmp.push(self.loading);
+            // some browsers kicks the page loading right away, others do it on the next tick
+            // so we have at least two consecutives loading === false before being completely
+            // ready.
+            if (tmp.length < 2 ||
+                (tmp[tmp.length - 1] || tmp[tmp.length -2])) {
+                setTimeout(waitFor, 1);
+                return;
+            }
+            tmp = null;
+            callback();
+        }
+
+        waitFor();
     };
 
 

@@ -92,7 +92,7 @@ module.exports = function(grunt) {
 
                 files: conf.testFilesDev,
 
-                reporters: ['dots'],
+                reporters: ['dots']
 
 
             },

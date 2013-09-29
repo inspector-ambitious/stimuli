@@ -53,14 +53,13 @@
         var ret = doc.elementFromPoint(x, y);
 
 
-        // IE8 hack: When nesting iframes ie8 doesn't layout properly 
-        // freshly inserted elements, so before calling elementFromPoint
+        // IE8 hack: Inside an iframe ie8 doesn't repaint properly inside an iframe, so before calling elementFromPoint
         // we trigger a reflow to force the layout to be recalculated
         // (Note: that was a tricky one it's 4:39AM)
         // see http://stackoverflow.com/questions/4444014/blank-iframe-in-ie
         if (Stimuli.core.Support.isIE8 &&
             ret === null &&
-            context.parent && context.parent.parent) { // encapsulated iframe check
+            context.parent !== context) { // iframe check
             doc.body.getBoundingClientRect();
             ret = doc.elementFromPoint(x, y);
         }
@@ -106,17 +105,7 @@
      * @param {Function} callback The function to call when the viewport is ready.
      */
     Viewport.prototype.waitForReady = function(callback) {
-        var self = this;
-
-        function waitFor() {
-            if (self.context.isLoading()) {
-                setTimeout(waitFor, 1);
-                return;
-            }
-            callback();
-        }
-
-        setTimeout(waitFor, 1);
+        this.context.waitForReady(callback);
     };
 
 

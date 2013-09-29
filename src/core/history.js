@@ -40,7 +40,6 @@
 
         return self.defer(function(done) {
             var url;
-
             if (index < 0) { // back
                 url = self.backwardPagesList[self.backwardPagesList.length + index - 1]; // -1 to remove current url
                 if (!url) {
@@ -66,7 +65,7 @@
             // the global history.go doesn't work on firefox inside an iframe
             self.context.getWindow().location = url;
 
-            self.context.once('new', function() {
+            self.context.waitForReady(function() {
                 self.context.subscribe('new', self.updateBackwardPagesList, self);
                 done();
             });

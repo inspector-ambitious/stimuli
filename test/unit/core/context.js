@@ -15,9 +15,9 @@ describe('Stimuli.core.Context', function() {
     });
 
 
-    describe('isLoading', function() {
+    describe('waitForReady', function() {
 
-        it('should be loading in the next tick just after the navigation triggered by a window location change', function(done) {
+        it('should returns true just after the navigation is triggered by a window location change', function(done) {
                 iframe
                 .load('/base/test/fixtures/empty.html', function() {
                     expect(context.getWindow().location + '').to.contain('/base/test/fixtures/empty.html');
@@ -25,10 +25,11 @@ describe('Stimuli.core.Context', function() {
                 })
                 .then(function(next) {
                      context.getWindow().location = '/base/test/fixtures/big.html';
-                     setTimeout(function() {
-                        expect(context.isLoading()).to.be(true);
+                     context.waitForReady(function() {
+                         expect(context.getWindow().location + '').to.contain('/base/test/fixtures/big.html');
+                         expect(context.getWindow().document.readyState).to.be('complete');
                         next();
-                     },1);
+                     });
                 })
                 .destroy(function() {
                     done();

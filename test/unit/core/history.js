@@ -48,10 +48,8 @@ describe('Stimuli.core.History', function() {
 
                 };
 
-
                 iframe.load('/base/test/fixtures/divinfront.html');
                 history.go(-1);
-
             });
 
             it('should not throw an error if you try to go backward when only two navigations have occurred', function(done) {
@@ -60,7 +58,6 @@ describe('Stimuli.core.History', function() {
                     .load('/base/test/fixtures/links.html');
 
                 history
-                    .sleep(500)
                     .go(-1)
                     .then(function() {
                         expect(context.getWindow().location + '').to.contain('/base/test/fixtures/divinfront.html');
@@ -162,7 +159,6 @@ describe('Stimuli.core.History', function() {
                         expect(context.getWindow().location + '').to.contain('/base/test/fixtures/empty.html');
                         done();
                     });
-
 
             });
 

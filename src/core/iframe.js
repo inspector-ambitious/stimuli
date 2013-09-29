@@ -27,47 +27,60 @@
      */
     Iframe.prototype.initIframe = function() {
         var self = this,
-            iframe = document.createElement('iframe'),
+            wrap = self.getRootDocument().createElement('div'),
+            iframe = self.getRootDocument().createElement('iframe'),
             options = self.options,
-            style = iframe.style;
+            wstyle = wrap.style,
+            istyle = iframe.style;
 
-        style.width = options.width ? options.width + 'px' : '100%';
+        wstyle.position = 'absolute';
+        wstyle.top = 0;
+        wstyle.left = 0;
+        wstyle.border = 0;
+        wstyle.margin = 0;
+        wstyle.padding = 0;
+        wstyle.width =  options.width ? options.width + 'px' : '100%';
+        wstyle.height =  options.height ? options.height + 'px' : '100%';
 
-        style.height = options.height ? options.height + 'px' : '100%';
-
-        style.position = 'absolute';
-        style.top = 0;
-        style.left = 0;
-        style.border = 0;
-
+        istyle.position = 'relative';
+        istyle.width = '100%';
+        istyle.height = '100%';
+        istyle.border = 0;
+        istyle.margin = 0;
+        istyle.padding = 0;
         iframe.frameBorder = 0;
-
-        style.margin = 0;
-        style.padding = 0;
-
-        self.iframeEl = iframe;
 
         // ie8 hack: iframe src must be set see http://aspnetresources.com/blog/always_set_iframe_source
         if (Stimuli.core.Support.isIE8) {
             iframe.src = 'about:blank';
         }
 
-        self.iframeObserver = new Stimuli.view.event.Observer(iframe);
+        self.iframeEl = iframe;
+        self.iframeObserver = new Stimuli.view.event.Observer(self.iframeEl);
+        self.iframeObserver.subscribe('load', self.onIframeLoad, self);
 
-        document.body.appendChild(iframe);
+        self.getRootDocument().body.appendChild(wrap);
+        wrap.appendChild(iframe);
 
-        self.iframeObserver.subscribe('load', function() {
-            var win = self.iframeEl.contentWindow;
+    };
+
+    Iframe.prototype.onIframeLoad = function() {
+        var self = this,
+            win = self.iframeEl.contentWindow;
+
             // by default ie and firefox fires load on about:blank so we skip this window to keep consistenty with other
             // browsers
             if ((win.location + '') !== 'about:blank') {
-                var doc = win.document;
-
                 // IE hack: onload event is not extremely reliable so we need to do an additional check here to ensure
                 // the document is truly ready.
                 var checkDocReadyState = function() {
-                    if (doc && doc.body && doc.readyState === 'complete') {
-                        // IE10 hack: forcing iframe reflow, because the iframe could be loaded but not painted !
+                    var doc, readyTest;
+                    try {
+                        doc = win.document;
+                        readyTest = doc && doc.body && doc.readyState === 'complete';
+                    } catch(e) {}
+                    if (readyTest) {
+                        // IE10 hack: forcing iframe reflow, because the iframe could be loaded but not yet painted !
                         if (Stimuli.core.Support.isIE10) {
                             self.iframeEl.getBoundingClientRect();
                         }
@@ -77,16 +90,37 @@
                             winObserver = null;
                         });
 
+
                         self.context.setNew(win);
+
                     } else {
                         setTimeout(checkDocReadyState, 20);
                     }
                 };
 
-                checkDocReadyState();
+                // First we jump outside the event listener scope chain to avoid any possible error to be thrown
+                // in the parent window (in case stimuli was contextualized in a subframe).
+                setTimeout(checkDocReadyState, 1);
             }
-        });
+    };
+    /**
+     * Returns the root window.
+     */
+    Iframe.prototype.getRootWindow = function() {
+        var win = window;
 
+        while(win.parent && win.parent !== win) {
+            win = win.parent;
+        }
+
+        return win;
+    };
+
+    /**
+     * Returns the root document to avoid iframe nesting as much as possible, which can cause repaint issues with IE.
+     */
+    Iframe.prototype.getRootDocument = function() {
+        return this.getRootWindow().document;
     };
 
     /**
