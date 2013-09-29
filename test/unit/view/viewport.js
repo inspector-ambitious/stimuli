@@ -1,5 +1,7 @@
+'use strict';
+
 describe('Stimuli.view.Viewport', function() {
-    this.timeout(10000);
+
     var stimuli, viewport;
 
     before(function(done) {

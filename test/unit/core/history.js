@@ -1,6 +1,7 @@
 'use strict';
+
 describe('Stimuli.core.History', function() {
-    this.timeout(15000);
+
     var history, iframe, context;
 
     beforeEach(function() {

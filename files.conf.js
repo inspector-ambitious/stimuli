@@ -93,6 +93,9 @@ testFilesBuild.push({
 
 // test specs
 var specs = [{
+    pattern: 'test/mocha_setup.js'
+
+},{
     pattern: 'test/unit/**/*.js'
 }];
 

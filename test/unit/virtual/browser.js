@@ -1,5 +1,6 @@
+'use strict';
+
 describe('Stimuli.virtual.Browser', function() {
-    this.timeout(10000);
 
     var context;
 

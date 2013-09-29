@@ -1,5 +1,5 @@
+'use strict';
 describe('Stimuli.command.mouse.Helper', function() {
-    this.timeout(10000);
 
     var stimuli, helper, position, options, yellow, blue;
 
