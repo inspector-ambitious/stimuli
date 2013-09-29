@@ -23,7 +23,8 @@
     "TestHelper": true,
     "after": true,
     "Sizzle": true,
-    "App": true
+    "App": true,
+    "mocha": true
   },
   "debug": false,
   "strict": false,
