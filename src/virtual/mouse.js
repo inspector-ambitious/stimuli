@@ -41,7 +41,7 @@
     Mouse.prototype.generateCommand = function(commandName, options) {
         var self = this;
         return function(done) {
-            var command = new Stimuli.command.mouse[commandName](self.viewport, options);
+            var command = new Stimuli.mouse[commandName](self.viewport, options);
             command.execute(done);
         };
     };

@@ -13,15 +13,15 @@ var Stimuli = function(options) {
     options = options || {};
 
 
-    self.context = new Stimuli.core.Context();
+    self.context = new Stimuli.shared.Context();
 
     self.browser = new Stimuli.virtual.Browser(self.context);
 
-    self.viewport = new Stimuli.view.Viewport(self.context);
+    self.viewport = new Stimuli.shared.Viewport(self.context);
 
     self.mouse = new Stimuli.virtual.Mouse(self.viewport);
 
-    self.recorder = new Stimuli.core.Recorder();
+    self.recorder = new Stimuli.shared.Recorder();
 
     self.synchronize(self.recorder);
 
@@ -44,11 +44,13 @@ var Stimuli = function(options) {
 };
 
 // Namespaces declaration
-Stimuli.view = {
-    event: {
-        synthetizer: {}
-    }
+
+Stimuli.core = {};
+Stimuli.shared = {};
+Stimuli.event = {
+    synthetizer: {}
 };
+
 
 Stimuli.virtual = {
     mouse: {},
@@ -56,11 +58,11 @@ Stimuli.virtual = {
     touch:{}
 };
 
-Stimuli.core = {};
+Stimuli.browser = {};
 
-Stimuli.command = {
-    mouse: {}
-};
+Stimuli.mouse = {};
+
+
 
 
 /**

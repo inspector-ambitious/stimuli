@@ -16,30 +16,29 @@ var stimuliFiles = [
     'src/core/object.js',
     'src/core/class.js',
     'src/core/observable.js',
-
-
     'src/core/scheduler.js',
     'src/core/chainable.js',
-    'src/core/recorder.js',
-
-    'src/core/context.js',
-
     'src/core/ajax.js',
-    'src/core/iframe.js',
-    'src/core/history.js',
 
-    'src/view/viewport.js',
-    'src/view/event/emitter.js',
-    'src/view/event/observer.js',
-    'src/view/event/synthetizer/mouse.js',
+    'src/event/emitter.js',
+    'src/event/observer.js',
+    'src/event/synthetizer/mouse.js',
+
+    'src/shared/recorder.js',
+    'src/shared/viewport.js',
+    'src/shared/context.js',
+    'src/shared/interaction.js',
+
+    'src/virtual/browser.js',
+    'src/browser/iframe.js',
+    'src/browser/history.js',
+
+
 
     'src/virtual/mouse.js',
-    'src/virtual/browser.js',
-
-    'src/command/generic.js',
-    'src/command/mouse/helper.js',
-    'src/command/mouse/click.js',
-    'src/command/mouse/dblclick.js'
+    'src/mouse/helper.js',
+    'src/mouse/click.js',
+    'src/mouse/dblclick.js'
 
 ];
 

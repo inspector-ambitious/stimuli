@@ -138,7 +138,7 @@ function MainCtrl($scope, $http, $location, $templateCache) {
     $scope.startCapture = function() {
 
         if ($scope.capture) {
-            var viewport = new Stimuli.view.Viewport();
+            var viewport = new Stimuli.shared.Viewport();
             var elements = viewport.$($scope.selector, true),
                 elementsLength = elements.length,
                 domEvents = $scope.domEvents,
@@ -146,7 +146,7 @@ function MainCtrl($scope, $http, $location, $templateCache) {
                 i, j, domListener, domEvent;
 
             for (i = 0; i < elementsLength; i++) {
-                domListener = new Stimuli.view.event.Observer(elements[i]);
+                domListener = new Stimuli.event.Observer(elements[i]);
                 capturedElements.push(domListener);
                 for (j = 0; j < domEventslength; j++) {
                     domEvent = domEvents[j];

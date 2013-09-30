@@ -5,7 +5,7 @@
  * @mixins Stimuli.core.Chainable
  * A virtual browser implementation.
  * @constructor
- * @param {Stimuli.core.Context} context The browser context.
+ * @param {Stimuli.shared.Context} context The browser context.
  * @param {Object=} options
  * @param {Number/String} options.width The iframe width in px (Number) or in % (String)
  * @param {Number/String} options.height The iframe height in px (Number) or in % (String)
@@ -19,9 +19,9 @@
 
         self.options = options || {};
 
-        self.iframe = self.options.iframe || new Stimuli.core.Iframe(context, self.options);
+        self.iframe = self.options.iframe || new Stimuli.browser.Iframe(context, self.options);
 
-        self.history = self.options.history || new Stimuli.core.History(context);
+        self.history = self.options.history || new Stimuli.browser.History(context);
 
     };
 
