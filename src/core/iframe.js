@@ -99,8 +99,7 @@
                     }
                 };
 
-                // First we jump outside the event listener scope chain to avoid any possible error to be thrown
-                // in the parent window (in case stimuli was contextualized in a subframe).
+                // Let's clear the call stack to prevent errors to be thrown in the top most window context.
                 setTimeout(checkDocReadyState, 1);
             }
     };
