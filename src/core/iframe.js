@@ -59,7 +59,8 @@
         self.iframeObserver = new Stimuli.view.event.Observer(self.iframeEl);
         self.iframeObserver.subscribe('load', self.onIframeLoad, self);
 
-        self.getRootDocument().body.appendChild(wrap);
+        self.wrapEl = self.getRootDocument().body.appendChild(wrap);
+
         wrap.appendChild(iframe);
 
     };
@@ -168,6 +169,11 @@
             if (self.iframeEl) {
                 self.iframeEl.parentNode.removeChild(self.iframeEl);
                 self.iframeEl = null;
+            }
+
+            if (self.wrapEl) {
+                self.wrapEl.parentNode.removeChild(self.wrapEl);
+                self.wrapEl = null;
             }
 
             self.context.destroy();
