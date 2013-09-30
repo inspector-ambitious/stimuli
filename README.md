@@ -1,19 +1,23 @@
+[![Build Status](https://travis-ci.org/yhwh/stimuli.png?branch=master)](https://travis-ci.org/yhwh/stimuli) 
+
+Cross Browser tested on each build thanks to [BrowserStack](http://www.browserstack.com/)'s support!
 
 Description
 -----------
 
-A DOM events injection library.
+A testing framework using dom events injection to simulates users interaction.
 
 
 Supported Browsers
 ------------------
 
-* IE8-10
-* Firefox 22+
+* IE8+
+* Firefox ESR+
 * Chrome 23+
 * Safari 6+
 * PhantomJS 1.9+
-
+* Opera 15+
+* Android 4
 
 How to build
 ------------
@@ -67,5 +71,3 @@ Contributors Tips
 * Unit test all the fucking time.
 
 * Design matters [SOLID Javascript](http://aspiringcraftsman.com/series/solid-javascript/).
-
-
