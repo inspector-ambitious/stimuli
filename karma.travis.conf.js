@@ -13,11 +13,11 @@ module.exports = function(config) {
         accessKey: process.env.BROWSER_STACK_ACCESS_KEY,
         startTunnel: true,
         captureTimeout: 120000, // 2 mins
-        retryLimit: 8
+        retryLimit: 10
     };
-    conf.logLevel = config.LOG_INFO;
+    conf.logLevel = config.LOG_ERROR;
     conf.reportSlowerThan = 30000;
-    conf.disconnectTolerance = 3;
+    conf.disconnectTolerance = 5;
     conf.customLaunchers = {
 
         BS_FIREFOX: {
