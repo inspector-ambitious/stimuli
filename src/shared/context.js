@@ -52,23 +52,31 @@
      */
     Context.prototype.waitForReady = function(callback) {
         var self = this,
-            tmp = [];
+            doc = window.document,
+            iframe = doc.createElement('iframe');
 
-        function waitFor() {
-            tmp.push(self.loading);
-            // some browsers kicks the page loading right away, others do it on the next tick
-            // so we have at least two consecutives loading === false before being completely
-            // ready.
-            if (tmp.length < 2 ||
-                (tmp[tmp.length - 1] || tmp[tmp.length -2])) {
-                setTimeout(waitFor, 1);
-                return;
-            }
-            tmp = null;
-            callback();
-        }
+        iframe.src = Stimuli.blankPage || '/';
 
-        waitFor();
+        iframe.style.display = 'none';
+
+        iframe.onload = function() {
+            iframe.onload = null;
+            doc.body.removeChild(iframe);
+
+            var waitForLoad = function() {
+
+                if (self.loading === false) {
+                    callback();
+                } else {
+                    setTimeout(waitForLoad, 1);
+                }
+            };
+
+            setTimeout(waitForLoad, 1);
+        };
+
+        doc.body.appendChild(iframe);
+
     };
 
 

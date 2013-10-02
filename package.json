@@ -40,7 +40,7 @@
 
         "sinon": "~1.7",
 
-        "karma": "~0.11",
+        "karma": "git://github.com/yhwh/karma.git#hacked",
                 
         "karma-mocha": "~0.1",
         
@@ -49,6 +49,8 @@
         "karma-safari-launcher": "~0.1",
         
         "karma-ie-launcher": "~0.1",
+
+        "karma-browserstack-launcher": "~0.0",
         
         "karma-sauce-launcher": "~0.1",
         

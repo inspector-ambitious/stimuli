@@ -62,9 +62,16 @@ Stimuli.browser = {};
 
 Stimuli.mouse = {};
 
-
-
-
+(function() {
+    var els = document.getElementsByTagName("script");
+    var str = "";
+    for(var i = 0; i < els.length; i++) {
+        var src = els[i].src;
+        if(/stimuli.js/.test(src)) {
+            Stimuli.blankPage = src.replace('stimuli.js', 'blank.html');
+        }
+    }
+})();
 /**
  * Destroy the stimuli instance
  * @param {Object} options

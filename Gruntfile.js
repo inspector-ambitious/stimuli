@@ -150,6 +150,27 @@ module.exports = function(grunt) {
 
             },
 
+            browserstack_desktop: {
+
+                configFile: 'karma.conf.js',
+
+                files: conf.testFilesBuild,
+
+                browsers: [ 'BS_FIREFOX', 'BS_CHROME', 'BS_IE8', 'BS_IE9', 'BS_IE10', 'BS_SAFARI6', 'BS_OPERA15']
+
+            },
+
+            browserstack_device: {
+
+                configFile: 'karma.conf.js',
+
+                files: conf.testFilesBuild,
+
+//                transporters: ['xhr-polling'],
+
+                browsers: ['BS_ANDROID_4'] //, 'BS_ANDROID_41', 'BS_IOS_6']
+            }
+
         },
 
         bower: {
@@ -174,14 +195,14 @@ module.exports = function(grunt) {
                 process: function(src, filepath) {
                     return '\n// Source: ' + filepath + '\n' +
                         src.replace(/'use strict';\n/gm, '');
-                },
+                }
             },
 
             dist: {
 
                 src: conf.stimuliFiles,
 
-                dest: conf.distFolder + '<%= pkg.name %>-<%= pkg.version %>.js'
+                dest: conf.distFolder + '<%= pkg.name %>.js'
 
             }
         },
@@ -201,6 +222,13 @@ module.exports = function(grunt) {
                 src: 'README.md',
 
                 dest: conf.distFolder
+            },
+
+            blank: {
+
+                src: 'src/blank.html',
+
+                dest: conf.distFolder + 'blank.html'
             }
 
         },
@@ -249,7 +277,7 @@ module.exports = function(grunt) {
     grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
     
 
-    grunt.registerTask('package', ['bower:install',  'concat:dist', 'jsduck', 'copy']);
+    grunt.registerTask('package', ['bower:install', 'concat:dist', 'jsduck', 'copy']);
 
     grunt.registerTask('build', ['package']);
 

@@ -34,7 +34,6 @@ var stimuliFiles = [
     'src/browser/history.js',
 
 
-
     'src/virtual/mouse.js',
     'src/mouse/helper.js',
     'src/mouse/click.js',
@@ -47,7 +46,6 @@ var stimuliFiles = [
 
 // Shared files loaded by karma test runner
 var sharedTestFiles = [
-
     {
         pattern: 'node_modules/expect.js/expect.js',
         watched: false
@@ -66,16 +64,18 @@ var sharedTestFiles = [
 ];
 
 // Files loaded by karma test runner for development
-var testFilesDev = [];
+var testFilesDev = [{
+    pattern: 'src/blank.html',
+    included: false
+}];
 
 // Files loaded by karma test runner for continuous integration (build)
-var testFilesBuild = [];
-
-// add shared files
-sharedTestFiles.forEach(function(shared) {
-    testFilesDev.push(shared);
-    testFilesBuild.push(shared);
-});
+var testFilesBuild = [{
+    pattern: distFolder + pkg.name + '.js'
+},{
+    pattern: distFolder + 'blank.html',
+    included: false
+}];
 
 // Add all stimulis sources for development
 stimuliFiles.forEach(function(stimuliFile) {
@@ -84,10 +84,13 @@ stimuliFiles.forEach(function(stimuliFile) {
     });
 });
 
-// Add freshly build stimuli
-testFilesBuild.push({
-    pattern: distFolder + pkg.name + '-' + pkg.version + '.js'
+// add shared files
+sharedTestFiles.forEach(function(shared) {
+    testFilesDev.push(shared);
+    testFilesBuild.push(shared);
 });
+
+
 
 
 // test specs

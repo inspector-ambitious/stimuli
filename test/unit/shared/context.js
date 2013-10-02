@@ -36,5 +36,18 @@ describe('Stimuli.shared.Context', function() {
                 });
         });
 
+        it('should not wait forever if the page is not reloading', function(done) {
+            iframe
+                .load('/base/test/fixtures/empty.html')
+                .then(function(next) {
+                     context.waitForReady(function() {
+                         next();
+                     });
+                })
+                .destroy(function() {
+                    done();
+                });
+        });
+
     });
 });

@@ -86,11 +86,15 @@
                             self.iframeEl.getBoundingClientRect();
                         }
                         var winObserver = new Stimuli.event.Observer(win);
-                        winObserver.once('beforeunload', function() {
+//                        winObserver.once('beforeunload', function() {
+//                            self.context.setLoading();
+//                            winObserver = null;
+//                        });
+
+                        winObserver.once('unload', function() {
                             self.context.setLoading();
                             winObserver = null;
                         });
-
 
                         self.context.setNew(win);
 
