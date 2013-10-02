@@ -17,8 +17,7 @@ module.exports = function(config) {
     };
     conf.logLevel = config.LOG_INFO;
     conf.reportSlowerThan = 30000;
-    conf.browserDisconnectTimeout = 30000;
-    conf.notExecutedRetryLimit = 3;
+    conf.disconnectTolerance = 3;
     conf.customLaunchers = {
 
         BS_FIREFOX: {

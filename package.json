@@ -36,7 +36,7 @@
 
         "sinon": "~1.7",
 
-        "karma": "git://github.com/yhwh/karma.git#hacked",
+        "karma": "git://github.com/yhwh/karma.git#dev",
                 
         "karma-mocha": "~0.1",
         
