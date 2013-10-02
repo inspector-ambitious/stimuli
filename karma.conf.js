@@ -53,92 +53,6 @@ module.exports = function(config) {
 
         customLaunchers: {
 
-            'Android - 2.3': {
-                base: 'AndroidVBox',
-                vm: 'Android 2.3',
-                natForwardingPort: 54321
-            },
-
-            'Android - 3.2': {
-                base: 'AndroidVBox',
-                vm: 'Android 3.2',
-                natForwardingPort: 54322
-            },
-
-            'Android - 4.0': {
-                base: 'AndroidVBox',
-                vm: 'Android 4.0',
-                natForwardingPort: 54323
-            },
-
-            'Android - 4.2': {
-                base: 'AndroidVBox',
-                vm: 'Android 4.2',
-                natForwardingPort: 54324
-            },
-
-            'Android - 4.3': {
-                base: 'AndroidVBox',
-                vm: 'Android 4.3',
-                natForwardingPort: 54325
-            },
-
-            'SL_Chrome': {
-                base: 'SauceLabs',
-                browserName: 'chrome',
-                platform: 'Windows 7'
-            },
-
-            'SL_Firefox': {
-                base: 'SauceLabs',
-                browserName: 'firefox',
-                platform: 'Windows 7',
-                version: '23'
-
-            },
-
-            'SL_Safari': {
-                base: 'SauceLabs',
-                browserName: 'safari',
-                platform: 'Mac 10.8',
-                version: '6'
-            },
-
-            'SL_IE8': {
-                base: 'SauceLabs',
-                browserName: 'internet explorer',
-                platform: 'Windows 7',
-                version: '8'
-            },
-
-            'SL_IE9': {
-                base: 'SauceLabs',
-                browserName: 'internet explorer',
-                platform: 'Windows 7',
-                version: '9'
-            },
-
-            'SL_IE10': {
-                base: 'SauceLabs',
-                browserName: 'internet explorer',
-                platform: 'Windows 8',
-                version: '10'
-            },
-
-            SL_IOS6: {
-                base: 'SauceLabs',
-                browserName: 'iphone',
-                platform: 'OS X 10.8',
-                version: '6'
-            },
-
-            SL_ANDROID4: {
-                base: 'SauceLabs',
-                browserName: 'android',
-                platform: 'Linux',
-                version: '4.0'
-            },
-
             BS_FIREFOX: {
                 base: 'BrowserStack',
                 browser: 'firefox',
@@ -187,6 +101,14 @@ module.exports = function(config) {
                 os_version: '7'
             },
 
+            BS_SAFARI51: {
+                base: 'BrowserStack',
+                browser: 'safari',
+                browser_version: '5.1',
+                os: 'OS X',
+                os_version: 'Snow Leopard'
+            },
+
             BS_SAFARI6: {
                 base: 'BrowserStack',
                 browser: 'safari',
@@ -201,6 +123,15 @@ module.exports = function(config) {
                 browser: 'opera',
                 os_version: '7',
                 browser_version: '15.0'
+            },
+
+            BS_ANDROID_23: {
+                base: 'BrowserStack',
+                os: 'android',
+                device: 'Samsung Galaxy S II',
+                browser: 'Android Browser',
+                os_version: '2.3',
+                browser_version: null
             },
 
             BS_ANDROID_4: {
@@ -221,6 +152,15 @@ module.exports = function(config) {
                 browser_version: null
             },
 
+            BS_ANDROID_42: {
+                base: 'BrowserStack',
+                os: 'android',
+                device: 'LG Nexus 4',
+                browser: 'Android Browser',
+                os_version: '4.2',
+                browser_version: null
+            },
+
             BS_IOS_6: {
                 base: 'BrowserStack',
                 os: 'ios',
@@ -229,8 +169,6 @@ module.exports = function(config) {
                 os_version: '6.0',
                 browser_version: null
             }
-
-
 
         },
 

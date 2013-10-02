@@ -65,24 +65,40 @@ module.exports = function(grunt) {
                 browsers: ['PhantomJS']
             },
 
-            sauce: {
+            browserstack_desktop_ie: {
 
                 configFile: 'karma.conf.js',
 
                 files: conf.testFilesBuild,
 
-                browsers: ['SL_Chrome', 'SL_Safari', 'SL_IE8', 'SL_IE9', 'SL_IE10', 'SL_ANDROID4']
+                reportSlowerThan: 30000,
+
+                // TODO: (yhwh) IE11 deactivated for now since there is a bug in sizzle  (Permission denied)
+                browsers: ['BS_IE8', 'BS_IE9', 'BS_IE10' /* , 'BS_IE11'*/]
 
             },
 
-            browserstack_desktop: {
+            browserstack_desktop_webkit: {
 
                 configFile: 'karma.conf.js',
 
                 files: conf.testFilesBuild,
 
-                browsers: [ 'BS_FIREFOX', 'BS_CHROME', 'BS_IE8', 'BS_IE9', 'BS_IE10', 'BS_SAFARI6', 'BS_OPERA15']
+                reportSlowerThan: 30000,
 
+                browsers: ['BS_CHROME', 'BS_SAFARI51', 'BS_SAFARI6', 'BS_OPERA15']
+
+            },
+
+            browserstack_desktop_gecko: {
+
+                configFile: 'karma.conf.js',
+
+                files: conf.testFilesBuild,
+
+                reportSlowerThan: 30000,
+
+                browsers: [ 'BS_FIREFOX']
             },
 
             browserstack_device: {
@@ -91,7 +107,9 @@ module.exports = function(grunt) {
 
                 files: conf.testFilesBuild,
 
-                browsers: ['BS_ANDROID_4', 'BS_ANDROID_41', 'BS_IOS_6']
+                reportSlowerThan: 30000,
+
+                browsers: [ 'BS_ANDROID_4', 'BS_ANDROID_41', 'BS_ANDROID_42', 'BS_IOS_6']
             }
 
         },
@@ -195,8 +213,6 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-hub');
-
-    grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
 
     grunt.registerTask('package', ['bower:install', 'concat:dist', 'jsduck', 'copy']);
 

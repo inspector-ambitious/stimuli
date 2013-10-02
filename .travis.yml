@@ -27,5 +27,8 @@ script:
   - grunt jshint && 
     grunt build &&
     grunt karma:phantomjs &&
-    grunt karma:browserstack_desktop &&
+    grunt karma:browserstack_desktop_ie &&
+    grunt karma:browserstack_device &&
+    grunt karma:browserstack_desktop_gecko &&
+    grunt karma:browserstack_desktop_webkit &&
     .travis/ghpages-deploy.sh
