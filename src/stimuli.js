@@ -2,66 +2,105 @@
 
 /**
  * @class Stimuli
- * Creates a new stimuli
+ * This class stimulates your browser! it's the entry point of all the framework.
  * @constructor
  * @param {Object} options
  */
 
 var Stimuli = function(options) {
+    var self = this;
+
     options = options || {};
 
 
-    if (typeof Stimuli.device.Mouse !== 'undefined') {
-        this.mouse = new Stimuli.device.Mouse(options);
+    self.context = new Stimuli.shared.Context();
+
+    self.browser = new Stimuli.virtual.Browser(self.context);
+
+    self.viewport = new Stimuli.shared.Viewport(self.context);
+
+    self.mouse = new Stimuli.virtual.Mouse(self.viewport);
+
+    self.recorder = new Stimuli.shared.Recorder();
+
+    self.synchronize(self.recorder);
+
+    self.synchronize(self.browser);
+
+    self.synchronize(self.mouse);
+
+    function mix(obj) {
+        obj.browser = self.browser;
+        obj.mouse = self.mouse;
+        obj.recorder = self.recorder;
     }
 
-};
+    mix(self.browser);
 
-/**
- * Returns a virtual mouse
- * @return {Stimuli.device.Mouse}
- */
-Stimuli.prototype.getMouse = function() {
-    return this.mouse;
-};
+    mix(self.mouse);
 
-/**
- * @static
- * Returns the first dom element matching the css selector.
- * @param {string} selector Css selector jquery styl
- * @return {HTMLElement}
- */
-Stimuli.$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector)[0];
-};
+    mix(self.recorder);
 
-/**
- * @static
- * Returns all dom elements matching the css selector.
- * @param {string} selector Css selector jquery styl
- * @return {HTMLElement[]}
- */
-
-Stimuli.$$ = function(selector) {
-    /* jshint newcap: false */
-    return Sizzle(selector);
 };
 
 // Namespaces declaration
-Stimuli.browser = {};
 
-Stimuli.device = {};
-
+Stimuli.core = {};
+Stimuli.shared = {};
 Stimuli.event = {
     synthetizer: {}
 };
 
-Stimuli.command = {
-    mouse: {
-        utils: {}
-    }
+
+Stimuli.virtual = {
+    mouse: {},
+    keyboard: {},
+    touch:{}
 };
 
-Stimuli.utils = {};
+Stimuli.browser = {};
 
+Stimuli.mouse = {};
+
+(function() {
+    var els = document.getElementsByTagName("script");
+    var str = "";
+    for(var i = 0; i < els.length; i++) {
+        var src = els[i].src;
+        if(/stimuli.js/.test(src)) {
+            Stimuli.blankPage = src.replace('stimuli.js', 'blank.html');
+        }
+    }
+})();
+/**
+ * Destroy the stimuli instance
+ * @param {Object} options
+ */
+Stimuli.prototype.destroy = function(callback) {
+    return this.browser.destroy(callback);
+};
+
+/**
+ * Finds the dom element matching the css selector in the current virtual browser viewport.
+ * @param {Object} options
+ * @return {HTMLElement} The element.
+ */
+Stimuli.prototype.$ = function(selector) {
+    return this.viewport.$(selector);
+};
+
+/**
+ * Returns the current virtual browser window object.
+ * @return {Window}
+ */
+Stimuli.prototype.getWindow = function() {
+    return this.context.getWindow();
+};
+
+/**
+ * Returns the current virtual browser document object.
+ * @return {Object}
+ */
+Stimuli.prototype.getDocument = function() {
+    return this.viewport.getDocument();
+};
