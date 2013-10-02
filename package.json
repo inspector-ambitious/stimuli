@@ -42,7 +42,9 @@
         
         "karma-coverage": "~0.1",
 
-        "karma-browserstack-launcher": "git://github.com/yhwh/karma-browserstack-launcher.git#stimuli"
+        "karma-browserstack-launcher": "git://github.com/yhwh/karma-browserstack-launcher.git#stimuli",
+
+        "karma-minimalist-reporter": "~0.2"
 
     }
 }
