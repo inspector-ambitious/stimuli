@@ -39,7 +39,7 @@ module.exports = {
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,
 
-    reportSlowerThan: 10000
+    reportSlowerThan: 10000,
 
-   // transports: ['websocket', 'xhr-polling']  // (flashsockets are buggy on ie8-9)
+    transports: ['websocket', 'xhr-polling']  // (flashsockets are buggy on ie8-9)
 };
