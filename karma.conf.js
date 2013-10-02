@@ -38,7 +38,7 @@ module.exports = function(config) {
             accessKey: process.env.BROWSER_STACK_ACCESS_KEY,
             startTunnel: true,
             captureTimeout: 90000,
-            retryLimit: 10
+            retryLimit: 5
         },
 
         sauceLabs: {
@@ -240,7 +240,6 @@ module.exports = function(config) {
 
         // enable / disable colors in the output (reporters and logs)
         colors: true,
-
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
