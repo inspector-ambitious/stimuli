@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 
             files: [
 
-                'Gruntfile.js',
+                '*.js',
                 'src/**/*.js',
                 '*.json',
                 '.jshintrc',
@@ -27,102 +27,6 @@ module.exports = function(grunt) {
 
             }
 
-        },
-
-        jsdoc: {
-
-            dist: {
-
-                src: ['src/**/*.js'],
-
-                options: {
-                    destination: 'docs'
-                }
-            }
-
-        },
-
-        karma: {
-
-            watch: {
-
-                configFile: 'karma.conf.js',
-
-                singleRun: false,
-
-                autoWatch: true,
-
-                files: conf.testFilesDev
-
-            },
-
-            phantomjs: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesBuild,
-
-                browsers: ['PhantomJS']
-            },
-
-            browserstack_desktop_ie: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesBuild,
-
-                reportSlowerThan: 30000,
-
-                // TODO: (yhwh) IE11 deactivated for now since there is a bug in sizzle  (Permission denied)
-                browsers: ['BS_IE8', 'BS_IE9', 'BS_IE10' /* , 'BS_IE11'*/]
-
-            },
-
-            browserstack_desktop_webkit: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesBuild,
-
-                reportSlowerThan: 30000,
-
-                browsers: ['BS_CHROME', 'BS_SAFARI51', 'BS_SAFARI6', 'BS_OPERA15']
-
-            },
-
-            browserstack_desktop_gecko: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesBuild,
-
-                reportSlowerThan: 30000,
-
-                browsers: [ 'BS_FIREFOX']
-            },
-
-            browserstack_device: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesBuild,
-
-                reportSlowerThan: 30000,
-
-                browsers: [ 'BS_ANDROID_4', 'BS_ANDROID_41', 'BS_ANDROID_42', 'BS_IOS_6']
-            }
-
-        },
-
-        bower: {
-
-            install: {
-
-                options: {
-                    cleanBowerDir: true
-                }
-                
-            }
         },
 
         concat: {
@@ -209,24 +113,59 @@ module.exports = function(grunt) {
 
     grunt.registerTask('sizzle', function(){
         var done = this.async();
-        grunt.util.spawn({ cmd: 'bower', args: ['install']}, function() {
-            grunt.util.spawn({ cmd: 'rm', args: ['-rf', 'lib']}, function() {
-                grunt.util.spawn({ cmd: 'mv', args: ['bower_components', 'lib']}, function() {
-                    grunt.util.spawn({ cmd: 'mv', args: ['lib/sizzle/dist/sizzle.js', 'lib/sizzle/']}, done);
+        grunt.util.spawn({ cmd: 'bower', args: ['install'], opts: {stdio: 'inherit'}}, function() {
+            grunt.util.spawn({ cmd: 'rm', args: ['-rf', 'lib'], opts: {stdio: 'inherit'}}, function() {
+                grunt.util.spawn({ cmd: 'mv', args: ['bower_components', 'lib'], opts: {stdio: 'inherit'}}, function() {
+                    grunt.util.spawn({ cmd: 'mv', args: ['lib/sizzle/dist/sizzle.js', 'lib/sizzle/'], opts: {stdio: 'inherit'}}, done);
                 });
             });
 
         });
     });
 
+    grunt.registerTask('karma_ie_gecko', function(){
+        var done = this.async();
+        grunt.util.spawn({
+                cmd: 'karma',
+                args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX'],
+                opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('karma_webkit', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('karma_device', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6'],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('karma_watch', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.conf.js'],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-hub');
 
-    grunt.registerTask('build', ['sizzle', 'concat:dist', 'jsduck', 'copy']);
+    grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-
+    grunt.registerTask('travis', ['jshint', 'build', 'karma_ie_gecko', 'karma_device', 'karma_webkit']);
 };

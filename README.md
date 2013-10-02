@@ -49,7 +49,7 @@ The tests are automatically run with [karma](http://karma-runner.github.io/).
 
 To continuously run the tests on the browsers of your choice:
 
-    grunt karma:watch
+    grunt karma_watch
 
 To lint all the js files:
 

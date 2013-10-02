@@ -24,8 +24,6 @@
                 
         "grunt-contrib-jshint": "~0.6",
         
-        "grunt-karma": "git://github.com/yhwh/grunt-karma.git#master",
-        
         "grunt-jsduck": "~0.1",
 
         "grunt-contrib-concat": "~0.3",
