@@ -12,8 +12,8 @@ module.exports = function(config) {
         username: process.env.BROWSER_STACK_USERNAME,
         accessKey: process.env.BROWSER_STACK_ACCESS_KEY,
         startTunnel: true,
-        captureTimeout: 90000,
-        retryLimit: 5
+        captureTimeout: 900000, // 15 mins
+        retryLimit: 3
     };
     conf.logLevel = config.LOG_INFO;
     conf.customLaunchers = {
