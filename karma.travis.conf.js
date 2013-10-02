@@ -15,7 +15,7 @@ module.exports = function(config) {
         captureTimeout: 120000, // 2 mins
         retryLimit: 8
     };
-    conf.logLevel = config.LOG_DEBUG;
+    conf.logLevel = config.LOG_ERROR;
     conf.reportSlowerThan = 30000;
     conf.browserDisconnectTimeout = 30000;
     conf.customLaunchers = {
