@@ -208,10 +208,11 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('sizzle', function(){
+        var done = this.async();
         grunt.util.spawn({ cmd: 'bower', args: ['install']}, function() {
             grunt.util.spawn({ cmd: 'rm', args: ['-rf', 'lib']}, function() {
                 grunt.util.spawn({ cmd: 'mv', args: ['bower_components', 'lib']}, function() {
-                    grunt.util.spawn({ cmd: 'mv', args: ['lib/sizzle/dist/sizzle.js', 'lib/sizzle/']}, this.async());
+                    grunt.util.spawn({ cmd: 'mv', args: ['lib/sizzle/dist/sizzle.js', 'lib/sizzle/']}, done);
                 });
             });
 
