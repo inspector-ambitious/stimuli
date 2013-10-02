@@ -51,31 +51,57 @@
      * @param {Function} callback The function to call when the context is ready.
      */
     Context.prototype.waitForReady = function(callback) {
-        var self = this,
-            doc = window.document,
-            iframe = doc.createElement('iframe');
+        var self = this;
 
-        iframe.src = Stimuli.blankPage || '/';
+        // since there is no beforeunload on IOS, the only method i found to wait enough to check if a navigation is
+        // occuring in the stimuli window is to create an iframe wait for it to be loaded (it will always fire after
+        // the stimuli iframe unload).
+        if (Stimuli.core.Support.isIOS) {
 
-        iframe.style.display = 'none';
+            var doc = window.document,
+                iframe = doc.createElement('iframe');
 
-        iframe.onload = function() {
-            iframe.onload = null;
-            doc.body.removeChild(iframe);
+            iframe.src = Stimuli.blankPage || '/';
 
-            var waitForLoad = function() {
+            iframe.style.display = 'none';
 
-                if (self.loading === false) {
-                    callback();
-                } else {
-                    setTimeout(waitForLoad, 1);
-                }
+            iframe.onload = function() {
+                iframe.onload = null;
+                doc.body.removeChild(iframe);
+
+                var waitForLoad = function() {
+
+                    if (self.loading === false) {
+                        callback();
+                    } else {
+                        setTimeout(waitForLoad, 1);
+                    }
+                };
+
+                setTimeout(waitForLoad, 1);
             };
 
-            setTimeout(waitForLoad, 1);
-        };
+            doc.body.appendChild(iframe);
 
-        doc.body.appendChild(iframe);
+        // And now the "classic" navigation detection ^^
+        } else {
+            var tmp = [],
+                waitForLoad = function () {
+
+                    tmp.push(self.loading);
+                    // some browsers kicks the beforeunload right away, others do it on the next tick (setTimeout, 1)
+                    // so we need to be sure to have at least two consecutives loading === false before returning.
+                    if (tmp.length < 2 ||
+                        (tmp[tmp.length - 1] || tmp[tmp.length -2])) {
+                        setTimeout(waitForLoad, 1);
+                        return;
+                    }
+                    tmp = null;
+                    callback();
+                };
+
+            waitForLoad();
+        }
 
     };
 

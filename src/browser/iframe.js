@@ -85,19 +85,21 @@
                         if (Stimuli.core.Support.isIE10) {
                             self.iframeEl.getBoundingClientRect();
                         }
-                        var winObserver = new Stimuli.event.Observer(win);
+                        var winObserver = new Stimuli.event.Observer(win),
+                            onNavigate = function() {
+                                winObserver.unsubscribeAll();
+                                self.context.setLoading();
+                                winObserver = null;
+                            };
 
-                        winObserver.once('beforeunload', function() {
-                            winObserver.unsubscribeAll();
-                            self.context.setLoading();
-                            winObserver = null;
-                        });
+                        // there is no beforeunload event on IOS (see the Context waitForReady method)
+                        if (Stimuli.core.Support.isIOS) {
+                            winObserver.once('unload', onNavigate);
+                        }
 
-                        winObserver.once('unload', function() {
-                            winObserver.unsubscribeAll();
-                            self.context.setLoading();
-                            winObserver = null;
-                        });
+                        winObserver.once('beforeunload', onNavigate);
+
+
 
                         self.context.setNew(win);
 

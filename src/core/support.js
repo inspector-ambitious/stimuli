@@ -70,7 +70,13 @@ Stimuli.core.Support = {
      * @property {Boolean}
      * Is true if browser is ie10
      */
-    isIE10: isIE && IEVersion === 10
+    isIE10: isIE && IEVersion === 10,
+
+    /**
+     * @property {Boolean}
+     * Is true if browser is IOS
+     */
+    isIOS:  /(iPad|iPhone|iPod)/g.test( navigator.userAgent )
 
 };
 
