@@ -86,12 +86,15 @@
                             self.iframeEl.getBoundingClientRect();
                         }
                         var winObserver = new Stimuli.event.Observer(win);
-//                        winObserver.once('beforeunload', function() {
-//                            self.context.setLoading();
-//                            winObserver = null;
-//                        });
+
+                        winObserver.once('beforeunload', function() {
+                            winObserver.unsubscribeAll();
+                            self.context.setLoading();
+                            winObserver = null;
+                        });
 
                         winObserver.once('unload', function() {
+                            winObserver.unsubscribeAll();
                             self.context.setLoading();
                             winObserver = null;
                         });

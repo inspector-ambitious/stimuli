@@ -44,60 +44,7 @@ module.exports = function(grunt) {
 
         karma: {
 
-            droid: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesDev,
-
-                browsers: ['Android_2.3']
-            },
-
-            ios: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesDev,
-
-                browsers: ['iOS']
-            },
-
-            full: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesDev,
-
-                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
-
-            },
-
-            fullwatch: {
-
-                configFile: 'karma.conf.js',
-
-                singleRun: false,
-
-                autoWatch: true,
-
-                files: conf.testFilesDev,
-
-                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
-
-            },
-
-            quick: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesDev,
-
-                reporters: ['dots']
-
-
-            },
-
-            quickwatch: {
+            watch: {
 
                 configFile: 'karma.conf.js',
 
@@ -109,35 +56,13 @@ module.exports = function(grunt) {
 
             },
 
-            quickcoverage: {
+            phantomjs: {
 
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesDev,
-
-
-                reporters: ['coverage']
-
-            },
-
-            fullcoverage: {
-
-                configFile: 'karma.conf.js',
-
-                files: conf.testFilesDev,
-
-                reporters: ['coverage'],
-
-                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
-
-            },
-
-            travis: {
                 configFile: 'karma.conf.js',
 
                 files: conf.testFilesBuild,
 
-                browsers: ['PhantomJS', 'Firefox']
+                browsers: ['PhantomJS']
             },
 
             sauce: {
@@ -166,9 +91,7 @@ module.exports = function(grunt) {
 
                 files: conf.testFilesBuild,
 
-//                transporters: ['xhr-polling'],
-
-                browsers: ['BS_ANDROID_4'] //, 'BS_ANDROID_41', 'BS_IOS_6']
+                browsers: ['BS_ANDROID_4', 'BS_ANDROID_41', 'BS_IOS_6']
             }
 
         },
@@ -273,20 +196,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-hub');
 
-    
     grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
-    
 
     grunt.registerTask('package', ['bower:install', 'concat:dist', 'jsduck', 'copy']);
 
     grunt.registerTask('build', ['package']);
 
-    grunt.registerTask('coverage', ['karma:quickcoverage']);
 
-    grunt.registerTask('test', ['karma:quick']);
-    grunt.registerTask('test.watch', ['karma:quickwatch']);
-    grunt.registerTask('test.full', ['karma:full']);
-    grunt.registerTask('test.full.watch', ['karma:fullwatch']);
-    grunt.registerTask('test.sauce', ['karma:sauce']);
-    grunt.registerTask('test.travis', ['karma:travis']);
 };

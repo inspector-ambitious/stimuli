@@ -26,6 +26,6 @@ before_script:
 script:
   - grunt jshint && 
     grunt build &&
-    grunt test.travis &&
+    grunt karma:phantomjs &&
     grunt karma:browserstack_desktop &&
     .travis/ghpages-deploy.sh
