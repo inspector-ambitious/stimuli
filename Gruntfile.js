@@ -150,6 +150,17 @@ module.exports = function(grunt) {
         },done);
     });
 
+    grunt.registerTask('karma_travis', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.travis.conf.js', '--browsers',
+            'BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'
+            ],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
     grunt.registerTask('karma_watch', function(){
         var done = this.async();
         grunt.util.spawn({
@@ -167,5 +178,5 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('travis', ['jshint', 'build', 'karma_ie_gecko', 'karma_device', 'karma_webkit']);
+    grunt.registerTask('travis', ['jshint', 'build', 'karma_travis']);
 };
