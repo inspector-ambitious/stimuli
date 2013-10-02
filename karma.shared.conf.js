@@ -14,18 +14,18 @@ module.exports = {
     exclude: [],
 
     preprocessors: {
-        '**/src/**/*.js': 'coverage'
+//        '**/src/**/*.js': 'coverage'
     },
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
-    reporters: ['dots'],
+    reporters: ['progress'],
 
-    coverageReporter: {
-        type: 'lcovonly',
-        dir : 'coverage/'
-
-    },
+//    coverageReporter: {
+//        type: 'lcovonly',
+//        dir : 'coverage/'
+//
+//    },
 
 
     // web server port
