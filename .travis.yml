@@ -21,6 +21,8 @@ before_script:
   - npm -g install grunt-cli
   - npm -g install bower
   - export DISPLAY=:99.0
+  - export TRAVIS_IP=`/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $1}'`
+  - echo $TRAVIS_IP
   - sh -e /etc/init.d/xvfb start
 
 script:
