@@ -203,20 +203,29 @@ module.exports = function(grunt) {
             }
         }
 
+
+
     });
 
+    grunt.registerTask('sizzle', function(){
+        grunt.util.spawn({ cmd: 'bower', args: ['install']}, function() {
+            grunt.util.spawn({ cmd: 'rm', args: ['-rf', 'lib']}, function() {
+                grunt.util.spawn({ cmd: 'mv', args: ['bower_components', 'lib']}, function() {
+                    grunt.util.spawn({ cmd: 'mv', args: ['lib/sizzle/dist/sizzle.js', 'lib/sizzle/']}, this.async());
+                });
+            });
+
+        });
+    });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-hub');
 
-    grunt.registerTask('package', ['bower:install', 'concat:dist', 'jsduck', 'copy']);
-
-    grunt.registerTask('build', ['package']);
+    grunt.registerTask('build', ['sizzle', 'concat:dist', 'jsduck', 'copy']);
 
 
 };
