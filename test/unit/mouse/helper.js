@@ -1,4 +1,5 @@
 'use strict';
+
 describe('Stimuli.mouse.Helper', function() {
 
     var stimuli, helper, position, options, yellow, blue;
