@@ -17,6 +17,7 @@ module.exports = function(config) {
     };
     conf.logLevel = config.LOG_ERROR;
     conf.reportSlowerThan = 30000;
+    conf.browserDisconnectTimeout = 10000;
     conf.customLaunchers = {
 
         BS_FIREFOX: {

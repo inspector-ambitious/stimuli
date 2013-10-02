@@ -155,7 +155,7 @@ module.exports = function(grunt) {
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.travis.conf.js', '--browsers',
-            'BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'
+            'PhantomJS,BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'
             ],
             opts: {stdio: 'inherit'}
         },done);
