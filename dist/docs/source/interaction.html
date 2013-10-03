@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-shared-Interaction-method-constructor'><span id='Stimuli-shared-Interaction'>/**
+</span></span> * @class Stimuli.shared.Interaction
+ * @mixins Stimuli.core.Chainable
+ * Generic device implementation.
+ * @constructor
+ * @param {Stimuli.shared.Viewport} viewport The viewport to which is the device attached.
+ * @param {Object} options The device options if any.
+ */
+(function() {
+    
+    Stimuli.shared.Interaction = function(viewport, options) {
+        var self = this;
+        self.options = {};
+        self.viewport = viewport;
+        Stimuli.core.Object.merge(self.options, options);
+    };
+
+    var Generic = Stimuli.shared.Interaction;
+
+    Stimuli.core.Class.mix(Generic, Stimuli.core.Chainable);
+
+    Generic.prototype.configure = Generic.prototype.then;
+
+<span id='Stimuli-shared-Interaction-method-inject'>    /**
+</span>     * @chainable
+     * Injects the configured event into the dom.
+     * @param {Function} generateEventConfig The event configuration to generate.
+     * @param {Number=} delay The delay before in injection in ms
+     */
+    Generic.prototype.inject = function(generateEventConfig, delay) {
+        var self = this,
+            callback = function(event, canceled) {
+                if (!self.events) {
+                    self.events = [];
+                }
+                self.events.push({
+                    src: event,
+                    canceled: canceled
+                });
+            },
+            options;
+
+        if (!isNaN(delay)) {
+            options = {delay: delay};
+        }
+
+        return self.defer(function(next) {
+            var eventConfig = generateEventConfig();
+            eventConfig.view = self.viewport.getWindow();
+            Stimuli.event.Emitter.emit(eventConfig, next);
+        }, callback, options);
+
+    };
+
+})();</pre>
+</body>
+</html>

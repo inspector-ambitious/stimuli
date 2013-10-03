@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-browser-History-method-constructor'><span id='Stimuli-browser-History'>/**
+</span></span> * @class Stimuli.browser.History
+ * @mixins Stimuli.core.Chainable
+ * This class provides an abstraction layer to handle {Stimuli.virtual.Browser} History.
+ * @constructor
+ * @param {Stimuli.shared.Context} The browser context.
+ */
+(function() {
+
+    Stimuli.browser.History = function(context) {
+        var self = this;
+        self.backwardPagesList = [];
+        self.forwardPagesList = [];
+        self.context = context;
+        self.context.subscribe('new', self.updateBackwardPagesList, self, true);
+    };
+
+    var History = Stimuli.browser.History;
+
+    Stimuli.core.Class.mix(History, Stimuli.core.Chainable);
+
+<span id='Stimuli-browser-History-method-updateBackwardPagesList'>    /**
+</span>     * Called each time the context is updated to update the backward pages list.
+     */
+    History.prototype.updateBackwardPagesList = function() {
+        this.backwardPagesList.push(this.context.getWindow().location + '');
+    };
+
+<span id='Stimuli-browser-History-method-go'>    /**
+</span>     * @chainable
+     * Navigates to a specified index in history (0 reload, -n backward, +n forward).
+     * @param {Number} index The history index.
+     * @param {Function} callback The function to call after the navigation has occured (block until page is fully
+     * loaded).
+     */
+    History.prototype.go = function(index, callback) {
+        var self = this;
+
+        return self.defer(function(done) {
+            var url;
+            if (index &lt; 0) { // back
+                url = self.backwardPagesList[self.backwardPagesList.length + index - 1]; // -1 to remove current url
+                if (!url) {
+                    throw new Error('Stimuli.browser.History: Can\'t go back.');
+                }
+                while(0 &gt; index++) {
+                    self.forwardPagesList.push(self.backwardPagesList.pop());
+                }
+            } else if (index &gt; 0) { // forward
+                url = self.forwardPagesList[self.forwardPagesList.length - index];
+                if (!url) {
+                    throw new Error('Stimuli.browser.History: Can\'t go forward.');
+                }
+                while(0 &lt; index--) {
+                    self.backwardPagesList.push(self.forwardPagesList.pop());
+                }
+
+            } else {
+                url = self.context.getWindow().location.href;
+            }
+            self.context.unsubscribe('new', self.updateBackwardPagesList);
+
+            // the global history.go doesn't work on firefox inside an iframe
+            self.context.getWindow().location = url;
+
+            self.context.waitForReady(function() {
+                self.context.subscribe('new', self.updateBackwardPagesList, self);
+                done();
+            });
+        }, callback);
+
+    };
+
+<span id='Stimuli-browser-History-method-destroy'>    /**
+</span>     * @chainable
+     * Destroys the saved history.
+     * @param {Function} callback The function to call after history is destroyed.
+     */
+    History.prototype.destroy = function(callback) {
+        var self = this;
+
+        return self.defer(function(done) {
+            self.backwardPagesList = [];
+            self.forwardPagesList = [];
+            done();
+        }, callback);
+
+    };
+
+})();</pre>
+</body>
+</html>

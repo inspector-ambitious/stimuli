@@ -23,6 +23,25 @@
  * This class detects supported browser features.
  */
 
+(function() {
+
+    var isIE = false,
+        IEVersion = 0,
+        jscriptMap = {
+            &quot;5.8&quot;: 8,
+            &quot;9&quot;: 9,
+            &quot;10&quot;: 10
+        },
+        jscriptVersion = 'none';
+
+    /*@cc_on
+     jscriptVersion = @_jscript_version;
+     @*/
+    IEVersion = jscriptMap[jscriptVersion];
+   if (IEVersion) {
+       isIE = true;
+
+   }
 Stimuli.core.Support = {
 
 <span id='Stimuli-core-Support-property-documentAddEventListener'>    /**
@@ -56,7 +75,28 @@ Stimuli.core.Support = {
 </span>     * @property {Boolean}
      * Is true if browser is ie8
      */
-    isIE8: typeof document.addEventListener === 'undefined'
-};</pre>
+    isIE8: isIE &amp;&amp; IEVersion === 8,
+
+<span id='Stimuli-core-Support-property-isIE9'>    /**
+</span>     * @property {Boolean}
+     * Is true if browser is ie9
+     */
+    isIE9: isIE &amp;&amp; IEVersion === 9,
+
+<span id='Stimuli-core-Support-property-isIE10'>    /**
+</span>     * @property {Boolean}
+     * Is true if browser is ie10
+     */
+    isIE10: isIE &amp;&amp; IEVersion === 10,
+
+<span id='Stimuli-core-Support-property-isIOS'>    /**
+</span>     * @property {Boolean}
+     * Is true if browser is IOS
+     */
+    isIOS:  /(iPad|iPhone|iPod)/g.test( navigator.userAgent )
+
+};
+
+})();</pre>
 </body>
 </html>

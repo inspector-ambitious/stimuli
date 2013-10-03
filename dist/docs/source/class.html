@@ -17,8 +17,18 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
+<span id='Stimuli-core-Class'>/**
+</span> * @class Stimuli.core.Class
+ * @singleton
+ * This singleton provide utilities to deal with classes inheritance and mixins.
+ */
 Stimuli.core.Class = {
 
+<span id='Stimuli-core-Class-method-inherit'>    /**
+</span>     * Creates a class which has inherited constructor and prototype from another one.
+     * @param {Mixed} clsSource The class to inherit from.
+     * @return {Mixed} The subclass.
+     */
     inherit: function(clsSource) {
         var cls = function() {
             return clsSource.apply(this, arguments);
@@ -29,6 +39,11 @@ Stimuli.core.Class = {
         return cls;
     },
 
+<span id='Stimuli-core-Class-method-mix'>    /**
+</span>     * Applies a mixin to a class prototype.
+     * @param {Mixed} cls The destination class.
+     * @param {Mixed} mixin The applied mixin.
+     */
     mix: function(cls, mixin) {
         Stimuli.core.Object.merge(cls.prototype, mixin);
     }

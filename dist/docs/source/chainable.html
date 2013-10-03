@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-core-Chainable'>/**
+</span> * @class Stimuli.core.Chainable
+ * @singleton
+ * This mixin provides asynchronous function queueing (a bit like promises)
+ */
+(function() {
+
+    Stimuli.core.Chainable = {
+
+<span id='Stimuli-core-Chainable-method-initScheduler'>        /**
+</span>         * Initializes the functions queue.
+         * @param {Object=} options
+         * @param {Number} [options.delay=0] The default delay before executing a function.
+         * @param {Mixed} [options.scope=this] The scope used for calling asynchronous functions.
+         */
+        initScheduler: function(options) {
+            var self = this;
+            options = options || {};
+            options.delay = !isNaN(options.delay) ? options.delay : 0;
+            options.scope = options.scope || self;
+
+            self.scheduler = new Stimuli.core.Scheduler(options);
+
+            var error = null;
+
+            self.scheduler.subscribe('event', function(fn, callback) {
+                fn.call(options.scope, callback);
+            });
+
+        },
+
+<span id='Stimuli-core-Chainable-method-sneak'>        /**
+</span>         * @chainable
+         * Adds an asynchronous function at the top of the queue.
+         * @param {Function} fn The asynchronous function.
+         * @param {Function} callback The asynchronous function callback.
+         * @param {Object} options
+         * @param {Number} options.delay The default delay before executing a function.
+         */
+        sneak: function(fn, callback, options) {
+            var self = this;
+            fn = fn || function(done) {done();};
+
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+
+            self.scheduler.schedule(fn, callback, options, 0);
+            return self;
+        },
+
+<span id='Stimuli-core-Chainable-method-defer'>        /**
+</span>         * @chainable
+         * Adds an asynchronous function and it's callback at the bottom of the queue.
+         * @param {Function} fn The asynchronous function.
+         * @param {Function} callback The asynchronous function callback.
+         * @param {Object} options
+         * @param {Number} options.delay The default delay before executing a function.
+         */
+        defer: function(fn, callback, options) {
+            var self = this;
+            fn = fn || function(done) {done();};
+
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+
+            self.scheduler.schedule(fn, callback, options);
+            return self;
+        },
+
+<span id='Stimuli-core-Chainable-method-then'>        /**
+</span>         * @chainable
+         * Adds a function at the bottom of the queue.
+         * @param {Function} callback The function.
+         */
+
+        then: function(callback) {
+            return this.defer(null, callback);
+        },
+
+<span id='Stimuli-core-Chainable-method-sleep'>        /**
+</span>         * @chainable
+         * Sleeps for the specified amount of time.
+         * @param {Number} delay The sleeping delay in ms.
+         */
+        sleep: function(delay) {
+            return this.defer(null, null, {delay: delay});
+        },
+
+<span id='Stimuli-core-Chainable-method-synchronize'>        /**
+</span>         * Synchronizes another instance with this one.
+         * @param {Object} instance.
+         */
+        synchronize: function(instance) {
+            var self = this;
+            if (!self.scheduler) {
+                self.initScheduler();
+            }
+            instance.scheduler = this.scheduler;
+        }
+
+    };
+
+})();
+
+// Dependencies
+Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
+</pre>
+</body>
+</html>

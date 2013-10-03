@@ -17,50 +17,51 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-view-Viewport-method-constructor'><span id='Stimuli-view-Viewport-cfg-view'><span id='Stimuli-view-Viewport'>/**
-</span></span></span> * @class Stimuli.view.Viewport
- * Provides methods to deal with the visible elements of the viewport,
- * the page size and scrolling.
+<span id='Stimuli-shared-Viewport-method-constructor'><span id='Stimuli-shared-Viewport-cfg-view'><span id='Stimuli-shared-Viewport'>/**
+</span></span></span> * @class Stimuli.shared.Viewport
+ * A viewport abstraction layer to be used by virtual devices.
  * @cfg {Window=} view A window object 
  * @constructor
- * @param {Object} config The config object
+ * @param {Stimuli.shared.Context} context The current browser context this viewport depends on.
  */
 
 (function() {
 
-    Stimuli.view.Viewport = function(context) {
+    Stimuli.shared.Viewport = function(context) {
 
         this.context = context || null;
 
     };
 
-    var Viewport = Stimuli.view.Viewport;
+    var Viewport = Stimuli.shared.Viewport;
 
-<span id='Stimuli-view-Viewport-method-getScreenX'>    /**
+<span id='Stimuli-shared-Viewport-method-getScreenX'>    /**
 </span>     * Returns the x coordinate of the window relative to the screen.
      * @return {Number}
      */
     Viewport.prototype.getScreenX = function() {
-        return this.context.screenX || this.context.screenLeft;
+        var win = this.context.getWindow();
+        return win.screenX || win.screenLeft;
     };
 
-<span id='Stimuli-view-Viewport-method-getScreenY'>    /**
+<span id='Stimuli-shared-Viewport-method-getScreenY'>    /**
 </span>     * Returns the y coordinate of window relative to the screen.
      * @return {Number}
      */
     Viewport.prototype.getScreenY = function() {
-        return this.context.screenY || this.context.screenTop;
+        var win = this.context.getWindow();
+        return win.screenY || win.screenTop;
     };
 
-<span id='Stimuli-view-Viewport-method-getVisibleElementAt'>    /**
-</span>     * Returns the a visible element at the specified coordinates.
+<span id='Stimuli-shared-Viewport-method-getVisibleElementAt'>    /**
+</span>     * Returns a visible element at the specified coordinates.
      * @param {Number} x The x coordinate
      * @param {Number} y The y coordinate
      * @return {HTMLElement}
      */
     Viewport.prototype.getVisibleElementAt = function(x, y) {
-        var self = this,
-            doc = self.context.document;
+        var context = this.context.getWindow(),
+            doc = context.document;
 
         if (x &lt; 0 || y &lt; 0) {
             return null;
@@ -69,13 +70,13 @@
         var ret = doc.elementFromPoint(x, y);
 
 
-        // IE8 hack: When nesting iframes ie8 doesn't layout properly 
-        // freshly inserted elements, so before calling elementFromPoint
+        // IE8 hack: Inside an iframe ie8 doesn't repaint properly inside an iframe, so before calling elementFromPoint
         // we trigger a reflow to force the layout to be recalculated
         // (Note: that was a tricky one it's 4:39AM)
+        // see http://stackoverflow.com/questions/4444014/blank-iframe-in-ie
         if (Stimuli.core.Support.isIE8 &amp;&amp;
             ret === null &amp;&amp;
-            self.context.parent &amp;&amp; self.context.parent.parent) { // encapsulated iframe check
+            context.parent !== context) { // iframe check
             doc.body.getBoundingClientRect();
             ret = doc.elementFromPoint(x, y);
         }
@@ -83,63 +84,56 @@
         return ret;
     };
 
-<span id='Stimuli-view-Viewport-method-getContext'>    /**
-</span>     * Returns the viewport window.
-     * return {Window}
+<span id='Stimuli-shared-Viewport-method-getWindow'>    /**
+</span>     * Returns the current window.
+     * @return {Window}
      */
-    Viewport.prototype.getContext = function() {
-        return this.context;
+    Viewport.prototype.getWindow = function() {
+        return this.context.getWindow();
     };
 
-<span id='Stimuli-view-Viewport-method-setContext'>    /**
-</span>     * Sets the viewport window.
-     * return {Window}
+<span id='Stimuli-shared-Viewport-method-getDocument'>    /**
+</span>     * Returns the current document.
+     * @return {Object}
      */
-    Viewport.prototype.setContext = function(context) {
-        this.context = context;
+    Viewport.prototype.getDocument = function() {
+        return this.context.getWindow().document;
     };
 
-
-    Viewport.prototype.destroy = function() {
-        this.context = null;
-    };
-
-<span id='Stimuli-view-Viewport-method-waitToBeReady'>    /**
-</span>     *
-     * @returns {*}
+<span id='Stimuli-shared-Viewport-method-updateHash'>    /**
+</span>     * Updates window hash.
+     * @param {String} hash The new hash.
      */
-
-    Viewport.prototype.waitToBeReady = function(callback) {
-        var self = this;
-
-        function waitFor() {
-            if (!!self.context) {
-                callback();
-                return;
-            }
-            setTimeout(waitFor, 25);
-        }
-        waitFor();
-    };
-
     Viewport.prototype.updateHash = function(hash) {
-        this.context.location.hash = hash;
+        this.context.getWindow().location.hash = hash;
     };
 
+<span id='Stimuli-shared-Viewport-method-updateUrl'>    /**
+</span>     * Updates the current window url.
+     * @param {String} url The new url.
+     */
     Viewport.prototype.updateUrl = function(url) {
-        this.context.location = url;
-        this.context = null;
+        this.context.getWindow().location = url;
     };
 
-<span id='Stimuli-view-Viewport-method-S-'>    /**
+<span id='Stimuli-shared-Viewport-method-waitForReady'>    /**
+</span>     * Waits for the viewport to be ready, it allows to block while a stimulus caused
+     * a navigation to another page.
+     * @param {Function} callback The function to call when the viewport is ready.
+     */
+    Viewport.prototype.waitForReady = function(callback) {
+        this.context.waitForReady(callback);
+    };
+
+
+<span id='Stimuli-shared-Viewport-method-S-'>    /**
 </span>     * Returns the first {HTMLElement} matching the css selector.
      * @param {string} selector The css selector (see http://sizzlejs.com/)
      * @param {Boolean=} all If set to True all elements matching the css selector will be returned in an {Array}. 
      * @return {Mixed}
      */
-
     Viewport.prototype.$ = function(selector, all) {
-        var elements = Sizzle(selector, this.context.document);
+        var elements = Sizzle(selector, this.context.getWindow().document);
         if (all) {
             return elements;
         } else {

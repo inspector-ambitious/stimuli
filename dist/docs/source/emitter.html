@@ -17,23 +17,21 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-view-event-Emitter'>/**
-</span> * @private
- * @class Stimuli.view.event.Emitter
+<span id='Stimuli-event-Emitter'>/**
+</span> * @class Stimuli.event.Emitter
  * @singleton
  * Provides an abstraction layer to routes events to their corresponding synthetizers.
  */
-
 (function() {
     
-    var synthetizer = Stimuli.view.event.synthetizer;
+    var synthetizer = Stimuli.event.synthetizer;
 
-    Stimuli.view.event.Emitter = {
+    Stimuli.event.Emitter = {
 
-<span id='Stimuli-view-event-Emitter-method-isMouseEvent'>        /**
+<span id='Stimuli-event-Emitter-method-isMouseEvent'>        /**
 </span>         * Determines if an event is a mouse event
          * @param {String} eventType The event type
-         * @retun {Boolean} True if it's a mouse event
+         * @return {Boolean} True if it's a mouse event
          */
         isMouseEvent: function(eventType) {
             return {
@@ -50,7 +48,7 @@
             }[eventType] || false;
         },
 
-<span id='Stimuli-view-event-Emitter-method-emit'>        /**
+<span id='Stimuli-event-Emitter-method-emit'>        /**
 </span>         * Emits the event and call the callback function
          * @param {Object} data The event configuration
          * @param {Function} callback The callback function to be called after the invent is injected.

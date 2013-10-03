@@ -19,7 +19,7 @@
 
 <span id='Stimuli-method-constructor'><span id='Stimuli'>/**
 </span></span> * @class Stimuli
- * Creates a new stimuli
+ * This class stimulates your browser! it's the entry point of all the framework.
  * @constructor
  * @param {Object} options
  */
@@ -30,15 +30,15 @@ var Stimuli = function(options) {
     options = options || {};
 
 
-    self.viewport = new Stimuli.view.Viewport();
+    self.context = new Stimuli.shared.Context();
 
-    self.browser = new Stimuli.virtual.Browser();
+    self.browser = new Stimuli.virtual.Browser(self.context);
 
-    self.mouse = new Stimuli.virtual.Mouse();
+    self.viewport = new Stimuli.shared.Viewport(self.context);
 
-    self.recorder = new Stimuli.core.Recorder();
+    self.mouse = new Stimuli.virtual.Mouse(self.viewport);
 
-    self.synchronize(self.viewport);
+    self.recorder = new Stimuli.shared.Recorder();
 
     self.synchronize(self.recorder);
 
@@ -48,12 +48,9 @@ var Stimuli = function(options) {
 
     function mix(obj) {
         obj.browser = self.browser;
-        obj.viewport = self.viewport;
         obj.mouse = self.mouse;
         obj.recorder = self.recorder;
     }
-
-    mix(self.viewport);
 
     mix(self.browser);
 
@@ -61,16 +58,16 @@ var Stimuli = function(options) {
 
     mix(self.recorder);
 
-    self.mouse.destroy = self.destroy;
-
 };
 
 // Namespaces declaration
-Stimuli.view = {
-    event: {
-        synthetizer: {}
-    }
+
+Stimuli.core = {};
+Stimuli.shared = {};
+Stimuli.event = {
+    synthetizer: {}
 };
+
 
 Stimuli.virtual = {
     mouse: {},
@@ -78,40 +75,52 @@ Stimuli.virtual = {
     touch:{}
 };
 
-Stimuli.core = {};
+Stimuli.browser = {};
 
-Stimuli.command = {
-    mouse: {}
-};
+Stimuli.mouse = {};
 
-
-
-
+(function() {
+    var els = document.getElementsByTagName(&quot;script&quot;);
+    var str = &quot;&quot;;
+    for(var i = 0; i &lt; els.length; i++) {
+        var src = els[i].src;
+        if(/stimuli.js/.test(src)) {
+            Stimuli.blankPage = src.replace('stimuli.js', 'blank.html');
+        }
+    }
+})();
 <span id='Stimuli-method-destroy'>/**
 </span> * Destroy the stimuli instance
  * @param {Object} options
  */
-Stimuli.prototype.destroy = function() {
-    this.browser.destroy();
-    return true;
+Stimuli.prototype.destroy = function(callback) {
+    return this.browser.destroy(callback);
 };
 
 <span id='Stimuli-method-S-'>/**
-</span> * Finds the dom element matching the css selector.
+</span> * Finds the dom element matching the css selector in the current virtual browser viewport.
  * @param {Object} options
+ * @return {HTMLElement} The element.
  */
 Stimuli.prototype.$ = function(selector) {
     return this.viewport.$(selector);
 };
 
+<span id='Stimuli-method-getWindow'>/**
+</span> * Returns the current virtual browser window object.
+ * @return {Window}
+ */
 Stimuli.prototype.getWindow = function() {
-    return this.viewport.getContext();
+    return this.context.getWindow();
 };
 
+<span id='Stimuli-method-getDocument'>/**
+</span> * Returns the current virtual browser document object.
+ * @return {Object}
+ */
 Stimuli.prototype.getDocument = function() {
-    return this.viewport.getContext().document;
+    return this.viewport.getDocument();
 };
-
 </pre>
 </body>
 </html>

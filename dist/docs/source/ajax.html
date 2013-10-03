@@ -17,8 +17,12 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
+<span id='Stimuli-core-Ajax'>/**
+</span> * @class Stimuli.core.Ajax
+ * @singleton
+ * This singleton provides communications with a remote server. Requests are asynchronous, and will return immediately.
+ */
 (function() {
-
     var xhr;
 
     try {
@@ -29,23 +33,30 @@
 
     Stimuli.core.Ajax = {
 
+<span id='Stimuli-core-Ajax-method-get'>        /**
+</span>         * Sends a HTTP GET requests to a remote server.
+         * @param {String} url The remote server url.
+         * @param {Function} callback The function to call when the request is complete.
+         */
         get: function(url, callback) {
 
-            xhr.onload = function() {
-                xhr.onload = null;
-                xhr.onreadystatechange = null;
-                callback(this.responseText);
-            };
-
-            xhr.onreadystatechange = function() {
-                if(xhr.readyState === 4){
+            if (Stimuli.core.Support.isIE8)  {
+                xhr.onreadystatechange = function() {
+                    if(xhr.readyState === 4){
+                        xhr.onreadystatechange = null;
+                        callback(this.responseText, this.status, this.statusText);
+                    }
+                };
+            } else {
+                xhr.onload = function() {
                     xhr.onload = null;
-                    xhr.onreadystatechange = null;
-                    callback(this.responseText);
-                }
-            };
+                    callback(this.responseText, this.status, this.statusText);
+                };
+            }
+
 
             xhr.open('get', url, true);
+
             xhr.send();
         }
 

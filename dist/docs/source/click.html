@@ -19,11 +19,11 @@
 
 (function() {
 
-    Stimuli.command.mouse.click = Stimuli.core.Class.inherit(Stimuli.command.Generic);
+    Stimuli.mouse.click = Stimuli.core.Class.inherit(Stimuli.shared.Interaction);
 
-    var click = Stimuli.command.mouse.click;
+    var click = Stimuli.mouse.click;
 
-    Stimuli.core.Class.mix(click, Stimuli.command.mouse.Helper);
+    Stimuli.core.Class.mix(click, Stimuli.mouse.Helper);
 
     click.prototype.execute = function(done) {
 
@@ -41,13 +41,13 @@
             target = self.getTarget();
 
             if (target === null) {
-                throw new Error('Stimuli.command.mouse.click: invalid target.');
+                throw new Error('Stimuli.mouse.click: invalid target.');
             }
 
             position = self.calculateViewportCoordinates(target, self.options);
 
             if (position === null) {
-                throw new Error('Stimuli.command.mouse.click: invalid position.');
+                throw new Error('Stimuli.mouse.click: invalid position.');
             }
 
         })
@@ -75,7 +75,7 @@
 
         .then(function() {
             if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
-                throw 'Stimuli.command.mouse.click: target disappeared on mousedown.';
+                throw 'Stimuli.mouse.click: target disappeared on mousedown.';
             }
         })
 
@@ -102,7 +102,7 @@
 
         .then(function() {
             if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
-                throw 'Stimuli.command.mouse.click: target disappeared on mouseup.';
+                throw 'Stimuli.mouse.click: target disappeared on mouseup.';
             }
 
             var element = target;
@@ -116,7 +116,7 @@
             }
 
             if (newUrl &amp;&amp; !Stimuli.core.Support.isIE8) {
-                var windowObserver = new Stimuli.view.event.Observer(self.viewport.getContext());
+                var windowObserver = new Stimuli.event.Observer(self.viewport.getWindow());
                 windowObserver.subscribe('click', function(e) {
                     if (typeof e.preventDefault === 'function') {
                         e.preventDefault();
@@ -151,14 +151,12 @@
 
 
         .then(function() {
-
             if (newHash) {
                 self.viewport.updateHash(newHash);
             } else if (newUrl) {
                 self.viewport.updateUrl(newUrl);
             }
-
-            self.viewport.waitToBeReady(done);
+            self.viewport.waitForReady(done);
         });
 
     };

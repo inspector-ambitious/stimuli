@@ -17,8 +17,8 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-<span id='Stimuli-virtual-Mouse-method-constructor'><span id='Stimuli-virtual-Mouse-cfg-browser'><span id='Stimuli-virtual-Mouse'>/**
-</span></span></span> * @class Stimuli.virtual.Mouse
+/*
+ * @class Stimuli.virtual.Mouse
  * @alternateClassName Stimuli.Mouse
  * @mixins Stimuli.device.Generic
  * The virtual mouse interface.
@@ -29,23 +29,25 @@
 
 (function() {
 
-    Stimuli.virtual.Mouse = function() {};
+    Stimuli.virtual.Mouse = function(viewport) {
+        this.viewport = viewport;
+    };
     
     var Mouse = Stimuli.virtual.Mouse;
 
     // Extends Stimuli.Device.Abstract
-    Stimuli.core.Class.mix(Mouse, Stimuli.core.Deferable);
+    Stimuli.core.Class.mix(Mouse, Stimuli.core.Chainable);
 
-<span id='Stimuli-virtual-Mouse-method-click'>    /**
-</span>     * Executes a simple click.
+    /*
+     * Executes a simple click.
      * @param {Object} options
      */
     Mouse.prototype.click = function(options) {
         return this.then(this.generateCommand('click', options));
     };
 
-<span id='Stimuli-virtual-Mouse-method-dblclick'>    /**
-</span>     * Executes a double click.
+    /*
+     * Executes a double click.
      * @param {Object} options
      */
     Mouse.prototype.dblclick = function(options) {
@@ -56,8 +58,7 @@
     Mouse.prototype.generateCommand = function(commandName, options) {
         var self = this;
         return function(done) {
-            var command = new Stimuli.command.mouse[commandName](options);
-            command.viewport = self.viewport;
+            var command = new Stimuli.mouse[commandName](self.viewport, options);
             command.execute(done);
         };
     };
