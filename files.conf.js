@@ -27,7 +27,7 @@ var stimuliFiles = [
     'src/shared/recorder.js',
     'src/shared/viewport.js',
     'src/shared/context.js',
-    'src/shared/interaction.js',
+    'src/shared/command.js',
 
     'src/virtual/browser.js',
     'src/browser/iframe.js',

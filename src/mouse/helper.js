@@ -4,6 +4,22 @@
 
     Stimuli.mouse.Helper = {
 
+        parseOptions: function() {
+            var self = this,
+                args = self.args;
+            self.options = {};
+            if (typeof args[0] === 'string') {
+                self.options.target = args[0];
+            } else {
+                var i = 0,
+                    length = args.length,
+                    prop, arg;
+
+                for (i = 0; i < length; i++) {
+                    Stimuli.core.Object.merge(self.options, args[i]);
+                }
+            }
+        },
 
         getTarget: function() {
             var viewport = this.viewport,
@@ -131,4 +147,5 @@
         
     };
 
+    Stimuli.core.Object.merge(Stimuli.mouse.Helper, Stimuli.core.Chainable);
 })();

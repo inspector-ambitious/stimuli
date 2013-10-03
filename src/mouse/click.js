@@ -2,17 +2,19 @@
 
 (function() {
 
-    Stimuli.mouse.click = Stimuli.core.Class.inherit(Stimuli.shared.Interaction);
+    Stimuli.mouse.Click = function() {
+        Stimuli.shared.Command.apply(this, arguments);
+        this.parseOptions();
+    };
 
-    var click = Stimuli.mouse.click;
+    var Click = Stimuli.mouse.Click;
 
-    Stimuli.core.Class.mix(click, Stimuli.mouse.Helper);
+    Stimuli.core.Class.mix(Click, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(Click, Stimuli.mouse.Helper);
 
-    click.prototype.execute = function(done) {
+    Click.prototype.execute = function(done) {
 
         var self = this,
-            newUrl = null,
-            newHash = null,
             target, position;
 
         return self
@@ -88,23 +90,73 @@
                 throw 'Stimuli.mouse.click: target disappeared on mouseup.';
             }
 
-            var element = target;
+            var element = target,
+                searchForm = false,
+                tagName = null,
+                action = null,
+                href = null,
+                hash = null,
+                form = null,
+                type = null;
+
             while(element) {
-                if (element.href) {
-                    newHash = element.href.split('#')[1];
-                    newUrl = element.href;
+                href = element.getAttribute('href');
+                tagName = element.tagName.toLowerCase();
+                type = element.getAttribute('type');
+                action = element.getAttribute('action');
+                if (searchForm && tagName === 'form' && action) {
+                    form = element;
                     break;
+                }
+                if (href) {
+                    hash = href.split('#')[1];
+                    break;
+                }
+                if (tagName === 'input' && type === 'submit') {
+                    searchForm = true;
                 }
                 element = element.parentNode;
             }
 
-            if (newUrl && !Stimuli.core.Support.isIE8) {
-                var windowObserver = new Stimuli.event.Observer(self.viewport.getWindow());
-                windowObserver.subscribe('click', function(e) {
-                    if (typeof e.preventDefault === 'function') {
-                        e.preventDefault();
+            if (href || hash || form) {
+                // click doesn't fire on the window in ie8 but on the document.
+                var isIE8 = Stimuli.core.Support.isIE8,
+                    win = self.viewport.getWindow(),
+                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
+
+                observer.subscribe('click', function(e) {
+                    observer.unsubscribeAll();
+                    var canceled = isIE8 ? e.returnValue === false : e.defaultPrevented;
+
+                    if (!canceled) {
+                        if (hash) {
+                            win.location.hash = hash;
+                        } else if (href) {
+                            if (!isIE8) {
+                                win.location.href = href;
+                            } else {
+                                // ie8 doesn't handle relative href let's forge it
+                                var match = win.location.href.match(/[^\/]*$/),
+                                    prefix = '';
+                                if (!/:\/\//.test(href)) {
+                                    prefix =  win.location.href;
+                                }
+                                if (match) {
+                                    prefix = prefix.replace(match[0], '');
+                                }
+
+                                win.location.href = prefix + href;
+                            }
+                        } else if (form) {
+                            form.submit();
+                        }
+
+                        if (!isIE8) { // ie8 does not trigger automatically a link load
+                            e.preventDefault();
+                        }  else {
+                            e.returnValue = false;
+                        }
                     }
-                    windowObserver.unsubscribeAll();
                 });
             }
 
@@ -134,11 +186,6 @@
 
 
         .then(function() {
-            if (newHash) {
-                self.viewport.updateHash(newHash);
-            } else if (newUrl) {
-                self.viewport.updateUrl(newUrl);
-            }
             self.viewport.waitForReady(done);
         });
 
