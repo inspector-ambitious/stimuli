@@ -41,5 +41,5 @@ module.exports = {
 
     reportSlowerThan: 10000,
 
-    transports: ['websocket', 'xhr-polling']  // (flashsockets are buggy on ie8-9)
+    transports: ['xhr-polling']  // (flashsockets are buggy on ie8-9)
 };
