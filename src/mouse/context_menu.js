@@ -81,7 +81,7 @@
 
             .inject(function() {
 
-                return Obj.merge({type: 'contextmenu'}, defaultConf);;
+                return Obj.merge({type: 'contextmenu'}, defaultConf);
 
             }, 1)
 
