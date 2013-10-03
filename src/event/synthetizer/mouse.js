@@ -6,7 +6,19 @@
  * Abstraction layer for cross-browsers synthetic mouse events injection. 
  */
 (function() {
-   
+
+    var forceEventProperty = function(event, property, val) {
+        var value = val;
+        Object.defineProperty(event, property, {
+            get: function() {
+                return value;
+            },
+            set: function(v) {
+                value = v;
+            }
+        });
+    };
+
     Stimuli.event.synthetizer.Mouse = {
  
         /**

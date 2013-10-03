@@ -40,6 +40,79 @@
             return null;
         },
 
+        handleClick: function(element) {
+            var searchForm = false,
+                win = this.viewport.getWindow(),
+                tagName = null,
+                action = null,
+                href = null,
+                hash = null,
+                form = null,
+                type = null;
+
+            while(element !== win.document.body) {
+                href = element.getAttribute('href');
+                tagName = element.tagName.toLowerCase();
+                type = element.getAttribute('type');
+                action = element.getAttribute('action');
+                if (searchForm && tagName === 'form' && action) {
+                    form = element;
+                    break;
+                }
+                if (href) {
+                    hash = href.split('#')[1];
+                    break;
+                }
+                if (tagName === 'input' && type === 'submit') {
+                    searchForm = true;
+                }
+                element = element.parentNode;
+            }
+
+            if (href || hash || form) {
+                // click doesn't fire on the window in ie8 but on the document.
+                var isIE8 = Stimuli.core.Support.isIE8,
+                    isIE9 = Stimuli.core.Support.isIE9,
+                    isIE10 = Stimuli.core.Support.isIE10,
+                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
+
+                observer.subscribe('click', function(e) {
+                    observer.unsubscribeAll();
+                    var canceled = isIE8 ? e.returnValue === false : e.defaultPrevented;
+
+                    if (!canceled) {
+                        if (hash) {
+                            win.location.hash = hash;
+                        } else if (href) {
+                            if (!isIE8 && !isIE9 && !isIE10) {
+                                win.location.href = href;
+                            } else {
+                                // ie8-10 don't handle relative href passed to window.location let's forge it
+                                var match = win.location.href.match(/[^\/]*$/),
+                                    prefix = '';
+                                if (!/:\/\//.test(href)) {
+                                    prefix =  win.location.href;
+                                }
+                                if (match) {
+                                    prefix = prefix.replace(match[0], '');
+                                }
+
+                                win.location.href = prefix + href;
+                            }
+                        } else if (form) {
+                            form.submit();
+                        }
+
+                        if (!isIE8) { // ie8 does not trigger automatically a link load
+                            e.preventDefault();
+                        }  else {
+                            e.returnValue = false;
+                        }
+                    }
+                });
+            }
+        },
+
         getButton: function() {
                 
             var isIE8 = Stimuli.core.Support.isIE8,

@@ -1,8 +1,7 @@
 'use strict';
 
 describe('Stimuli.mouse.Click', function() {
-    var stimuli,
-        click;
+    var stimuli;
 
     beforeEach(function() {
         stimuli = new Stimuli();
@@ -10,6 +9,37 @@ describe('Stimuli.mouse.Click', function() {
 
     afterEach(function() {
         stimuli.destroy();
+    });
+
+    describe('left click over a div', function() {
+
+        it('should fire mousedown, mouseup and click events', function(done) {
+            var events = [];
+            stimuli
+                .browser
+                .navigateTo('/base/test/fixtures/divinfront.html')
+                .then(function() {
+                    var observer = new Stimuli.event.Observer(this.$('#blue'));
+                    var spyFn = function(e) {
+                        events.push(e.type);
+                    };
+                    observer.once('mouseup', spyFn);
+
+                    observer.once('mousedown', spyFn);
+
+                    observer.once('click', spyFn);
+                })
+                .mouse
+                .click('#blue')
+                .then(function() {
+                    expect(events[0]).to.be('mousedown');
+                    expect(events[1]).to.be('mouseup');
+                    expect(events[2]).to.be('click');
+                    expect(events.length).to.be(3);
+                    done();
+                });
+        });
+
     });
 
     describe('clicking on an anchor linking to another page', function() {

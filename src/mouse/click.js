@@ -15,6 +15,8 @@
     Click.prototype.execute = function(done) {
 
         var self = this,
+            Obj = Stimuli.core.Object,
+            defaultConf,
             target, position;
 
         return self
@@ -35,12 +37,7 @@
                 throw new Error('Stimuli.mouse.click: invalid position.');
             }
 
-        })
-
-        .inject(function() {
-
-            return {
-                type: 'mousedown',
+            defaultConf = {
                 button: self.getButton(),
                 bubbles: true,
                 cancelable: true,
@@ -48,13 +45,19 @@
                 ctrlKey: self.options.ctrl,
                 shiftKey: self.options.shift,
                 metaKey: self.options.meta,
-                detail: 1,
                 target: target,
+                details: 1,
                 clientX: position.clientX,
                 clientY: position.clientY,
                 screenX: position.screenX,
                 screenY: position.screenY
             };
+
+        })
+
+        .inject(function() {
+
+            return Obj.merge({type: 'mousedown'}, defaultConf);
 
          })
 
@@ -66,22 +69,7 @@
 
         .inject(function() {
 
-            return {
-                type: 'mouseup',
-                button: self.getButton(),
-                bubbles: true,
-                cancelable: true,
-                altKey: self.options.alt,
-                ctrlKey: self.options.ctrl,
-                shiftKey: self.options.shift,
-                metaKey: self.options.meta,
-                detail: 1,
-                target: target,
-                clientX: position.clientX,
-                clientY: position.clientY,
-                screenX: position.screenX,
-                screenY: position.screenY
-            };
+            return Obj.merge({type: 'mouseup'}, defaultConf);
 
         }, 100)
 
@@ -89,103 +77,14 @@
             if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
                 throw 'Stimuli.mouse.click: target disappeared on mouseup.';
             }
-
-            var element = target,
-                searchForm = false,
-                tagName = null,
-                action = null,
-                href = null,
-                hash = null,
-                form = null,
-                type = null;
-
-            while(element) {
-                href = element.getAttribute('href');
-                tagName = element.tagName.toLowerCase();
-                type = element.getAttribute('type');
-                action = element.getAttribute('action');
-                if (searchForm && tagName === 'form' && action) {
-                    form = element;
-                    break;
-                }
-                if (href) {
-                    hash = href.split('#')[1];
-                    break;
-                }
-                if (tagName === 'input' && type === 'submit') {
-                    searchForm = true;
-                }
-                element = element.parentNode;
-            }
-
-            if (href || hash || form) {
-                // click doesn't fire on the window in ie8 but on the document.
-                var isIE8 = Stimuli.core.Support.isIE8,
-                    isIE9 = Stimuli.core.Support.isIE9,
-                    isIE10 = Stimuli.core.Support.isIE10,
-                    win = self.viewport.getWindow(),
-                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
-
-                observer.subscribe('click', function(e) {
-                    observer.unsubscribeAll();
-                    var canceled = isIE8 ? e.returnValue === false : e.defaultPrevented;
-
-                    if (!canceled) {
-                        if (hash) {
-                            win.location.hash = hash;
-                        } else if (href) {
-                            if (!isIE8 && !isIE9 && !isIE10) {
-                                win.location.href = href;
-                            } else {
-                                // ie8-10 don't handle relative href passed to window.location let's forge it
-                                var match = win.location.href.match(/[^\/]*$/),
-                                    prefix = '';
-                                if (!/:\/\//.test(href)) {
-                                    prefix =  win.location.href;
-                                }
-                                if (match) {
-                                    prefix = prefix.replace(match[0], '');
-                                }
-
-                                win.location.href = prefix + href;
-                            }
-                        } else if (form) {
-                            form.submit();
-                        }
-
-                        if (!isIE8) { // ie8 does not trigger automatically a link load
-                            e.preventDefault();
-                        }  else {
-                            e.returnValue = false;
-                        }
-                    }
-                });
-            }
-
+            self.handleClick(target);
         })
-
 
         .inject(function() {
 
-            return {
-                type: 'click',
-                button: self.getButton(),
-                bubbles: true,
-                cancelable: true,
-                altKey: !!self.options.alt,
-                ctrlKey: !!self.options.ctrl,
-                shiftKey: !!self.options.shift,
-                metaKey: !!self.options.meta,
-                detail: 1,
-                target: target,
-                clientX: position.clientX,
-                clientY: position.clientY,
-                screenX: position.screenX,
-                screenY: position.screenY
-            };
+            return Obj.merge({type: 'click'}, defaultConf);
 
         }, 1)
-
 
         .then(function() {
             self.viewport.waitForReady(done);

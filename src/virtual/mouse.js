@@ -31,7 +31,28 @@
      * Executes a double click.
      */
     Mouse.prototype.dblclick = function() {
-        return this.then(this.generateCommand('Dblclick', arguments));
+        return this.then(this.generateCommand('DblClick', arguments));
+    };
+
+    /**
+     * Executes a right click.
+     */
+    Mouse.prototype.contextmenu = function() {
+        return this.then(this.generateCommand('ContextMenu', arguments));
+    };
+
+    /**
+     * Presses a mouse button.
+     */
+    Mouse.prototype.down = function() {
+        return this.then(this.generateCommand('Down', arguments));
+    };
+
+    /**
+     * Releases a mouse button.
+     */
+    Mouse.prototype.up = function() {
+        return this.then(this.generateCommand('Up', arguments));
     };
 
     /**
@@ -47,7 +68,5 @@
             command.execute(done);
         };
     };
-
-
 
 })();
