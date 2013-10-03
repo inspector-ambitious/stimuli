@@ -24,15 +24,11 @@
                 
         "grunt-contrib-jshint": "~0.6",
         
-        "grunt-karma": "git://github.com/yhwh/grunt-karma.git#master",
-        
         "grunt-jsduck": "~0.1",
 
         "grunt-contrib-concat": "~0.3",
 
         "grunt-contrib-copy": "~0.4",
-
-        "grunt-bower-task": "~0.3",
 
         "grunt-hub": "~0.5",
 
@@ -40,21 +36,15 @@
 
         "sinon": "~1.7",
 
-        "karma": "~0.11",
+        "karma": "git://github.com/yhwh/karma.git#dev",
                 
         "karma-mocha": "~0.1",
         
         "karma-coverage": "~0.1",
-        
-        "karma-safari-launcher": "~0.1",
-        
-        "karma-ie-launcher": "~0.1",
-        
-        "karma-sauce-launcher": "~0.1",
-        
-        "karma-ievms": "~0.0",
 
-        "karma-ios-launcher": "~0.0"
+        "karma-browserstack-launcher": "git://github.com/yhwh/karma-browserstack-launcher.git#stimuli",
+
+        "karma-minimalist-reporter": "~0.2"
 
     }
 }

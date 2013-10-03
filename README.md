@@ -14,10 +14,11 @@ Supported Browsers
 * IE8+
 * Firefox ESR+
 * Chrome 23+
-* Safari 6+
+* Safari 5.1+
 * PhantomJS 1.9+
 * Opera 15+
-* Android 4
+* Android 4+
+* IOS 6+
 
 How to build
 ------------
@@ -25,6 +26,10 @@ How to build
 Install grunt:
 
     npm install -g grunt-cli
+
+Install bower:
+
+    npm install -g bower
 
 Install all required node modules: 
 
@@ -37,37 +42,15 @@ Build stimuli in build/:
 How to tests
 ------------
 
-The js framework used for testing are: [mocha](http://visionmedia.github.io/mocha/),
+The testing frameworks are: [mocha](http://visionmedia.github.io/mocha/),
 [Sinon.JS](http://sinonjs.org/) and [expect.js](https://github.com/LearnBoost/expect.js/).
 
 The tests are automatically run with [karma](http://karma-runner.github.io/).
 
-To test IE with [ievms](https://github.com/xdissent/ievms):
+To continuously run the tests on the browsers of your choice:
 
-    curl -s https://raw.github.com/xdissent/ievms/master/ievms.sh | env IEVMS_VERSIONS="8 9 10" bash
-
-To quickly execute the test once with PhantomJS:
-
-    grunt quicktest
-
-To continuously run the tests on all browsers:
-
-    grunt watchtest
+    grunt karma_watch
 
 To lint all the js files:
 
-    grunt lint
-
-To generate lcov test coverage report in coverage/ folder:
-
-    grunt cov
-
-
-Contributors Tips
-------------------
-
-* Send pull requests to the development branch.
-
-* Unit test all the fucking time.
-
-* Design matters [SOLID Javascript](http://aspiringcraftsman.com/series/solid-javascript/).
+    grunt jshint

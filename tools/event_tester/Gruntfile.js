@@ -4,18 +4,6 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
 
-        bower: {
-
-            install: {
-
-                options: {
-
-                    cleanBowerDir: true
-
-                }
-                
-            }
-        },
 
         jshint: {
 
@@ -68,7 +56,6 @@ module.exports = function(grunt) {
 
     });
 
-    grunt.loadTasks('./../../node_modules/grunt-bower-task/tasks');
 
     grunt.loadTasks('./../../node_modules/grunt-contrib-jshint/tasks');
 
