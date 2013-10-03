@@ -1,119 +1,20 @@
 'use strict';
 
+var conf = require('./files.conf.js');
+
+
 module.exports = function(grunt) {
-
-    // Distribution folder
-    var distFolder = './dist/';
-
-    // import package.json
-    var pkg = grunt.file.readJSON('package.json');
-
-    // StimuliFiles
-    var stimuliFiles = [
-        // dependencies
-        'lib/sizzle/sizzle.js',
-
-        // core
-        'src/stimuli.js',
-        'src/utils/object.js',
-        'src/utils/observable.js',
-        'src/utils/scheduler.js',
-        'src/browser/support.js',
-        'src/browser/viewport.js',
-        'src/device/generic.js',
-        'src/event/emitter.js',
-        'src/event/binder.js',
-
-        // mouse
-        'src/device/mouse.js',
-        'src/event/synthetizer/mouse.js',
-        'src/command/generic.js',
-        'src/command/mouse/utils/bounding_rectangle.js',
-        'src/command/mouse/utils/bounding_rectangle_offset.js',
-        'src/command/mouse/utils/position.js',
-        'src/command/mouse/generic.js',
-        'src/command/mouse/down.js',
-        'src/command/mouse/up.js',
-        'src/command/mouse/click.js',
-        'src/command/mouse/dblclick.js'
-
-    ];
-
-
-    // GENERATE FILES CONFIGURATION FOR KARMA (DEV AND CI MODE)
-
-    // Shared files loaded by karma test runner
-    var sharedTestFiles = [
-
-        {
-            pattern: 'node_modules/expect.js/expect.js',
-            watched: false
-        },
-
-        {
-            pattern: 'node_modules/sinon/pkg/sinon.js',
-            watched: false
-        },
-
-        {
-            pattern: 'node_modules/sinon/pkg/sinon-ie.js',
-            watched: false
-        },
-
-        {
-            pattern: 'test/helper/**/*.js'
-        }
-
-    ];
-
-    // Files loaded by karma test runner for development
-    var testFilesDev = [];
-
-    // Files loaded by karma test runner for continuous integration (build)
-    var testFilesBuild = [];
-
-    // add shared files
-    sharedTestFiles.forEach(function(shared) {
-        testFilesDev.push(shared);
-        testFilesBuild.push(shared);
-    });
-
-    // Add all stimulis sources for development
-    stimuliFiles.forEach(function(stimuliFile) {
-        testFilesDev.push({
-            pattern: stimuliFile
-        });
-    });
-
-    // Add freshly build stimuli
-    testFilesBuild.push({
-        pattern: distFolder + pkg.name + '-' + pkg.version + '.js'
-    });
-
-
-    // test specs
-    var specs = [{
-        pattern: 'test/unit/**/*.js'
-    }, {
-        pattern: 'test/integration/**/*.js'
-    }];
-
-    // add specs to both mode
-    specs.forEach(function(spec) {
-        testFilesDev.push(spec);
-        testFilesBuild.push(spec);
-    });
 
     // GRUNT CONFIGURATION
     grunt.initConfig({
 
-        pkg: pkg,
+        pkg: conf.pkg,
 
         jshint: {
 
             files: [
 
-                'Gruntfile.js',
+                '*.js',
                 'src/**/*.js',
                 '*.json',
                 '.jshintrc',
@@ -128,134 +29,6 @@ module.exports = function(grunt) {
 
         },
 
-        jsdoc: {
-
-            dist: {
-
-                src: ['src/**/*.js'],
-
-                options: {
-                    destination: 'docs'
-                }
-            }
-
-        },
-
-        karma: {
-
-            droid: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesDev,
-
-                browsers: ['Android_2.3']
-            },
-
-            ios: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesDev,
-
-                browsers: ['iOS']
-            },
-
-            full: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesDev,
-
-                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
-
-            },
-
-            fullwatch: {
-
-                configFile: 'karma.conf.js',
-
-                singleRun: false,
-
-                autoWatch: true,
-
-                files: testFilesDev,
-
-                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
-
-            },
-
-            quick: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesDev,
-
-                browsers: ['PhantomJS']
-
-            },
-
-            quickwatch: {
-
-                configFile: 'karma.conf.js',
-
-                singleRun: false,
-
-                autoWatch: true,
-
-                files: testFilesDev,
-
-                browsers: ['PhantomJS']
-
-            },
-
-            quickcoverage: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesDev,
-
-                browsers: ['PhantomJS'],
-
-                reporters: ['coverage']
-
-            },
-
-            fullcoverage: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesDev,
-
-                reporters: ['coverage'],
-
-                browsers: ['Firefox', 'PhantomJS', 'Chrome', 'Safari', 'IE8 - WinXP', 'IE9 - Win7', 'IE10 - Win7']
-
-            },
-
-            travis: {
-
-                configFile: 'karma.conf.js',
-
-                files: testFilesBuild,
-
-                browsers: ['PhantomJS', 'SL_Chrome', 'SL_Firefox', 'SL_Safari', 'SL_IE8', 'SL_IE9', 'SL_IE10']
-
-            },
-
-        },
-
-        bower: {
-
-            install: {
-
-                options: {
-                    cleanBowerDir: true
-                }
-                
-            }
-        },
-
         concat: {
 
             options: {
@@ -267,14 +40,14 @@ module.exports = function(grunt) {
                 process: function(src, filepath) {
                     return '\n// Source: ' + filepath + '\n' +
                         src.replace(/'use strict';\n/gm, '');
-                },
+                }
             },
 
             dist: {
 
-                src: stimuliFiles,
+                src: conf.stimuliFiles,
 
-                dest: distFolder + '<%= pkg.name %>-<%= pkg.version %>.js'
+                dest: conf.distFolder + '<%= pkg.name %>.js'
 
             }
         },
@@ -285,7 +58,7 @@ module.exports = function(grunt) {
                 
                 src: 'LICENSE',
 
-                dest: distFolder
+                dest: conf.distFolder
 
             },
 
@@ -293,7 +66,14 @@ module.exports = function(grunt) {
 
                 src: 'README.md',
 
-                dest: distFolder
+                dest: conf.distFolder
+            },
+
+            blank: {
+
+                src: 'src/blank.html',
+
+                dest: conf.distFolder + 'blank.html'
             }
 
         },
@@ -318,7 +98,7 @@ module.exports = function(grunt) {
                 ],
 
                 // docs output dir
-                dest: distFolder + 'docs',
+                dest: conf.distFolder + 'docs',
 
                 // extra options
                 options: {
@@ -327,30 +107,76 @@ module.exports = function(grunt) {
             }
         }
 
+
+
     });
 
+    grunt.registerTask('sizzle', function(){
+        var done = this.async();
+        grunt.util.spawn({ cmd: 'bower', args: ['install'], opts: {stdio: 'inherit'}}, function() {
+            grunt.util.spawn({ cmd: 'rm', args: ['-rf', 'lib'], opts: {stdio: 'inherit'}}, function() {
+                grunt.util.spawn({ cmd: 'mv', args: ['bower_components', 'lib'], opts: {stdio: 'inherit'}}, function() {
+                    grunt.util.spawn({ cmd: 'mv', args: ['lib/sizzle/dist/sizzle.js', 'lib/sizzle/'], opts: {stdio: 'inherit'}}, done);
+                });
+            });
+
+        });
+    });
+
+    grunt.registerTask('karma_ie_gecko', function(){
+        var done = this.async();
+        grunt.util.spawn({
+                cmd: 'karma',
+                args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX'],
+                opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('karma_webkit', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('karma_device', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6'],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('karma_travis', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.travis.conf.js', '--browsers',
+            'PhantomJS,BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'
+            ],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('karma_watch', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.conf.js'],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
-    grunt.loadNpmTasks('grunt-bower-task');
     grunt.loadNpmTasks('grunt-hub');
 
-    
-    grunt.registerTask('quickwatchtest', ['karma:quickwatch']);
-    
+    grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('package', ['bower:install',  'concat:dist', 'jsduck', 'copy']);
-
-    grunt.registerTask('build', ['package']);
-
-    grunt.registerTask('coverage', ['karma:quickcoverage']);
-
-    grunt.registerTask('test', ['karma:quick']);
-    grunt.registerTask('test.watch', ['karma:quickwatch']);
-    grunt.registerTask('test.full', ['karma:full']);
-    grunt.registerTask('test.full.watch', ['karma:watchall']);
-    grunt.registerTask('test.sauce', ['karma:travis']);
+    grunt.registerTask('travis', ['jshint', 'build', 'karma_travis']);
 };

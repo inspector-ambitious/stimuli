@@ -1,72 +1,112 @@
 'use strict';
 
+/**
+ * @class Stimuli.event.synthetizer.Mouse
+ * @singleton
+ * Abstraction layer for cross-browsers synthetic mouse events injection. 
+ */
 (function() {
    
-    var ns = Stimuli.event.synthetizer;
-
-    ns.Mouse = {
+    Stimuli.event.synthetizer.Mouse = {
  
-        isCancelable: function(name) {
-            return {
-                click: true,
-                dblclick: true,
-                mousedown: true,
-                mouseup: true,
-            }[name] || false;
-        },
+        /**
+         * Injects an a synthetic mouse event into the dom.
+         * @param {Object} eventConfig The mouse event configuration
+         */
 
-
-        inject: function(data) {
-            var cancelable = this.isCancelable(data.name),
-                event,
+        inject: function(eventConfig) {
+            var event,
                 canceled;
 
-            if (Stimuli.browser.Support.isModern) {
+            if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
                 
-                event = data.view.document.createEvent('MouseEvents');
+                event = eventConfig.view.document.createEvent('MouseEvents');
 
                 event.initMouseEvent(
-                    data.name,
-                    data.bubbles,
-                    cancelable,
-                    data.view,
-                    data.detail,
-                    data.screenX,
-                    data.screenY,
-                    data.clientX,
-                    data.clientY,
-                    data.ctrlKey,
-                    data.altKey,
-                    data.shiftKey,
-                    data.metaKey,
-                    data.button,
-                    data.relatedTarget || null //IE 9 throw and Invalid argument if this one is undefined so just in case
+                    eventConfig.type,
+                    eventConfig.bubbles,
+                    eventConfig.cancelable,
+                    eventConfig.view,
+                    eventConfig.detail,
+                    eventConfig.screenX,
+                    eventConfig.screenY,
+                    eventConfig.clientX,
+                    eventConfig.clientY,
+                    eventConfig.ctrlKey,
+                    eventConfig.altKey,
+                    eventConfig.shiftKey,
+                    eventConfig.metaKey,
+                    eventConfig.button,
+                    eventConfig.relatedTarget || null //IE 9 throw and "Invalid Argument" Error if this property is undefined so just in case
                 );
 
-                canceled = !data.target.dispatchEvent(event);
+                canceled = !eventConfig.target.dispatchEvent(event);
             
-            } else {
+            } else { //IE8
+                
+                var eventName = 'on' + eventConfig.type;
+
+                // Regardless of their values specified in the event object,
+                // cancelBubble is automatically initialized by fireEvent. 
+                // (see http://msdn.microsoft.com/en-us/library/ie/ms536423(v=vs.85).aspx)
+                // So to bypass this limitation we create a listener which will be binded expando style,
+                // this way it will be fired before any other listener and the cancelBubble can be fixed.
             
-                event = data.view.document.createEventObject();
+                var currentListener = eventConfig.target[eventName];
 
-                event.bubbles = data.bubbles;
-                event.detail = data.detail;
-                event.screenX = data.screenX;
-                event.screenY = data.screenY;
-                event.clientX = data.clientX;
-                event.clientY = data.clientY;
-                event.ctrlKey = data.ctrlKey;
-                event.altKey = data.altKey;
-                event.shiftKey = data.shiftKey;
-                event.metaKey = data.metaKey;
-                event.button = data.button;
-                event.relatedTarget = data.relatedTarget;
-     
-                canceled = !data.target.fireEvent('on'+ data.name, event);
+                eventConfig.target[eventName] = function() {
+                    var e = eventConfig.view.event;
 
-                // IE8 can cancel mousedown, mouseup, mouseover seriously....
-                canceled = cancelable ? canceled : false;
+                    e.cancelBubble = !eventConfig.bubbles;
 
+                    // A possible hack to force an event to not be cancelable
+                    // we could set the returnValue to readonly...
+                    // But don't think it's a good idea to do that. 
+                    // Leaving this commented code for now.
+                    // if (!eventConfig.cancelable) {
+                    //     Object.defineProperty( e, 'returnValue', {
+                    //         get: function () {
+                    //             return undefined;
+                    //         }
+                    //     });
+                    // }
+
+                    if (currentListener) {
+                        currentListener.apply(this);
+                    } else {
+                        eventConfig.target[eventName] = null;
+                    }
+                };
+    
+                event = eventConfig.view.document.createEventObject();
+                event.detail = eventConfig.detail;
+                event.screenX = eventConfig.screenX;
+                event.screenY = eventConfig.screenY;
+                event.clientX = eventConfig.clientX;
+                event.clientY = eventConfig.clientY;
+                event.ctrlKey = eventConfig.ctrlKey;
+                event.altKey = eventConfig.altKey;
+                event.shiftKey = eventConfig.shiftKey;
+                event.metaKey = eventConfig.metaKey;
+                event.button = eventConfig.button;
+
+                // TODO: the real event flow should be investigated
+                // see http://www.quirksmode.org/js/events_mouse.html#relatedtarget
+                if (eventConfig.relatedTarget) {
+                    if (eventName === 'onmouseover') {
+                        event.fromElement = eventConfig.relatedTarget;
+                        event.toElement = eventConfig.target;
+                    }
+
+                    if (eventName === 'onmouseout') {
+                        event.fromElement = eventConfig.target;
+                        event.toElement = eventConfig.relatedTarget;
+                    }
+
+                }
+
+                eventConfig.target.fireEvent(eventName, event);
+                canceled = event.returnValue === false;
             }
             
             return {

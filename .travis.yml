@@ -10,21 +10,19 @@ env:
     - secure: "bdgJUEbPQ4xgLI2PM3jbC2RzIs+XRBfxzoq38b7w8T6RiCzRp2hae51SG4tcWqUNwshtY3HoAKTXwGmM8MWx6kwb8BJ+hsY8NzcBcft9gct/gJ89zA9upRnmnfzBmdbwXk1iDaFAmG4aKaUQsd6qwTqYip6UFZKPE/cHKCpY4hQ="
     - secure: "ipvXACA3RpS8EL2kleCshZ8Ys3t8ehaUmKk8qcLNhDltnLTLKJqhR9r4aZc9wiTafkUlp3lYUQpn54yqwxJoul+H+vcWUqvwzLXJLyoTlopyI9AV+DHhuC+CWzrd68UUHlvbiETMsN3ersciaV907s/415CcE3Bx8rdO6xRs3v0="
     - secure: "FBCyQQpcsOreZ0khYc0YNZWFTo6JJVyp8HwL8/FNRP6ecRAI2jKEgfWPiIUuPBtRO+MIfmWm9fRKJtmi8XMHtQc6aDt+gd/uqLICVd00K6cN3ui89uc3QpJiLjMONQ6WJmYjDNCNKQgYq3pP4WRk+MZyE/G++Wp1kBkF9HyBpdE="
+    - secure: "PrybvamC97PyuwgE3QJQkUAKDdYqjhDfJSqcpgIH+38TIEoRUEyZFe4Dho79MAc/7t8YynQKhv6yJBWTI8b/aHztzBpV/gHNkp9BA39+Joh8/JHPXCnTTdhH1BxQdmcAX3rnZIzichA5m4W0OL7beIQgfSrezNntOYv9CS+U3Ao="
+    - secure: "Wc+aV50jtAPDqf0/eQKyzbdG38/oqzKfOUgduVxw0IGfpnokYr0o40OnJ9jxnLID6Z/y9uTAEOXiuCDJQQyOaFdaX+fB/UvPXr0YHh1FBG/wujfOswesplQ5HzJulfh5dB6r7nE1bhinHJLAcklYfKjzaTJ3hTZzLXrsYGGKrGc="
 
 before_install:
   - npm config set loglevel error
 
 before_script:
   - gem install jsduck
-  - npm install -g grunt-cli
+  - npm -g install grunt-cli
   - npm -g install bower
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
-  - .travis/sauce_connect_setup.sh
 
 script:
-  - grunt jshint && 
-    grunt build && 
-    grunt test.sauce && 
-    grunt coverage && 
+  -  grunt travis -d --stack &&
     .travis/ghpages-deploy.sh
