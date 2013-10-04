@@ -19,52 +19,67 @@
 
 (function() {
 
-    var ns = Stimuli.command.mouse;
-
-    ns.down = ns.Generic.ctor;
-
-    ns.down.prototype.execute = function() {
-        var me = this,
-            target = me.getTarget(),
-            position = me.calculatePosition(target, me.options.offset);
-
-        if (position === null) {
-            return;
-        }
-
-        me.send({
-            
-            name: 'mousedown',
-
-            button: me.getButton(),
-
-            bubbles: me.getBubbles(),
-
-            altKey: me.getAltKey(),
-
-            ctrlKey: me.getCtrlKey(),
-
-            shiftKey: me.getShiftKey(),
-
-            metaKey: me.getMetaKey(),
-
-            detail: 1,
-
-            target: target,
-
-            clientX: position.getClientX(),
-            
-            clientY: position.getClientY(),
-
-            screenX: position.getScreenX(),
-
-            screenY: position.getScreenY()
-           
-        }, me.options.callback);
-
+    Stimuli.mouse.Down = function() {
+        Stimuli.shared.Command.apply(this, arguments);
+        this.parseOptions();
     };
 
-    Stimuli.utils.Object.merge(ns.down.prototype, ns.Generic.proto);
+    var Down = Stimuli.mouse.Down;
+
+    Stimuli.core.Class.mix(Down, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(Down, Stimuli.mouse.Helper);
+
+    Down.prototype.execute = function(done) {
+
+        var self = this,
+            target, position;
+
+        return self
+
+            .configure(function() {
+
+                self.options.button = self.options.button || 'left';
+
+                target = self.getTarget();
+
+                if (target === null) {
+                    throw new Error('Stimuli.mouse.down: invalid target.');
+                }
+
+                position = self.calculateViewportCoordinates(target, self.options);
+
+                if (position === null) {
+                    throw new Error('Stimuli.mouse.down: invalid position.');
+                }
+
+            })
+
+            .inject(function() {
+
+                return {
+                    type: 'mousedown',
+                    button: self.getButton(),
+                    bubbles: true,
+                    cancelable: true,
+                    altKey: self.options.alt,
+                    ctrlKey: self.options.ctrl,
+                    shiftKey: self.options.shift,
+                    metaKey: self.options.meta,
+                    target: target,
+                    details: 1,
+                    clientX: position.clientX,
+                    clientY: position.clientY,
+                    screenX: position.screenX,
+                    screenY: position.screenY
+                };
+
+            })
+
+            .then(function() {
+                self.viewport.waitForReady(done);
+            });
+
+    };
 
 })();</pre>
 </body>

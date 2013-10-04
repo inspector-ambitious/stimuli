@@ -1,15 +1,13 @@
-[![Build Status](https://travis-ci.org/yhwh/stimuli.png?branch=master)](https://travis-ci.org/yhwh/stimuli) 
+Stimuli [![Build Status](https://travis-ci.org/yhwh/stimuli.png?branch=master)](https://travis-ci.org/yhwh/stimuli)
+=======
 
-Cross Browser tested on each build thanks to [BrowserStack](http://www.browserstack.com/)'s support!
-
-Description
------------
+What is it ?
+------------
 
 A testing framework using dom events injection to simulates users interaction.
 
-
-Supported Browsers
-------------------
+Which browsers are supported ?
+------------------------------
 
 * IE8+
 * Firefox ESR+
@@ -20,8 +18,8 @@ Supported Browsers
 * Android 4+
 * IOS 6+
 
-How to build
-------------
+How to build ?
+--------------
 
 Install grunt:
 
@@ -39,8 +37,8 @@ Build stimuli in build/:
 
     grunt build
 
-How to tests
-------------
+How to tests ?
+--------------
 
 The testing frameworks are: [mocha](http://visionmedia.github.io/mocha/),
 [Sinon.JS](http://sinonjs.org/) and [expect.js](https://github.com/LearnBoost/expect.js/).
@@ -54,3 +52,7 @@ To continuously run the tests on the browsers of your choice:
 To lint all the js files:
 
     grunt jshint
+
+
+
+Cross Browser tested on each build thanks to [BrowserStack](http://www.browserstack.com/)'s support!

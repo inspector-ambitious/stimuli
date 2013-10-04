@@ -19,17 +19,21 @@
 
 (function() {
 
-    Stimuli.mouse.click = Stimuli.core.Class.inherit(Stimuli.shared.Interaction);
+    Stimuli.mouse.Click = function() {
+        Stimuli.shared.Command.apply(this, arguments);
+        this.parseOptions();
+    };
 
-    var click = Stimuli.mouse.click;
+    var Click = Stimuli.mouse.Click;
 
-    Stimuli.core.Class.mix(click, Stimuli.mouse.Helper);
+    Stimuli.core.Class.mix(Click, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(Click, Stimuli.mouse.Helper);
 
-    click.prototype.execute = function(done) {
+    Click.prototype.execute = function(done) {
 
         var self = this,
-            newUrl = null,
-            newHash = null,
+            Obj = Stimuli.core.Object,
+            defaultConf,
             target, position;
 
         return self
@@ -50,12 +54,7 @@
                 throw new Error('Stimuli.mouse.click: invalid position.');
             }
 
-        })
-
-        .inject(function() {
-
-            return {
-                type: 'mousedown',
+            defaultConf = {
                 button: self.getButton(),
                 bubbles: true,
                 cancelable: true,
@@ -63,13 +62,19 @@
                 ctrlKey: self.options.ctrl,
                 shiftKey: self.options.shift,
                 metaKey: self.options.meta,
-                detail: 1,
                 target: target,
+                details: 1,
                 clientX: position.clientX,
                 clientY: position.clientY,
                 screenX: position.screenX,
                 screenY: position.screenY
             };
+
+        })
+
+        .inject(function() {
+
+            return Obj.merge({type: 'mousedown'}, defaultConf);
 
          })
 
@@ -81,22 +86,7 @@
 
         .inject(function() {
 
-            return {
-                type: 'mouseup',
-                button: self.getButton(),
-                bubbles: true,
-                cancelable: true,
-                altKey: self.options.alt,
-                ctrlKey: self.options.ctrl,
-                shiftKey: self.options.shift,
-                metaKey: self.options.meta,
-                detail: 1,
-                target: target,
-                clientX: position.clientX,
-                clientY: position.clientY,
-                screenX: position.screenX,
-                screenY: position.screenY
-            };
+            return Obj.merge({type: 'mouseup'}, defaultConf);
 
         }, 100)
 
@@ -104,58 +94,16 @@
             if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
                 throw 'Stimuli.mouse.click: target disappeared on mouseup.';
             }
-
-            var element = target;
-            while(element) {
-                if (element.href) {
-                    newHash = element.href.split('#')[1];
-                    newUrl = element.href;
-                    break;
-                }
-                element = element.parentNode;
-            }
-
-            if (newUrl &amp;&amp; !Stimuli.core.Support.isIE8) {
-                var windowObserver = new Stimuli.event.Observer(self.viewport.getWindow());
-                windowObserver.subscribe('click', function(e) {
-                    if (typeof e.preventDefault === 'function') {
-                        e.preventDefault();
-                    }
-                    windowObserver.unsubscribeAll();
-                });
-            }
-
+            self.handleClick(target);
         })
-
 
         .inject(function() {
 
-            return {
-                type: 'click',
-                button: self.getButton(),
-                bubbles: true,
-                cancelable: true,
-                altKey: !!self.options.alt,
-                ctrlKey: !!self.options.ctrl,
-                shiftKey: !!self.options.shift,
-                metaKey: !!self.options.meta,
-                detail: 1,
-                target: target,
-                clientX: position.clientX,
-                clientY: position.clientY,
-                screenX: position.screenX,
-                screenY: position.screenY
-            };
+            return Obj.merge({type: 'click'}, defaultConf);
 
         }, 1)
 
-
         .then(function() {
-            if (newHash) {
-                self.viewport.updateHash(newHash);
-            } else if (newUrl) {
-                self.viewport.updateUrl(newUrl);
-            }
             self.viewport.waitForReady(done);
         });
 

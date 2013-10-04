@@ -17,10 +17,10 @@
 <body onload="prettyPrint(); highlight();">
   <pre class="prettyprint lang-js">'use strict';
 
-/*
- * @class Stimuli.virtual.Mouse
+<span id='Stimuli-virtual-Mouse-method-constructor'><span id='Stimuli-virtual-Mouse-cfg-browser'><span id='Stimuli-virtual-Mouse'>/**
+</span></span></span> * @class Stimuli.virtual.Mouse
  * @alternateClassName Stimuli.Mouse
- * @mixins Stimuli.device.Generic
+ * @mixins Stimuli.core.Chainable
  * The virtual mouse interface.
  * @cfg {Stimuli.virtual.Browser} browser The browser to which the mouse is attached to.
  * @constructor
@@ -35,35 +35,56 @@
     
     var Mouse = Stimuli.virtual.Mouse;
 
-    // Extends Stimuli.Device.Abstract
     Stimuli.core.Class.mix(Mouse, Stimuli.core.Chainable);
 
-    /*
-     * Executes a simple click.
-     * @param {Object} options
+<span id='Stimuli-virtual-Mouse-method-click'>    /**
+</span>     * Executes a simple click.
      */
-    Mouse.prototype.click = function(options) {
-        return this.then(this.generateCommand('click', options));
+    Mouse.prototype.click = function() {
+        return this.then(this.generateCommand('Click', arguments));
     };
 
-    /*
-     * Executes a double click.
-     * @param {Object} options
+<span id='Stimuli-virtual-Mouse-method-dblclick'>    /**
+</span>     * Executes a double click.
      */
-    Mouse.prototype.dblclick = function(options) {
-        return this.then(this.generateCommand('dblclick', options));
+    Mouse.prototype.dblclick = function() {
+        return this.then(this.generateCommand('DblClick', arguments));
     };
 
+<span id='Stimuli-virtual-Mouse-method-contextmenu'>    /**
+</span>     * Executes a right click.
+     */
+    Mouse.prototype.contextmenu = function() {
+        return this.then(this.generateCommand('ContextMenu', arguments));
+    };
 
-    Mouse.prototype.generateCommand = function(commandName, options) {
+<span id='Stimuli-virtual-Mouse-method-down'>    /**
+</span>     * Presses a mouse button.
+     */
+    Mouse.prototype.down = function() {
+        return this.then(this.generateCommand('Down', arguments));
+    };
+
+<span id='Stimuli-virtual-Mouse-method-up'>    /**
+</span>     * Releases a mouse button.
+     */
+    Mouse.prototype.up = function() {
+        return this.then(this.generateCommand('Up', arguments));
+    };
+
+<span id='Stimuli-virtual-Mouse-method-generateCommand'>    /**
+</span>     * Abstract method to generate the corresponding mouse command.
+     * @param {String} commandName The command name
+     * @param options
+     * @returns {Function}
+     */
+    Mouse.prototype.generateCommand = function(commandName, args) {
         var self = this;
         return function(done) {
-            var command = new Stimuli.mouse[commandName](self.viewport, options);
+            var command = new Stimuli.mouse[commandName](self.viewport, args);
             command.execute(done);
         };
     };
-
-
 
 })();</pre>
 </body>

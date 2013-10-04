@@ -1,4 +1,4 @@
-/*! stimuli - v0.0.1 - 2013-10-03 */
+/*! stimuli - v0.0.1 - 2013-10-04 */
 'use strict';
 
 // Source: lib/sizzle/sizzle.js
@@ -2006,11 +2006,8 @@ if ( typeof define === "function" && define.amd ) {
  * @param {Object} options
  */
 
-var Stimuli = function(options) {
+var Stimuli = function() {
     var self = this;
-
-    options = options || {};
-
 
     self.context = new Stimuli.shared.Context();
 
@@ -2837,7 +2834,19 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
  * Abstraction layer for cross-browsers synthetic mouse events injection. 
  */
 (function() {
-   
+
+    var forceEventProperty = function(event, property, val) {
+        var value = val;
+        Object.defineProperty(event, property, {
+            get: function() {
+                return value;
+            },
+            set: function(v) {
+                value = v;
+            }
+        });
+    };
+
     Stimuli.event.synthetizer.Mouse = {
  
         /**
@@ -3300,30 +3309,29 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
 })();
 
-// Source: src/shared/interaction.js
+// Source: src/shared/command.js
 
 /**
- * @class Stimuli.shared.Interaction
+ * @class Stimuli.shared.Command
  * @mixins Stimuli.core.Chainable
- * Generic device implementation.
+ * Command device implementation.
  * @constructor
  * @param {Stimuli.shared.Viewport} viewport The viewport to which is the device attached.
  * @param {Object} options The device options if any.
  */
 (function() {
     
-    Stimuli.shared.Interaction = function(viewport, options) {
+    Stimuli.shared.Command = function(viewport, args) {
         var self = this;
-        self.options = {};
+        self.args = args;
         self.viewport = viewport;
-        Stimuli.core.Object.merge(self.options, options);
     };
 
-    var Generic = Stimuli.shared.Interaction;
+    var Command = Stimuli.shared.Command;
 
-    Stimuli.core.Class.mix(Generic, Stimuli.core.Chainable);
+    Stimuli.core.Class.mix(Command, Stimuli.core.Chainable);
 
-    Generic.prototype.configure = Generic.prototype.then;
+    Command.prototype.configure = Command.prototype.then;
 
     /**
      * @chainable
@@ -3331,7 +3339,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
      * @param {Function} generateEventConfig The event configuration to generate.
      * @param {Number=} delay The delay before in injection in ms
      */
-    Generic.prototype.inject = function(generateEventConfig, delay) {
+    Command.prototype.inject = function(generateEventConfig, delay) {
         var self = this,
             callback = function(event, canceled) {
                 if (!self.events) {
@@ -3749,10 +3757,10 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
 // Source: src/virtual/mouse.js
 
-/*
+/**
  * @class Stimuli.virtual.Mouse
  * @alternateClassName Stimuli.Mouse
- * @mixins Stimuli.device.Generic
+ * @mixins Stimuli.core.Chainable
  * The virtual mouse interface.
  * @cfg {Stimuli.virtual.Browser} browser The browser to which the mouse is attached to.
  * @constructor
@@ -3767,35 +3775,56 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
     
     var Mouse = Stimuli.virtual.Mouse;
 
-    // Extends Stimuli.Device.Abstract
     Stimuli.core.Class.mix(Mouse, Stimuli.core.Chainable);
 
-    /*
+    /**
      * Executes a simple click.
-     * @param {Object} options
      */
-    Mouse.prototype.click = function(options) {
-        return this.then(this.generateCommand('click', options));
+    Mouse.prototype.click = function() {
+        return this.then(this.generateCommand('Click', arguments));
     };
 
-    /*
+    /**
      * Executes a double click.
-     * @param {Object} options
      */
-    Mouse.prototype.dblclick = function(options) {
-        return this.then(this.generateCommand('dblclick', options));
+    Mouse.prototype.dblclick = function() {
+        return this.then(this.generateCommand('DblClick', arguments));
     };
 
+    /**
+     * Executes a right click.
+     */
+    Mouse.prototype.contextmenu = function() {
+        return this.then(this.generateCommand('ContextMenu', arguments));
+    };
 
-    Mouse.prototype.generateCommand = function(commandName, options) {
+    /**
+     * Presses a mouse button.
+     */
+    Mouse.prototype.down = function() {
+        return this.then(this.generateCommand('Down', arguments));
+    };
+
+    /**
+     * Releases a mouse button.
+     */
+    Mouse.prototype.up = function() {
+        return this.then(this.generateCommand('Up', arguments));
+    };
+
+    /**
+     * Abstract method to generate the corresponding mouse command.
+     * @param {String} commandName The command name
+     * @param options
+     * @returns {Function}
+     */
+    Mouse.prototype.generateCommand = function(commandName, args) {
         var self = this;
         return function(done) {
-            var command = new Stimuli.mouse[commandName](self.viewport, options);
+            var command = new Stimuli.mouse[commandName](self.viewport, args);
             command.execute(done);
         };
     };
-
-
 
 })();
 
@@ -3805,6 +3834,22 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
     Stimuli.mouse.Helper = {
 
+        parseOptions: function() {
+            var self = this,
+                args = self.args;
+            self.options = {};
+            if (typeof args[0] === 'string') {
+                self.options.target = args[0];
+            } else {
+                var i = 0,
+                    length = args.length,
+                    prop, arg;
+
+                for (i = 0; i < length; i++) {
+                    Stimuli.core.Object.merge(self.options, args[i]);
+                }
+            }
+        },
 
         getTarget: function() {
             var viewport = this.viewport,
@@ -3823,6 +3868,79 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             }
 
             return null;
+        },
+
+        handleClick: function(element) {
+            var searchForm = false,
+                win = this.viewport.getWindow(),
+                tagName = null,
+                action = null,
+                href = null,
+                hash = null,
+                form = null,
+                type = null;
+
+            while(element !== win.document.body) {
+                href = element.getAttribute('href');
+                tagName = element.tagName.toLowerCase();
+                type = element.getAttribute('type');
+                action = element.getAttribute('action');
+                if (searchForm && tagName === 'form' && action) {
+                    form = element;
+                    break;
+                }
+                if (href) {
+                    hash = href.split('#')[1];
+                    break;
+                }
+                if (tagName === 'input' && type === 'submit') {
+                    searchForm = true;
+                }
+                element = element.parentNode;
+            }
+
+            if (href || hash || form) {
+                // click doesn't fire on the window in ie8 but on the document.
+                var isIE8 = Stimuli.core.Support.isIE8,
+                    isIE9 = Stimuli.core.Support.isIE9,
+                    isIE10 = Stimuli.core.Support.isIE10,
+                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
+
+                observer.subscribe('click', function(e) {
+                    observer.unsubscribeAll();
+                    var canceled = isIE8 ? e.returnValue === false : e.defaultPrevented;
+
+                    if (!canceled) {
+                        if (hash) {
+                            win.location.hash = hash;
+                        } else if (href) {
+                            if (!isIE8 && !isIE9 && !isIE10) {
+                                win.location.href = href;
+                            } else {
+                                // ie8-10 don't handle relative href passed to window.location let's forge it
+                                var match = win.location.href.match(/[^\/]*$/),
+                                    prefix = '';
+                                if (!/:\/\//.test(href)) {
+                                    prefix =  win.location.href;
+                                }
+                                if (match) {
+                                    prefix = prefix.replace(match[0], '');
+                                }
+
+                                win.location.href = prefix + href;
+                            }
+                        } else if (form) {
+                            form.submit();
+                        }
+
+                        if (!isIE8) { // ie8 does not trigger automatically a link load
+                            e.preventDefault();
+                        }  else {
+                            e.returnValue = false;
+                        }
+                    }
+                });
+            }
         },
 
         getButton: function() {
@@ -3932,6 +4050,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
         
     };
 
+    Stimuli.core.Object.merge(Stimuli.mouse.Helper, Stimuli.core.Chainable);
 })();
 
 
@@ -3939,17 +4058,21 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
 (function() {
 
-    Stimuli.mouse.click = Stimuli.core.Class.inherit(Stimuli.shared.Interaction);
+    Stimuli.mouse.Click = function() {
+        Stimuli.shared.Command.apply(this, arguments);
+        this.parseOptions();
+    };
 
-    var click = Stimuli.mouse.click;
+    var Click = Stimuli.mouse.Click;
 
-    Stimuli.core.Class.mix(click, Stimuli.mouse.Helper);
+    Stimuli.core.Class.mix(Click, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(Click, Stimuli.mouse.Helper);
 
-    click.prototype.execute = function(done) {
+    Click.prototype.execute = function(done) {
 
         var self = this,
-            newUrl = null,
-            newHash = null,
+            Obj = Stimuli.core.Object,
+            defaultConf,
             target, position;
 
         return self
@@ -3970,12 +4093,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                 throw new Error('Stimuli.mouse.click: invalid position.');
             }
 
-        })
-
-        .inject(function() {
-
-            return {
-                type: 'mousedown',
+            defaultConf = {
                 button: self.getButton(),
                 bubbles: true,
                 cancelable: true,
@@ -3983,13 +4101,19 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                 ctrlKey: self.options.ctrl,
                 shiftKey: self.options.shift,
                 metaKey: self.options.meta,
-                detail: 1,
                 target: target,
+                details: 1,
                 clientX: position.clientX,
                 clientY: position.clientY,
                 screenX: position.screenX,
                 screenY: position.screenY
             };
+
+        })
+
+        .inject(function() {
+
+            return Obj.merge({type: 'mousedown'}, defaultConf);
 
          })
 
@@ -4001,22 +4125,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
         .inject(function() {
 
-            return {
-                type: 'mouseup',
-                button: self.getButton(),
-                bubbles: true,
-                cancelable: true,
-                altKey: self.options.alt,
-                ctrlKey: self.options.ctrl,
-                shiftKey: self.options.shift,
-                metaKey: self.options.meta,
-                detail: 1,
-                target: target,
-                clientX: position.clientX,
-                clientY: position.clientY,
-                screenX: position.screenX,
-                screenY: position.screenY
-            };
+            return Obj.merge({type: 'mouseup'}, defaultConf);
 
         }, 100)
 
@@ -4024,60 +4133,113 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
                 throw 'Stimuli.mouse.click: target disappeared on mouseup.';
             }
-
-            var element = target;
-            while(element) {
-                if (element.href) {
-                    newHash = element.href.split('#')[1];
-                    newUrl = element.href;
-                    break;
-                }
-                element = element.parentNode;
-            }
-
-            if (newUrl && !Stimuli.core.Support.isIE8) {
-                var windowObserver = new Stimuli.event.Observer(self.viewport.getWindow());
-                windowObserver.subscribe('click', function(e) {
-                    if (typeof e.preventDefault === 'function') {
-                        e.preventDefault();
-                    }
-                    windowObserver.unsubscribeAll();
-                });
-            }
-
+            self.handleClick(target);
         })
-
 
         .inject(function() {
 
-            return {
-                type: 'click',
-                button: self.getButton(),
-                bubbles: true,
-                cancelable: true,
-                altKey: !!self.options.alt,
-                ctrlKey: !!self.options.ctrl,
-                shiftKey: !!self.options.shift,
-                metaKey: !!self.options.meta,
-                detail: 1,
-                target: target,
-                clientX: position.clientX,
-                clientY: position.clientY,
-                screenX: position.screenX,
-                screenY: position.screenY
-            };
+            return Obj.merge({type: 'click'}, defaultConf);
 
         }, 1)
 
-
         .then(function() {
-            if (newHash) {
-                self.viewport.updateHash(newHash);
-            } else if (newUrl) {
-                self.viewport.updateUrl(newUrl);
-            }
             self.viewport.waitForReady(done);
         });
+
+    };
+
+})();
+
+// Source: src/mouse/context_menu.js
+
+(function() {
+
+    Stimuli.mouse.ContextMenu = function() {
+        Stimuli.shared.Command.apply(this, arguments);
+        this.parseOptions();
+    };
+
+    var ContextMenu = Stimuli.mouse.ContextMenu;
+
+    Stimuli.core.Class.mix(ContextMenu, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(ContextMenu, Stimuli.mouse.Helper);
+
+    ContextMenu.prototype.execute = function(done) {
+
+        var self = this,
+            Obj = Stimuli.core.Object,
+            defaultConf,
+            target, position;
+
+        return self
+
+            .configure(function() {
+
+                self.options.button = 'right';
+
+                target = self.getTarget();
+
+                if (target === null) {
+                    throw new Error('Stimuli.mouse.contextmenu: invalid target.');
+                }
+
+                position = self.calculateViewportCoordinates(target, self.options);
+
+                if (position === null) {
+                    throw new Error('Stimuli.mouse.contextmenu: invalid position.');
+                }
+
+                defaultConf = {
+                    button: self.getButton(),
+                    bubbles: true,
+                    cancelable: true,
+                    altKey: self.options.alt,
+                    ctrlKey: self.options.ctrl,
+                    shiftKey: self.options.shift,
+                    metaKey: self.options.meta,
+                    target: target,
+                    details: 1,
+                    clientX: position.clientX,
+                    clientY: position.clientY,
+                    screenX: position.screenX,
+                    screenY: position.screenY
+                };
+
+            })
+
+            .inject(function() {
+
+                return Obj.merge({type: 'mousedown'}, defaultConf);
+
+            })
+
+            .then(function() {
+                if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                    throw 'Stimuli.mouse.contextmenu: target disappeared on mousedown.';
+                }
+            })
+
+            .inject(function() {
+
+                return Obj.merge({type: 'mouseup'}, defaultConf);
+
+            }, 100)
+
+            .then(function() {
+                if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                    throw 'Stimuli.mouse.contextmenu: target disappeared on mouseup.';
+                }
+            })
+
+            .inject(function() {
+
+                return Obj.merge({type: 'contextmenu'}, defaultConf);
+
+            }, 1)
+
+            .then(function() {
+                self.viewport.waitForReady(done);
+            });
 
     };
 
@@ -4086,7 +4248,303 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 // Source: src/mouse/dblclick.js
 
 (function() {
-    Stimuli.mouse.dblclick = Stimuli.core.Class.inherit(Stimuli.shared.Interaction);
 
+    Stimuli.mouse.DblClick = function() {
+        Stimuli.shared.Command.apply(this, arguments);
+        this.parseOptions();
+    };
+
+    var DblClick = Stimuli.mouse.DblClick;
+
+    Stimuli.core.Class.mix(DblClick, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(DblClick, Stimuli.mouse.Helper);
+
+    DblClick.prototype.execute = function(done) {
+
+        var self = this,
+            Obj = Stimuli.core.Object,
+            defaultConf,
+            target, position;
+
+        return self
+
+            .configure(function() {
+
+                self.options.button = 'left';
+
+                target = self.getTarget();
+
+                if (target === null) {
+                    throw new Error('Stimuli.mouse.dblclick: invalid target.');
+                }
+
+                position = self.calculateViewportCoordinates(target, self.options);
+
+                if (position === null) {
+                    throw new Error('Stimuli.mouse.dblclick: invalid position.');
+                }
+
+                defaultConf = {
+                    button: self.getButton(),
+                    bubbles: true,
+                    cancelable: true,
+                    altKey: self.options.alt,
+                    ctrlKey: self.options.ctrl,
+                    shiftKey: self.options.shift,
+                    metaKey: self.options.meta,
+                    target: target,
+                    clientX: position.clientX,
+                    clientY: position.clientY,
+                    screenX: position.screenX,
+                    screenY: position.screenY
+                };
+
+            })
+
+            .inject(function() {
+
+                return Obj.merge({
+                    type: 'mousedown',
+                    detail: 1
+                }, defaultConf);
+
+            })
+
+            .then(function() {
+                if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                    throw 'Stimuli.mouse.dblclick: target disappeared on mousedown.';
+                }
+            })
+
+            .inject(function() {
+
+                return Obj.merge({
+                    type: 'mouseup',
+                    detail: 1
+                }, defaultConf);
+
+            }, 100)
+
+            .then(function() {
+                if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                    throw 'Stimuli.mouse.dblclick: target disappeared on mouseup.';
+                }
+
+                self.handleClick(target);
+
+            })
+
+            .inject(function() {
+
+                return Obj.merge({
+                    type: 'click',
+                    detail: 1
+                }, defaultConf);
+
+            }, 1)
+
+            .then(function() {
+                if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                    throw 'Stimuli.mouse.dblclick: target disappeared on click.';
+                }
+            })
+
+            .inject(function() {
+
+                return Obj.merge({
+                    type: 'mousedown',
+                    detail: 2
+                }, defaultConf);
+
+            })
+
+            .then(function() {
+                if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                    throw 'Stimuli.mouse.dblclick: target disappeared on mousedown.';
+                }
+            })
+
+            .inject(function() {
+
+                return Obj.merge({
+                    type: 'mouseup',
+                    detail: 2
+                }, defaultConf);
+
+            }, 100)
+
+            .then(function() {
+                if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                    throw 'Stimuli.mouse.dblclick: target disappeared on mouseup.';
+                }
+
+                self.handleClick(target);
+
+            })
+
+            .inject(function() {
+
+                return Obj.merge({
+                    type: 'click',
+                    detail: 2
+                }, defaultConf);
+
+            }, 1)
+
+            .then(function() {
+                if (!self.isElementVisibleAt(target, position.clientX, position.clientY))  {
+                    throw 'Stimuli.mouse.dblclick: target disappeared on click.';
+                }
+            })
+
+            .inject(function() {
+
+                return Obj.merge({
+                    type: 'dblclick',
+                    detail: 2
+                }, defaultConf);
+
+            }, 1)
+
+            .then(function() {
+                self.viewport.waitForReady(done);
+            });
+
+    };
+})();
+
+// Source: src/mouse/up.js
+
+(function() {
+
+    Stimuli.mouse.Up = function() {
+        Stimuli.shared.Command.apply(this, arguments);
+        this.parseOptions();
+    };
+
+    var Up = Stimuli.mouse.Up;
+
+    Stimuli.core.Class.mix(Up, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(Up, Stimuli.mouse.Helper);
+
+    Up.prototype.execute = function(done) {
+
+        var self = this,
+            target, position;
+
+        return self
+
+            .configure(function() {
+
+                self.options.button = self.options.button || 'left';
+
+                target = self.getTarget();
+
+                if (target === null) {
+                    throw new Error('Stimuli.mouse.up: invalid target.');
+                }
+
+                position = self.calculateViewportCoordinates(target, self.options);
+
+                if (position === null) {
+                    throw new Error('Stimuli.mouse.up: invalid position.');
+                }
+
+            })
+
+            .inject(function() {
+
+                return {
+                    type: 'mouseup',
+                    button: self.getButton(),
+                    bubbles: true,
+                    cancelable: true,
+                    altKey: self.options.alt,
+                    ctrlKey: self.options.ctrl,
+                    shiftKey: self.options.shift,
+                    metaKey: self.options.meta,
+                    target: target,
+                    details: 1,
+                    clientX: position.clientX,
+                    clientY: position.clientY,
+                    screenX: position.screenX,
+                    screenY: position.screenY
+                };
+
+            })
+
+            .then(function() {
+                self.viewport.waitForReady(done);
+            });
+
+    };
+
+})();
+
+// Source: src/mouse/down.js
+
+(function() {
+
+    Stimuli.mouse.Down = function() {
+        Stimuli.shared.Command.apply(this, arguments);
+        this.parseOptions();
+    };
+
+    var Down = Stimuli.mouse.Down;
+
+    Stimuli.core.Class.mix(Down, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(Down, Stimuli.mouse.Helper);
+
+    Down.prototype.execute = function(done) {
+
+        var self = this,
+            target, position;
+
+        return self
+
+            .configure(function() {
+
+                self.options.button = self.options.button || 'left';
+
+                target = self.getTarget();
+
+                if (target === null) {
+                    throw new Error('Stimuli.mouse.down: invalid target.');
+                }
+
+                position = self.calculateViewportCoordinates(target, self.options);
+
+                if (position === null) {
+                    throw new Error('Stimuli.mouse.down: invalid position.');
+                }
+
+            })
+
+            .inject(function() {
+
+                return {
+                    type: 'mousedown',
+                    button: self.getButton(),
+                    bubbles: true,
+                    cancelable: true,
+                    altKey: self.options.alt,
+                    ctrlKey: self.options.ctrl,
+                    shiftKey: self.options.shift,
+                    metaKey: self.options.meta,
+                    target: target,
+                    details: 1,
+                    clientX: position.clientX,
+                    clientY: position.clientY,
+                    screenX: position.screenX,
+                    screenY: position.screenY
+                };
+
+            })
+
+            .then(function() {
+                self.viewport.waitForReady(done);
+            });
+
+    };
 
 })();
