@@ -13,7 +13,6 @@ module.exports = function(grunt) {
         jshint: {
 
             files: [
-
                 '*.js',
                 'src/**/*.js',
                 '*.json',
@@ -39,7 +38,7 @@ module.exports = function(grunt) {
 
                 process: function(src, filepath) {
                     return '\n// Source: ' + filepath + '\n' +
-                        src.replace(/'use strict';\n/gm, '');
+                        src.replace(/'use strict';\n/g, '');
                 }
             },
 
@@ -123,40 +122,31 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('karma_ie_gecko', function(){
-        var done = this.async();
-        grunt.util.spawn({
-                cmd: 'karma',
-                args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX'],
-                opts: {stdio: 'inherit'}
-        },done);
-    });
-
-    grunt.registerTask('karma_webkit', function(){
+    grunt.registerTask('karma_phantom', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'],
+            args: ['start', 'karma.travis.conf.js', '--browsers', 'PhantomJS'],
             opts: {stdio: 'inherit'}
         },done);
     });
 
-    grunt.registerTask('karma_device', function(){
-        var done = this.async();
-        grunt.util.spawn({
-            cmd: 'karma',
-            args: ['start', 'karma.travis.conf.js', '--browsers', 'BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6'],
-            opts: {stdio: 'inherit'}
-        },done);
-    });
-
-    grunt.registerTask('karma_travis', function(){
+    grunt.registerTask('karma_browserstack', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.travis.conf.js', '--browsers',
-            'PhantomJS,BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'
+            'BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'
             ],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('build_watch', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.travis.conf.js', '--auto-watch'],
             opts: {stdio: 'inherit'}
         },done);
     });
@@ -178,5 +168,5 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('travis', ['jshint', 'build', 'karma_travis']);
+    grunt.registerTask('travis', ['jshint', 'build', 'karma_phantom', 'karma_browserstack']);
 };

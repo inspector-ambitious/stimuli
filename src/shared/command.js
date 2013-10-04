@@ -1,27 +1,26 @@
 'use strict';
 
 /**
- * @class Stimuli.shared.Interaction
+ * @class Stimuli.shared.Command
  * @mixins Stimuli.core.Chainable
- * Generic device implementation.
+ * Command device implementation.
  * @constructor
  * @param {Stimuli.shared.Viewport} viewport The viewport to which is the device attached.
  * @param {Object} options The device options if any.
  */
 (function() {
     
-    Stimuli.shared.Interaction = function(viewport, options) {
+    Stimuli.shared.Command = function(viewport, args) {
         var self = this;
-        self.options = {};
+        self.args = args;
         self.viewport = viewport;
-        Stimuli.core.Object.merge(self.options, options);
     };
 
-    var Generic = Stimuli.shared.Interaction;
+    var Command = Stimuli.shared.Command;
 
-    Stimuli.core.Class.mix(Generic, Stimuli.core.Chainable);
+    Stimuli.core.Class.mix(Command, Stimuli.core.Chainable);
 
-    Generic.prototype.configure = Generic.prototype.then;
+    Command.prototype.configure = Command.prototype.then;
 
     /**
      * @chainable
@@ -29,7 +28,7 @@
      * @param {Function} generateEventConfig The event configuration to generate.
      * @param {Number=} delay The delay before in injection in ms
      */
-    Generic.prototype.inject = function(generateEventConfig, delay) {
+    Command.prototype.inject = function(generateEventConfig, delay) {
         var self = this,
             callback = function(event, canceled) {
                 if (!self.events) {

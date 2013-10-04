@@ -27,7 +27,7 @@ var stimuliFiles = [
     'src/shared/recorder.js',
     'src/shared/viewport.js',
     'src/shared/context.js',
-    'src/shared/interaction.js',
+    'src/shared/command.js',
 
     'src/virtual/browser.js',
     'src/browser/iframe.js',
@@ -37,7 +37,10 @@ var stimuliFiles = [
     'src/virtual/mouse.js',
     'src/mouse/helper.js',
     'src/mouse/click.js',
-    'src/mouse/dblclick.js'
+    'src/mouse/context_menu.js',
+    'src/mouse/dblclick.js',
+    'src/mouse/up.js',
+    'src/mouse/down.js'
 
 ];
 
@@ -89,8 +92,6 @@ sharedTestFiles.forEach(function(shared) {
     testFilesDev.push(shared);
     testFilesBuild.push(shared);
 });
-
-
 
 
 // test specs

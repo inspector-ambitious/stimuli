@@ -24,5 +24,5 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  -  grunt travis -d --stack &&
+  -  grunt travis &&
     .travis/ghpages-deploy.sh
