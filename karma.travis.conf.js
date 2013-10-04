@@ -142,6 +142,7 @@ module.exports = function(config) {
     };
     conf.autoWatch = false;
     conf.singleRun = true;
+    conf.disableCompression = true;
     config.set(conf);
 
 };
