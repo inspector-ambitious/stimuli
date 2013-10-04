@@ -11,6 +11,8 @@ module.exports = function(config) {
     conf.browserStack = {
         username: process.env.BROWSER_STACK_USERNAME,
         accessKey: process.env.BROWSER_STACK_ACCESS_KEY,
+        project: process.env.TRAVIS_REPO_SLUG || 'stimuli@local',
+        build: process.env.TRAVIS_BUILD_NUMBER,
         startTunnel: true,
         captureTimeout: 120000, // 2 mins
         retryLimit: 10
