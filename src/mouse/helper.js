@@ -74,7 +74,8 @@
                 var isIE8 = Stimuli.core.Support.isIE8,
                     isIE9 = Stimuli.core.Support.isIE9,
                     isIE10 = Stimuli.core.Support.isIE10,
-                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
+                    isIOS = Stimuli.core.Support.isIOS,
+                    observer = new Stimuli.event.Observer(isIE8  ? win.document : win);
 
                 observer.subscribe('click', function(e) {
                     observer.unsubscribeAll();
@@ -84,21 +85,17 @@
                         if (hash) {
                             win.location.hash = hash;
                         } else if (href) {
-                            if (!isIE8 && !isIE9 && !isIE10) {
-                                win.location.href = href;
-                            } else {
-                                // ie8-10 don't handle relative href passed to window.location let's forge it
-                                var match = win.location.href.match(/[^\/]*$/),
-                                    prefix = '';
-                                if (!/:\/\//.test(href)) {
-                                    prefix =  win.location.href;
-                                }
-                                if (match) {
-                                    prefix = prefix.replace(match[0], '');
-                                }
-
-                                win.location.href = prefix + href;
+                            // some browsers don't handle relative href passed to window.location let's forge it
+                            var match = win.location.href.match(/[^\/]*$/),
+                                prefix = '';
+                            if (!/:\/\//.test(href)) {
+                                prefix =  win.location.href;
                             }
+                            if (match) {
+                                prefix = prefix.replace(match[0], '');
+                            }
+
+                            win.location.href = prefix + href;
                         } else if (form) {
                             form.submit();
                         }
