@@ -26,7 +26,7 @@ module.exports = function(config) {
     conf.serverPort = 9876;
     conf.serverHost = 'localhost';
     conf.clientPort = 54321;
-
+    conf.transports = ['xhr-polling'];
     conf.customLaunchers = {
 
         BS_FIREFOX: {
