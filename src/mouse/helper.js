@@ -158,7 +158,7 @@
             if (isNaN(offset.x)) {
                 for (x = left; x < right && isNaN(offset.x); x++) {
                     for (y = top; y < bottom && isNaN(offset.x); y++) {
-                        if (viewport.getVisibleElementAt(x, y)) {
+                        if (viewport.getVisibleElementAt(x, y) === element) {
                             offset.x = x - left;
                             offset.y = offset.y || (y - top);
                         }
@@ -170,7 +170,7 @@
             if (isNaN(offset.y)) {
                 for (y = top; y < bottom && isNaN(offset.y); y++) {
                     for (x = left; x < right && isNaN(offset.y); x++) {
-                        if (viewport.getVisibleElementAt(x, y)) {
+                        if (viewport.getVisibleElementAt(x, y) === element) {
                             offset.y = y - top;
                         }
                     }
@@ -203,7 +203,7 @@
             
             coordinates = {
                 clientX: left + offset.x,
-                clientY: top + offset.y,
+                clientY: top + offset.y
             };
 
             coordinates.screenX = viewport.getScreenX() + coordinates.clientX;
