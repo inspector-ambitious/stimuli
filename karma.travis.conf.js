@@ -25,7 +25,7 @@ module.exports = function(config) {
     conf.disableCompression = true;
     conf.serverPort = 9876;
     conf.serverHost = 'localhost';
-    conf.clientPort = '54321';
+    conf.clientPort = 54321;
 
     conf.customLaunchers = {
 
