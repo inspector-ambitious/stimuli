@@ -19,7 +19,7 @@ before_install:
 before_script:
   - sudo apt-get update -qq
   - sudo apt-get install -qq nginx
-  - sudo nginx -c .travis/nginx.conf -p .
+  - sudo nginx -c .nginx/nginx.conf -p .
   - gem install jsduck
   - npm -g install grunt-cli
   - npm -g install bower

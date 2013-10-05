@@ -24,8 +24,9 @@ module.exports = function(config) {
     conf.singleRun = true;
     conf.disableCompression = true;
     conf.serverPort = 9876;
-    conf.serverHost = 'localhost';
-    conf.clientPort = 54321;
+    conf.serverHost = '127.0.0.1';
+    conf.clientHost = '127.0.0.1';
+    conf.clientPort = 8080;
     conf.transports = ['xhr-polling'];
     conf.customLaunchers = {
 
