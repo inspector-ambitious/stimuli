@@ -17,6 +17,8 @@ before_install:
   - npm config set loglevel error
 
 before_script:
+  - sudo apt-get update -qq nginx
+  - nginx -c .travis/nginx.conf -p .
   - gem install jsduck
   - npm -g install grunt-cli
   - npm -g install bower

@@ -20,6 +20,13 @@ module.exports = function(config) {
     conf.logLevel = config.LOG_INFO;
     conf.reportSlowerThan = 30000;
     conf.disconnectTolerance = 5;
+    conf.autoWatch = false;
+    conf.singleRun = true;
+    conf.disableCompression = true;
+    conf.serverPort = 9876;
+    conf.serverHost = 'localhost';
+    conf.clientPort = '54321';
+
     conf.customLaunchers = {
 
         BS_FIREFOX: {
@@ -140,9 +147,7 @@ module.exports = function(config) {
         }
 
     };
-    conf.autoWatch = false;
-    conf.singleRun = true;
-    conf.disableCompression = true;
+
     config.set(conf);
 
 };
