@@ -65,7 +65,7 @@
             // the global history.go doesn't work on firefox inside an iframe
             self.context.getWindow().location = url;
 
-            self.context.waitForReady(function() {
+            self.context.once('new', function() {
                 self.context.subscribe('new', self.updateBackwardPagesList, self);
                 done();
             });

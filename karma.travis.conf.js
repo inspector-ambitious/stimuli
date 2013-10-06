@@ -11,6 +11,8 @@ module.exports = function(config) {
     conf.browserStack = {
         username: process.env.BROWSER_STACK_USERNAME,
         accessKey: process.env.BROWSER_STACK_ACCESS_KEY,
+        project: process.env.TRAVIS_REPO_SLUG || 'stimuli@local',
+        build: process.env.TRAVIS_BUILD_NUMBER,
         startTunnel: true,
         captureTimeout: 120000, // 2 mins
         retryLimit: 10
@@ -18,6 +20,14 @@ module.exports = function(config) {
     conf.logLevel = config.LOG_INFO;
     conf.reportSlowerThan = 30000;
     conf.disconnectTolerance = 5;
+    conf.autoWatch = false;
+    conf.singleRun = true;
+    conf.disableCompression = true;
+    conf.serverPort = 9876;
+    conf.serverHost = '127.0.0.1';
+    conf.clientHost = '127.0.0.1';
+    conf.clientPort = 8080;
+    conf.transports = ['xhr-polling'];
     conf.customLaunchers = {
 
         BS_FIREFOX: {
@@ -138,8 +148,7 @@ module.exports = function(config) {
         }
 
     };
-    conf.autoWatch = false;
-    conf.singleRun = true;
+
     config.set(conf);
 
 };

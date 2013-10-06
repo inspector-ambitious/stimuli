@@ -4,6 +4,22 @@
 
     Stimuli.mouse.Helper = {
 
+        parseOptions: function() {
+            var self = this,
+                args = self.args;
+            self.options = {};
+            if (typeof args[0] === 'string') {
+                self.options.target = args[0];
+            } else {
+                var i = 0,
+                    length = args.length,
+                    prop, arg;
+
+                for (i = 0; i < length; i++) {
+                    Stimuli.core.Object.merge(self.options, args[i]);
+                }
+            }
+        },
 
         getTarget: function() {
             var viewport = this.viewport,
@@ -22,6 +38,76 @@
             }
 
             return null;
+        },
+
+        handleClick: function(element) {
+            var searchForm = false,
+                win = this.viewport.getWindow(),
+                tagName = null,
+                action = null,
+                href = null,
+                hash = null,
+                form = null,
+                type = null;
+
+            while(element !== win.document.body) {
+                href = element.getAttribute('href');
+                tagName = element.tagName.toLowerCase();
+                type = element.getAttribute('type');
+                action = element.getAttribute('action');
+                if (searchForm && tagName === 'form' && action) {
+                    form = element;
+                    break;
+                }
+                if (href) {
+                    hash = href.split('#')[1];
+                    break;
+                }
+                if (tagName === 'input' && type === 'submit') {
+                    searchForm = true;
+                }
+                element = element.parentNode;
+            }
+
+            if (href || hash || form) {
+                // click doesn't fire on the window in ie8 but on the document.
+                var isIE8 = Stimuli.core.Support.isIE8,
+                    isIE9 = Stimuli.core.Support.isIE9,
+                    isIE10 = Stimuli.core.Support.isIE10,
+                    isIOS = Stimuli.core.Support.isIOS,
+                    observer = new Stimuli.event.Observer(isIE8  ? win.document : win);
+
+                observer.subscribe('click', function(e) {
+                    observer.unsubscribeAll();
+                    var canceled = isIE8 ? e.returnValue === false : e.defaultPrevented;
+
+                    if (!canceled) {
+                        if (hash) {
+                            win.location.hash = hash;
+                        } else if (href) {
+                            // some browsers don't handle relative href passed to window.location let's forge it
+                            var match = win.location.href.match(/[^\/]*$/),
+                                prefix = '';
+                            if (!/:\/\//.test(href)) {
+                                prefix =  win.location.href;
+                            }
+                            if (match) {
+                                prefix = prefix.replace(match[0], '');
+                            }
+
+                            win.location.href = prefix + href;
+                        } else if (form) {
+                            form.submit();
+                        }
+
+                        if (!isIE8) { // ie8 does not trigger automatically a link load
+                            e.preventDefault();
+                        }  else {
+                            e.returnValue = false;
+                        }
+                    }
+                });
+            }
         },
 
         getButton: function() {
@@ -69,7 +155,7 @@
             if (isNaN(offset.x)) {
                 for (x = left; x < right && isNaN(offset.x); x++) {
                     for (y = top; y < bottom && isNaN(offset.x); y++) {
-                        if (viewport.getVisibleElementAt(x, y)) {
+                        if (viewport.getVisibleElementAt(x, y) === element) {
                             offset.x = x - left;
                             offset.y = offset.y || (y - top);
                         }
@@ -81,7 +167,7 @@
             if (isNaN(offset.y)) {
                 for (y = top; y < bottom && isNaN(offset.y); y++) {
                     for (x = left; x < right && isNaN(offset.y); x++) {
-                        if (viewport.getVisibleElementAt(x, y)) {
+                        if (viewport.getVisibleElementAt(x, y) === element) {
                             offset.y = y - top;
                         }
                     }
@@ -114,7 +200,7 @@
             
             coordinates = {
                 clientX: left + offset.x,
-                clientY: top + offset.y,
+                clientY: top + offset.y
             };
 
             coordinates.screenX = viewport.getScreenX() + coordinates.clientX;
@@ -131,4 +217,5 @@
         
     };
 
+    Stimuli.core.Object.merge(Stimuli.mouse.Helper, Stimuli.core.Chainable);
 })();
