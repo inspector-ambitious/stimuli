@@ -91,7 +91,8 @@
                 var isIE8 = Stimuli.core.Support.isIE8,
                     isIE9 = Stimuli.core.Support.isIE9,
                     isIE10 = Stimuli.core.Support.isIE10,
-                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
+                    isIOS = Stimuli.core.Support.isIOS,
+                    observer = new Stimuli.event.Observer(isIE8  ? win.document : win);
 
                 observer.subscribe('click', function(e) {
                     observer.unsubscribeAll();
@@ -101,21 +102,17 @@
                         if (hash) {
                             win.location.hash = hash;
                         } else if (href) {
-                            if (!isIE8 &amp;&amp; !isIE9 &amp;&amp; !isIE10) {
-                                win.location.href = href;
-                            } else {
-                                // ie8-10 don't handle relative href passed to window.location let's forge it
-                                var match = win.location.href.match(/[^\/]*$/),
-                                    prefix = '';
-                                if (!/:\/\//.test(href)) {
-                                    prefix =  win.location.href;
-                                }
-                                if (match) {
-                                    prefix = prefix.replace(match[0], '');
-                                }
-
-                                win.location.href = prefix + href;
+                            // some browsers don't handle relative href passed to window.location let's forge it
+                            var match = win.location.href.match(/[^\/]*$/),
+                                prefix = '';
+                            if (!/:\/\//.test(href)) {
+                                prefix =  win.location.href;
                             }
+                            if (match) {
+                                prefix = prefix.replace(match[0], '');
+                            }
+
+                            win.location.href = prefix + href;
                         } else if (form) {
                             form.submit();
                         }
@@ -175,7 +172,7 @@
             if (isNaN(offset.x)) {
                 for (x = left; x &lt; right &amp;&amp; isNaN(offset.x); x++) {
                     for (y = top; y &lt; bottom &amp;&amp; isNaN(offset.x); y++) {
-                        if (viewport.getVisibleElementAt(x, y)) {
+                        if (viewport.getVisibleElementAt(x, y) === element) {
                             offset.x = x - left;
                             offset.y = offset.y || (y - top);
                         }
@@ -187,7 +184,7 @@
             if (isNaN(offset.y)) {
                 for (y = top; y &lt; bottom &amp;&amp; isNaN(offset.y); y++) {
                     for (x = left; x &lt; right &amp;&amp; isNaN(offset.y); x++) {
-                        if (viewport.getVisibleElementAt(x, y)) {
+                        if (viewport.getVisibleElementAt(x, y) === element) {
                             offset.y = y - top;
                         }
                     }
@@ -220,7 +217,7 @@
             
             coordinates = {
                 clientX: left + offset.x,
-                clientY: top + offset.y,
+                clientY: top + offset.y
             };
 
             coordinates.screenX = viewport.getScreenX() + coordinates.clientX;

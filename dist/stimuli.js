@@ -1,4 +1,4 @@
-/*! stimuli - v0.0.1 - 2013-10-04 */
+/*! stimuli - v0.1.0 - 2013-10-06 */
 'use strict';
 
 // Source: lib/sizzle/sizzle.js
@@ -3218,7 +3218,6 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
         var self = this;
         // TODO: (yhwh) reroute onerror, alert to current window etc...
         self.win = win;
-        self.loading = false;
         self.publish('new');
     };
 
@@ -3230,71 +3229,56 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
         return this.win;
     };
 
-    /**
-     * Sets the context in a loading state.
-     */
-    Context.prototype.setLoading = function() {
-        var self = this;
-        self.loading = true;
-        self.win = null;
-        self.publish('loading');
-    };
 
     /**
      * Waits for the context to be ready (generally used after a navigation change).
      * @param {Function} callback The function to call when the context is ready.
      */
     Context.prototype.waitForReady = function(callback) {
-        var self = this;
+        var self = this,
+            callbackWrapper = function() {
+            self.unsubscribe('new', callbackWrapper);
+            callback();
+        };
 
-        // since there is no beforeunload on IOS, the only method i found to wait enough to check if a navigation is
-        // occuring in the stimuli window is to create an iframe wait for it to be loaded (it will always fire after
-        // the stimuli iframe unload).
         if (Stimuli.core.Support.isIOS) {
 
-            var doc = window.document,
-                iframe = doc.createElement('iframe');
+            self.once('new', callbackWrapper);
 
-            iframe.src = Stimuli.blankPage || '/';
+            self.win._callback = callbackWrapper;
 
-            iframe.style.display = 'none';
+            // there is no beforeunload, but if the page is loading this asynchronous ajax request in the next tick
+            // will never complete :) (done a lot of manual testing on this one...)
+            self.win.eval.call(self.win, [
+                'setTimeout(function(){',
+                '   var xhr = new XMLHttpRequest();',
+                '   xhr.onload = function() {',
+                '       xhr.onload = null;',
+                '       _callback();',
+                '   };',
+                // the ? (new Date).getTime() + Math.random() is to prevent caching...
+                '   xhr.open("get", "ios-stupid-hack?" + (new Date).getTime() + Math.random(), true);',
+                '   xhr.send();',
+                '}, 1);'
+            ].join(''));
 
-            iframe.onload = function() {
-                iframe.onload = null;
-                doc.body.removeChild(iframe);
+        } else {
 
-                var waitForLoad = function() {
-
-                    if (self.loading === false) {
-                        callback();
-                    } else {
-                        setTimeout(waitForLoad, 1);
-                    }
-                };
-
-                setTimeout(waitForLoad, 1);
+            var buffer = [],
+                tick = function () {
+                buffer.push(self.loading);
+                var length = buffer.length;
+                // some browsers emit a beforeunload right away, others do it on the next tick (setTimeout 1)
+                // so we need to be sure to have at least two loading states in the buffer before assuming anything.
+                if (length < 2 || (buffer[length - 1] || buffer[length -2])) {
+                    setTimeout(tick, 1);
+                    return;
+                }
+                buffer = null;
+                callbackWrapper();
             };
 
-            doc.body.appendChild(iframe);
-
-        // And now the "classic" navigation detection ^^
-        } else {
-            var tmp = [],
-                waitForLoad = function () {
-
-                    tmp.push(self.loading);
-                    // some browsers kicks the beforeunload right away, others do it on the next tick (setTimeout, 1)
-                    // so we need to be sure to have at least two consecutives loading === false before returning.
-                    if (tmp.length < 2 ||
-                        (tmp[tmp.length - 1] || tmp[tmp.length -2])) {
-                        setTimeout(waitForLoad, 1);
-                        return;
-                    }
-                    tmp = null;
-                    callback();
-                };
-
-            waitForLoad();
+            tick();
         }
 
     };
@@ -3556,21 +3540,14 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                         if (Stimuli.core.Support.isIE10) {
                             self.iframeEl.getBoundingClientRect();
                         }
-                        var winObserver = new Stimuli.event.Observer(win),
-                            onNavigate = function() {
-                                winObserver.unsubscribeAll();
-                                self.context.setLoading();
-                                winObserver = null;
-                            };
 
-                        // there is no beforeunload event on IOS (see the Context waitForReady method)
-                        if (Stimuli.core.Support.isIOS) {
-                            winObserver.once('unload', onNavigate);
+                        if (!Stimuli.core.Support.isIOS) {
+                            var winObserver = new Stimuli.event.Observer(win);
+                            self.context.loading = false;
+                            winObserver.once('beforeunload', function() {
+                                self.context.loading = true;
+                            });
                         }
-
-                        winObserver.once('beforeunload', onNavigate);
-
-
 
                         self.context.setNew(win);
 
@@ -3729,7 +3706,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             // the global history.go doesn't work on firefox inside an iframe
             self.context.getWindow().location = url;
 
-            self.context.waitForReady(function() {
+            self.context.once('new', function() {
                 self.context.subscribe('new', self.updateBackwardPagesList, self);
                 done();
             });
@@ -3904,7 +3881,8 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                 var isIE8 = Stimuli.core.Support.isIE8,
                     isIE9 = Stimuli.core.Support.isIE9,
                     isIE10 = Stimuli.core.Support.isIE10,
-                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
+                    isIOS = Stimuli.core.Support.isIOS,
+                    observer = new Stimuli.event.Observer(isIE8  ? win.document : win);
 
                 observer.subscribe('click', function(e) {
                     observer.unsubscribeAll();
@@ -3914,21 +3892,17 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                         if (hash) {
                             win.location.hash = hash;
                         } else if (href) {
-                            if (!isIE8 && !isIE9 && !isIE10) {
-                                win.location.href = href;
-                            } else {
-                                // ie8-10 don't handle relative href passed to window.location let's forge it
-                                var match = win.location.href.match(/[^\/]*$/),
-                                    prefix = '';
-                                if (!/:\/\//.test(href)) {
-                                    prefix =  win.location.href;
-                                }
-                                if (match) {
-                                    prefix = prefix.replace(match[0], '');
-                                }
-
-                                win.location.href = prefix + href;
+                            // some browsers don't handle relative href passed to window.location let's forge it
+                            var match = win.location.href.match(/[^\/]*$/),
+                                prefix = '';
+                            if (!/:\/\//.test(href)) {
+                                prefix =  win.location.href;
                             }
+                            if (match) {
+                                prefix = prefix.replace(match[0], '');
+                            }
+
+                            win.location.href = prefix + href;
                         } else if (form) {
                             form.submit();
                         }
@@ -3988,7 +3962,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             if (isNaN(offset.x)) {
                 for (x = left; x < right && isNaN(offset.x); x++) {
                     for (y = top; y < bottom && isNaN(offset.x); y++) {
-                        if (viewport.getVisibleElementAt(x, y)) {
+                        if (viewport.getVisibleElementAt(x, y) === element) {
                             offset.x = x - left;
                             offset.y = offset.y || (y - top);
                         }
@@ -4000,7 +3974,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             if (isNaN(offset.y)) {
                 for (y = top; y < bottom && isNaN(offset.y); y++) {
                     for (x = left; x < right && isNaN(offset.y); x++) {
-                        if (viewport.getVisibleElementAt(x, y)) {
+                        if (viewport.getVisibleElementAt(x, y) === element) {
                             offset.y = y - top;
                         }
                     }
@@ -4033,7 +4007,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             
             coordinates = {
                 clientX: left + offset.x,
-                clientY: top + offset.y,
+                clientY: top + offset.y
             };
 
             coordinates.screenX = viewport.getScreenX() + coordinates.clientX;
