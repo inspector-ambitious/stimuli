@@ -10,7 +10,7 @@
   
     "author": "Nicolas Ferrero <ferrero.nicolas@gmail.com>",
   
-    "version": "0.0.1",
+    "version": "0.1.0",
     
     "repository": {
 
@@ -36,7 +36,7 @@
 
         "sinon": "~1.7",
 
-        "karma": "git://github.com/yhwh/karma.git#dev",
+        "karma": "git://github.com/yhwh/karma.git#stimuli",
                 
         "karma-mocha": "~0.1",
         

@@ -17,6 +17,9 @@ before_install:
   - npm config set loglevel error
 
 before_script:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq nginx
+  - sudo nginx -c .nginx/nginx.conf -p .
   - gem install jsduck
   - npm -g install grunt-cli
   - npm -g install bower
@@ -24,5 +27,5 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  -  grunt travis -d --stack &&
+  -  grunt travis &&
     .travis/ghpages-deploy.sh

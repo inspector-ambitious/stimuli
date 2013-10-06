@@ -1,9 +1,9 @@
 'use strict';
 
-/*
+/**
  * @class Stimuli.virtual.Mouse
  * @alternateClassName Stimuli.Mouse
- * @mixins Stimuli.device.Generic
+ * @mixins Stimuli.core.Chainable
  * The virtual mouse interface.
  * @cfg {Stimuli.virtual.Browser} browser The browser to which the mouse is attached to.
  * @constructor
@@ -18,34 +18,55 @@
     
     var Mouse = Stimuli.virtual.Mouse;
 
-    // Extends Stimuli.Device.Abstract
     Stimuli.core.Class.mix(Mouse, Stimuli.core.Chainable);
 
-    /*
+    /**
      * Executes a simple click.
-     * @param {Object} options
      */
-    Mouse.prototype.click = function(options) {
-        return this.then(this.generateCommand('click', options));
+    Mouse.prototype.click = function() {
+        return this.then(this.generateCommand('Click', arguments));
     };
 
-    /*
+    /**
      * Executes a double click.
-     * @param {Object} options
      */
-    Mouse.prototype.dblclick = function(options) {
-        return this.then(this.generateCommand('dblclick', options));
+    Mouse.prototype.dblclick = function() {
+        return this.then(this.generateCommand('DblClick', arguments));
     };
 
+    /**
+     * Executes a right click.
+     */
+    Mouse.prototype.contextmenu = function() {
+        return this.then(this.generateCommand('ContextMenu', arguments));
+    };
 
-    Mouse.prototype.generateCommand = function(commandName, options) {
+    /**
+     * Presses a mouse button.
+     */
+    Mouse.prototype.down = function() {
+        return this.then(this.generateCommand('Down', arguments));
+    };
+
+    /**
+     * Releases a mouse button.
+     */
+    Mouse.prototype.up = function() {
+        return this.then(this.generateCommand('Up', arguments));
+    };
+
+    /**
+     * Abstract method to generate the corresponding mouse command.
+     * @param {String} commandName The command name
+     * @param options
+     * @returns {Function}
+     */
+    Mouse.prototype.generateCommand = function(commandName, args) {
         var self = this;
         return function(done) {
-            var command = new Stimuli.mouse[commandName](self.viewport, options);
+            var command = new Stimuli.mouse[commandName](self.viewport, args);
             command.execute(done);
         };
     };
-
-
 
 })();

@@ -7,11 +7,8 @@
  * @param {Object} options
  */
 
-var Stimuli = function(options) {
+var Stimuli = function() {
     var self = this;
-
-    options = options || {};
-
 
     self.context = new Stimuli.shared.Context();
 
