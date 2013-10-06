@@ -14,9 +14,9 @@ module.exports = function(config) {
         project: process.env.TRAVIS_REPO_SLUG || 'stimuli@local',
         build: process.env.TRAVIS_BUILD_NUMBER,
         startTunnel: true,
-        captureTimeout: 120000, // 2 mins
         retryLimit: 10
     };
+    conf.captureTimeout = 120000; // 2 mins
     conf.logLevel = config.LOG_INFO;
     conf.reportSlowerThan = 30000;
     conf.disconnectTolerance = 5;
