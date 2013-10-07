@@ -103,6 +103,8 @@ describe('Stimuli.core.Observable', function() {
             expect(str).to.be('12');
         });
 
+
+
     });
 
     describe('unsubscribe', function() {
@@ -120,6 +122,30 @@ describe('Stimuli.core.Observable', function() {
             };
 
             observable.subscribe('event1', listener);
+
+            observable.unsubscribe('event1', listener);
+
+            observable.publish('event1', 1, 2, 3);
+
+            expect(arg1).to.be(null);
+            expect(arg2).to.be(null);
+            expect(arg3).to.be(null);
+
+        });
+
+        it('should not call the listener if the listener is unsubscribed and binded with once', function() {
+
+            var arg1 = null;
+            var arg2 = null;
+            var arg3 = null;
+
+            var listener = function(a, b, c) {
+                arg1 = a;
+                arg2 = b;
+                arg3 = c;
+            };
+
+            observable.once('event1', listener);
 
             observable.unsubscribe('event1', listener);
 
