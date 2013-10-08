@@ -32,6 +32,22 @@
         },
 
         /**
+         * Determines if an event is a keyboard event
+         * @param {String} eventType The event type
+         * @return {Boolean} True if it's a keyboard event
+         */
+        isKeyboardEvent: function(eventType) {
+            return {
+                keyup: true,
+                keydown: true,
+                keypress: true,
+                textInput: true,
+                textinput: true,
+                input: true
+            }[eventType] || false;
+        },
+
+        /**
          * Emits the event and call the callback function
          * @param {Object} data The event configuration
          * @param {Function} callback The callback function to be called after the invent is injected.
@@ -41,6 +57,9 @@
 
             if (this.isMouseEvent(data.type)) {
                 result = synthetizer.Mouse.inject(data);
+            }
+            else if (this.isKeyboardEvent(data.type)) {
+                result = synthetizer.Keyboard.inject(data);
             }
 
             callback(result.event, result.canceled);

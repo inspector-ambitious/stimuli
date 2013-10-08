@@ -76,8 +76,20 @@ Stimuli.core.Support = {
      * @property {Boolean}
      * Is true if browser is IOS
      */
-    isIOS:  /(iPad|iPhone|iPod)/g.test( navigator.userAgent )
+    isIOS:  /(iPad|iPhone|iPod)/g.test(navigator.userAgent),
 
+    /**
+     * @property {Boolean}
+     * Is true if browser rendering engine is Webkit
+     */
+    isWebkit: /AppleWebKit/g.test(navigator.userAgent),
+
+
+    /**
+     * @property {Boolean}
+     * Is true if the browser rendering engine is Gecko
+     */
+    isGecko: /Gecko/g.test(navigator.userAgent)
 };
 
 })();

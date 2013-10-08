@@ -23,6 +23,7 @@ var stimuliFiles = [
     'src/event/emitter.js',
     'src/event/observer.js',
     'src/event/synthetizer/mouse.js',
+    'src/event/synthetizer/keyboard.js',
 
     'src/shared/recorder.js',
     'src/shared/viewport.js',

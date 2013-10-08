@@ -59,6 +59,8 @@ Stimuli.browser = {};
 
 Stimuli.mouse = {};
 
+Stimuli.keyboard = {};
+
 (function() {
     var els = document.getElementsByTagName("script");
     var str = "";
