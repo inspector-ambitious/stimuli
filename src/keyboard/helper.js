@@ -17,6 +17,18 @@
             return this.viewport.getWindow().document.activeElement || null;
         },
 
+        notTypables: ['\n', '\t', '\b', '\r', '\f'],
+
+        isTypableCharacter: function(key) {
+
+            for (var i = 0; i < this.notTypables.length; i++) {
+                if (key === this.notTypables[i]) {
+                    return false;
+                }
+            }
+            return String.fromCharCode(key.charCodeAt(0)).length === 1;
+        },
+
         fixInputValue: function(target, key) {
             if (typeof target.selectionStart === 'number') {
                 var startPos = target.selectionStart,
