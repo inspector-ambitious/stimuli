@@ -13,7 +13,7 @@ describe('Stimuli.core.Observable', function() {
     });
 
     afterEach(function() {
-
+        observable.unsubscribeAll();
         observable = null;
         
     });

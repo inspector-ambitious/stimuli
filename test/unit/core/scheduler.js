@@ -17,6 +17,9 @@ describe('Stimuli.core.Scheduler', function() {
 
     afterEach(function() {
 
+        scheduler.unsubscribeAll();
+        scheduler = null;
+
         clock.restore();
 
         clock = null;

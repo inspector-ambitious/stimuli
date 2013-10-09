@@ -76,6 +76,7 @@ describe('Stimuli.mouse.Click', function() {
                 .click('#simplediv_link')
                 .then(function() {
                     expect(/links\.html$/.test(this.getWindow().location + '')).to.be(true);
+                    eventObserver.unsubscribeAll();
                     done();
                 });
         });
@@ -116,6 +117,7 @@ describe('Stimuli.mouse.Click', function() {
                 .click('#hashtag_link')
                 .then(function() {
                     expect(this.getWindow().location.hash + '').not.to.be('#hashtaglink');
+                    eventObserver.unsubscribeAll();
                     done();
                 });
         });
@@ -156,6 +158,7 @@ describe('Stimuli.mouse.Click', function() {
                 .click('#submit_button')
                 .then(function() {
                     expect(/form\.html$/.test(this.getWindow().location + '')).to.be(true);
+                    eventObserver.unsubscribeAll();
                     done();
                 });
         });

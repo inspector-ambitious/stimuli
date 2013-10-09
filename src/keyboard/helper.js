@@ -69,7 +69,7 @@
                     }
 
                 } catch(e) {}
-
+                input = null;
             });
 
             return editableInputs;
