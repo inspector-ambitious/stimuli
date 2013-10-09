@@ -107,11 +107,14 @@
         },
 
         fixTextualValue: function(target, key) {
+            var startPos;
             if (typeof target.selectionStart === 'number') {
-                var startPos = target.selectionStart,
-                endPos = target.selectionEnd,
-                value = target.value,
-                before = value.substr(0, startPos),
+                var endPos, value, before, after;
+
+                startPos = target.selectionStart;
+                endPos = target.selectionEnd;
+                value = target.value;
+                before = value.substr(0, startPos);
                 after = value.substr(endPos);
 
                 target.value = before + key + after;
@@ -119,7 +122,8 @@
                 target.selectionEnd = startPos + 1;
 
             } else {
-                var range = this.viewport.getDocument().selection.createRange(),
+                var range = this.viewport.getDocument().selection.createRange();
+
                 startPos = range.text.length;
 
                 if (range.parentElement() === target) {
