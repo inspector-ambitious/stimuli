@@ -20,8 +20,15 @@
         fixInputValue: function(target, key) {
             if (typeof target.selectionStart === 'number') {
                 var startPos = target.selectionStart,
-                endPos = target.selectionEnd;
-                target.value = target.value.substring(0, startPos) + key + target.value.substring(endPos, target.value.length);
+                endPos = target.selectionEnd,
+                value = target.value,
+                before = value.substr(0, startPos),
+                after = value.substr(endPos);
+
+                target.value = before + key + after;
+                target.selectionStart = startPos + 1;
+                target.selectionEnd = startPos + 1;
+
             } else {
                 var range = document.selection.createRange();
 
