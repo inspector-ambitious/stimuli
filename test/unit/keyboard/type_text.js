@@ -37,7 +37,7 @@ describe('Stimuli.keyboard.TypeText', function() {
 
                 })
                 .keyboard
-                .typeText('FOO')
+                .typeText('NIC')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
                         expect(events[0]).to.be('keydown');
@@ -94,7 +94,7 @@ describe('Stimuli.keyboard.TypeText', function() {
                     }
 
                     observer.unsubscribeAll();
-                    expect(textInput.value).to.be('FOO');
+                    expect(textInput.value).to.be('NIC');
                     done();
                 });
         });
