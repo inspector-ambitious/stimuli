@@ -35,7 +35,7 @@ describe('Stimuli.keyboard.Helper', function() {
             var test = function(elId, val) {
                 return function() {
                     expect(helper.isEditable(stimuli.$('#' + elId + 'input'))).to.be(val);
-                }
+                };
             };
 
 
