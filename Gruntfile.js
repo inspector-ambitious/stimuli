@@ -160,6 +160,24 @@ module.exports = function(grunt) {
         },done);
     });
 
+    grunt.registerTask('nginx_start', function(){
+      var done = this.async();
+      grunt.util.spawn({
+        cmd: 'nginx',
+        args: ['-c', '.nginx/nginx.conf', '-p', '.'],
+        opts: {stdio: 'inherit'}
+      },done);
+    });
+
+    grunt.registerTask('nginx_stop', function(){
+      var done = this.async();
+      grunt.util.spawn({
+        cmd: 'nginx',
+        args: ['-c', '.nginx/nginx.conf', '-p', '.', '-s', 'stop'],
+        opts: {stdio: 'inherit'}
+      },done);
+    });
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -169,4 +187,6 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
     grunt.registerTask('travis', ['jshint', 'build', 'karma_phantom', 'karma_browserstack']);
+
+    grunt.registerTask('travis_local', ['nginx_start', 'build', 'karma_browserstack', 'nginx_stop']);
 };
