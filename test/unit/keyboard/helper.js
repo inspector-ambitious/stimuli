@@ -27,7 +27,7 @@ describe('Stimuli.keyboard.Helper', function() {
         }
     });
 
-    describe.only('isEditable', function() {
+    describe('isEditable', function() {
 
         describe('inputs', function() {
             var stimuli;

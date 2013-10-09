@@ -41,13 +41,10 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
 
                 it('should be able to inject a keydown event', function() {
 
-                    var i = 0;
+                    var e;
 
-                    textInputObserver.subscribe('keydown', function(e) {
-                        i++;
-                        expect(e.keyCode).to.be(65);
-                        expect(e.charCode).to.be(0);
-                        expect(e.which).to.be(65);
+                    textInputObserver.subscribe('keydown', function(ev) {
+                        e = ev;
                     });
 
                     inject({
@@ -60,19 +57,18 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
                         target: textInput
                     });
 
-                    expect(i).to.be(1);
 
+                    expect(e.keyCode).to.be(65);
+                    expect(e.charCode).to.be(0);
+                    expect(e.which).to.be(65);
                 });
 
                 it('should be able to inject a keypress event', function() {
 
-                    var i = 0;
+                    var e;
 
-                    textInputObserver.subscribe('keypress', function(e) {
-                        i++;
-                        expect(e.keyCode).to.be(65);
-                        expect(e.charCode).to.be(65);
-                        expect(e.which).to.be(65);
+                    textInputObserver.subscribe('keypress', function(ev) {
+                        e = ev;
                     });
 
                     inject({
@@ -85,20 +81,19 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
                         target: textInput
                     });
 
-                    expect(i).to.be(1);
+                    expect(e.keyCode).to.be(65);
+                    expect(e.charCode).to.be(65);
+                    expect(e.which).to.be(65);
 
                 });
 
 
                 it('should be able to inject a keyup event', function() {
 
-                    var i = 0;
+                    var e;
 
-                    textInputObserver.subscribe('keyup', function(e) {
-                        i++;
-                        expect(e.keyCode).to.be(65);
-                        expect(e.charCode).to.be(0);
-                        expect(e.which).to.be(65);
+                    textInputObserver.subscribe('keyup', function(ev) {
+                        e = ev;
                     });
 
                     inject({
@@ -111,7 +106,9 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
                         target: textInput
                     });
 
-                    expect(i).to.be(1);
+                    expect(e.keyCode).to.be(65);
+                    expect(e.charCode).to.be(0);
+                    expect(e.which).to.be(65);
 
                 });
 
@@ -123,13 +120,10 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
 
                 it('should be able to inject a keydown event', function() {
 
-                    var i = 0;
+                    var e;
 
-                    textInputObserver.subscribe('keydown', function(e) {
-                        i++;
-                        expect(e.keyCode).to.be(65);
-                        expect(typeof e.charCode === 'undefined').to.be(true);
-                        expect(typeof e.which === 'undefined').to.be(true);
+                    textInputObserver.subscribe('keydown', function(ev) {
+                        e = ev;
                     });
 
                     inject({
@@ -142,19 +136,19 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
                         target: textInput
                     });
 
-                    expect(i).to.be(1);
+                    expect(e.keyCode).to.be(65);
+                    expect(typeof e.charCode === 'undefined').to.be(true);
+                    expect(typeof e.which === 'undefined').to.be(true);
 
                 });
 
                 it('should be able to inject a keypress event', function() {
 
-                    var i = 0;
+                    var e;
 
-                    textInputObserver.subscribe('keypress', function(e) {
-                        i++;
-                        expect(e.keyCode).to.be(65);
-                        expect(typeof e.charCode === 'undefined').to.be(true);
-                        expect(typeof e.which === 'undefined').to.be(true);
+                    textInputObserver.subscribe('keypress', function(ev) {
+                        e = ev;
+
                     });
 
                     inject({
@@ -167,20 +161,19 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
                         target: textInput
                     });
 
-                    expect(i).to.be(1);
+                    expect(e.keyCode).to.be(65);
+                    expect(typeof e.charCode === 'undefined').to.be(true);
+                    expect(typeof e.which === 'undefined').to.be(true);
 
                 });
 
 
                 it('should be able to inject a keyup event', function() {
 
-                    var i = 0;
+                    var e;
 
-                    textInputObserver.subscribe('keyup', function(e) {
-                        i++;
-                        expect(e.keyCode).to.be(65);
-                        expect(typeof e.charCode === 'undefined').to.be(true);
-                        expect(typeof e.which === 'undefined').to.be(true);
+                    textInputObserver.subscribe('keyup', function(ev) {
+                        e = ev;
                     });
 
                     inject({
@@ -193,7 +186,9 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
                         target: textInput
                     });
 
-                    expect(i).to.be(1);
+                    expect(e.keyCode).to.be(65);
+                    expect(typeof e.charCode === 'undefined').to.be(true);
+                    expect(typeof e.which === 'undefined').to.be(true);
 
                 });
 

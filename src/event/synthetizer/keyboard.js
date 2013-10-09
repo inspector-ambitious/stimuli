@@ -57,6 +57,25 @@
                         'en-US'
                     );
 
+
+
+                } else if (Stimuli.core.Support.isGecko) {
+
+                    event.initKeyEvent(
+                        eventConfig.type,
+                        eventConfig.bubbles,
+                        eventConfig.cancelable,
+                        eventConfig.view,
+                        control,
+                        alt,
+                        shift,
+                        meta,
+                        eventConfig.key.charCodeAt(0),
+                        eventConfig.key.charCodeAt(0)
+                    );
+                }
+
+                if (Stimuli.core.Support.isWebkit || Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
                     // Setting read-only properties for legacy (initKeyboardEvent doesn't update them)
                     Object.defineProperty(event, 'keyCode', {
                         get: function() {
@@ -78,23 +97,7 @@
                             return keyCode;
                         }
                     });
-
-                } else if (Stimuli.core.Support.isGecko) {
-
-                    event.initKeyEvent(
-                        eventConfig.type,
-                        eventConfig.bubbles,
-                        eventConfig.cancelable,
-                        eventConfig.view,
-                        control,
-                        alt,
-                        shift,
-                        meta,
-                        eventConfig.key.charCodeAt(0),
-                        eventConfig.key.charCodeAt(0)
-                    );
                 }
-
                 canceled = !eventConfig.target.dispatchEvent(event);
 
             } else {
