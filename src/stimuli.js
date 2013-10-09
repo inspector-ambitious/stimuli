@@ -18,6 +18,8 @@ var Stimuli = function() {
 
     self.mouse = new Stimuli.virtual.Mouse(self.viewport);
 
+    self.keyboard = new Stimuli.virtual.Keyboard(self.viewport);
+
     self.recorder = new Stimuli.shared.Recorder();
 
     self.synchronize(self.recorder);
@@ -26,13 +28,18 @@ var Stimuli = function() {
 
     self.synchronize(self.mouse);
 
+    self.synchronize(self.keyboard);
+
     function mix(obj) {
         obj.browser = self.browser;
         obj.mouse = self.mouse;
+        obj.keyboard = self.keyboard;
         obj.recorder = self.recorder;
     }
 
     mix(self.browser);
+
+    mix(self.keyboard);
 
     mix(self.mouse);
 

@@ -89,7 +89,7 @@ Stimuli.core.Support = {
      * @property {Boolean}
      * Is true if the browser rendering engine is Gecko
      */
-    isGecko: /Gecko/g.test(navigator.userAgent)
+    isGecko: /Gecko\//g.test(navigator.userAgent)
 };
 
 })();

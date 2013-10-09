@@ -22,8 +22,11 @@ var stimuliFiles = [
 
     'src/event/emitter.js',
     'src/event/observer.js',
+    'src/event/synthetizer/html.js',
     'src/event/synthetizer/mouse.js',
     'src/event/synthetizer/keyboard.js',
+    'src/event/synthetizer/text.js',
+    'src/event/synthetizer/input.js',
 
     'src/shared/recorder.js',
     'src/shared/viewport.js',
@@ -41,7 +44,12 @@ var stimuliFiles = [
     'src/mouse/context_menu.js',
     'src/mouse/dblclick.js',
     'src/mouse/up.js',
-    'src/mouse/down.js'
+    'src/mouse/down.js',
+
+
+    'src/virtual/keyboard.js',
+    'src/keyboard/helper.js',
+    'src/keyboard/type_text.js'
 
 ];
 
