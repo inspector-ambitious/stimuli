@@ -1,5 +1,5 @@
 'use strict';
-describe.only('Stimuli.keyboard.Helper', function() {
+describe('Stimuli.keyboard.Helper', function() {
 
     describe('isTypableCharacter', function() {
         var typables =  (
@@ -25,6 +25,58 @@ describe.only('Stimuli.keyboard.Helper', function() {
         for (var j = 0; j < nottypables.length; j++) {
             it('should return false for "' + nottypables[j] +'"', test(nottypables[j], false));
         }
+    });
+
+    describe.only('isEditable', function() {
+
+        describe('inputs', function() {
+            var stimuli;
+            var helper;
+            var test = function(elId, val) {
+                return function() {
+                    expect(helper.isEditable(stimuli.$('#' + elId + 'input'))).to.be(val);
+                }
+            };
+
+
+            before(function(done) {
+                stimuli = new Stimuli;
+                stimuli
+                    .browser
+                    .navigateTo('/base/test/fixtures/inputs.html')
+                    .then(function(){
+                        helper = Stimuli.core.Object.merge({
+                            viewport: stimuli.viewport
+                        }, Stimuli.keyboard.Helper);
+
+                        done();
+                    });
+            });
+
+            after(function() {
+                stimuli.destroy();
+            });
+
+
+            it('should return false with a checkbox input', test('checkbox', false));
+
+            it('should return true with a email input', test('email', true));
+
+            it('should return true with a number input', test('number', true));
+
+            it('should return true with a text input', test('text', true));
+
+            it('should return false with a file input', test('file', false));
+
+            it('should return false with a hidden input', test('hidden', false));
+
+            it('should return false with an image input', test('image', false));
+
+            it('should return true with a textarea input', test('textarea', true));
+
+            it('should return false with a select input', test('select', false));
+        });
+
     });
 
 });

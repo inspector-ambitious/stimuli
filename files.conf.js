@@ -14,6 +14,7 @@ var stimuliFiles = [
 
     'src/core/support.js',
     'src/core/object.js',
+    'src/core/array.js',
     'src/core/class.js',
     'src/core/observable.js',
     'src/core/scheduler.js',

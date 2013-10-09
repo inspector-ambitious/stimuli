@@ -16,11 +16,6 @@
 
         var self = this,
             Obj = Stimuli.core.Object,
-            keys = self.options.keys,
-            length = keys.length,
-            i = 0,
-            j = 0,
-            key,
             defaultConfig,
             target;
 
@@ -34,12 +29,10 @@
             };
         });
 
-        for (; i < length; i++) {
+        Stimuli.core.Array.forEach(self.options.keys.split(''), function(key, idx) {
 
-            /* jshint loopfunc: true */
             self.then(function() {
-                defaultConfig.key = keys[j];
-                j++;
+                defaultConfig.key = key;
             });
 
             self.inject(function() {
@@ -62,7 +55,7 @@
                      }, defaultConfig);
                 });
 
-            } else if (i === 0 &&
+            } else if (idx === 0 &&
                       (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10)) {
 
                 self.inject(function() {
@@ -76,7 +69,7 @@
             if (!Stimuli.core.Support.isWebkit) {
 
                 self.then(function() {
-                    self.fixInputValue(defaultConfig.target, defaultConfig.key);
+                    self.fixTextualValue(defaultConfig.target, defaultConfig.key);
                 });
 
             if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isWebkit) {
@@ -96,7 +89,8 @@
                     type: 'keyup'
                 }, defaultConfig);
             }, 25);
-        }
+
+        });
 
         self.then(function() {
             self.viewport.waitForReady(done);
