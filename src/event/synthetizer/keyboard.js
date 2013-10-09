@@ -14,6 +14,7 @@
          * @param {Object} eventConfig The keyboard event configuration
          */
 
+        // TODO: (yhwh) check location, key and keyIdentifier
         inject: function(eventConfig) {
             var event,
                 canceled,
@@ -26,25 +27,29 @@
                 keyCode = eventConfig.key.charCodeAt(0);
 
             if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
-                event = eventConfig.view.document.createEvent('KeyboardEvent');
 
                 if (Stimuli.core.Support.isWebkit) {
-                    event.initKeyboardEvent(
+                    // see https://bugs.webkit.org/show_bug.cgi?id=16735
+                    event = eventConfig.view.document.createEvent('Event');
+                    event.initEvent(
                         eventConfig.type,
                         eventConfig.bubbles,
                         eventConfig.cancelable,
-                        eventConfig.view,
-                        eventConfig.key,
-                        eventConfig.location,
-                        control,
-                        alt,
-                        shift,
-                        meta,
-                        altGraph
+                        eventConfig.view
                     );
+                    event.ctrlKey = control;
+                    event.altKey = alt;
+                    event.shiftKey = shift;
+                    event.metaKey = meta;
+                    event.keyCode = keyCode;
+                    event.charCode = eventConfig.type === 'keypress' ? keyCode : 0;
+                    event.location = 0;
+                    event.keyIdentifier = eventConfig.key;
+                    event.which = keyCode;
 
                 } else if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
 
+                    event = eventConfig.view.document.createEvent('KeyboardEvent');
                     event.initKeyboardEvent(
                         eventConfig.type,
                         eventConfig.bubbles,
@@ -57,10 +62,34 @@
                         'en-US'
                     );
 
+                    if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
 
+                        // Setting read-only properties for legacy (initKeyboardEvent doesn't update them)
+                        Object.defineProperty(event, 'keyCode', {
+                            get: function() {
+                                return keyCode;
+                            }
+                        });
+
+
+                        if (eventConfig.type === 'keypress') {
+                            Object.defineProperty(event, 'charCode', {
+                                get: function() {
+                                    return keyCode;
+                                }
+                            });
+                        }
+
+                        Object.defineProperty(event, 'which', {
+                            get: function() {
+                                return keyCode;
+                            }
+                        });
+
+                    }
 
                 } else if (Stimuli.core.Support.isGecko) {
-
+                    event = eventConfig.view.document.createEvent('KeyboardEvent');
                     event.initKeyEvent(
                         eventConfig.type,
                         eventConfig.bubbles,
@@ -75,29 +104,6 @@
                     );
                 }
 
-                if (Stimuli.core.Support.isWebkit || Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
-                    // Setting read-only properties for legacy (initKeyboardEvent doesn't update them)
-                    Object.defineProperty(event, 'keyCode', {
-                        get: function() {
-                            return keyCode;
-                        }
-                    });
-
-
-                    if (eventConfig.type === 'keypress') {
-                        Object.defineProperty(event, 'charCode', {
-                            get: function() {
-                                return keyCode;
-                            }
-                        });
-                    }
-
-                    Object.defineProperty(event, 'which', {
-                        get: function() {
-                            return keyCode;
-                        }
-                    });
-                }
                 canceled = !eventConfig.target.dispatchEvent(event);
 
             } else {

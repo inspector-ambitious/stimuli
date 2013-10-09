@@ -119,10 +119,14 @@
                 target.selectionEnd = startPos + 1;
 
             } else {
-                var range = document.selection.createRange();
+                var range = this.viewport.getDocument().selection.createRange(),
+                startPos = range.text.length;
 
-                if (key !== '' && range.parentElement() === target) {
+                if (range.parentElement() === target) {
                     range.text = key;
+                    range.collapse(true);
+                    range.move('character', startPos +1);
+                    range.select();
                 }
             }
         }
