@@ -47,7 +47,7 @@
                     event.keyIdentifier = eventConfig.key;
                     event.which = keyCode;
 
-                } else if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
+                } else if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11) {
 
                     event = eventConfig.view.document.createEvent('KeyboardEvent');
                     event.initKeyboardEvent(
@@ -62,31 +62,31 @@
                         'en-US'
                     );
 
-                    if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
-
-                        // Setting read-only properties for legacy (initKeyboardEvent doesn't update them)
-                        Object.defineProperty(event, 'keyCode', {
-                            get: function() {
-                                return keyCode;
-                            }
-                        });
 
 
-                        if (eventConfig.type === 'keypress') {
-                            Object.defineProperty(event, 'charCode', {
-                                get: function() {
-                                    return keyCode;
-                                }
-                            });
+                    // Setting read-only properties for legacy (initKeyboardEvent doesn't update them)
+                    Object.defineProperty(event, 'keyCode', {
+                        get: function() {
+                            return keyCode;
                         }
+                    });
 
-                        Object.defineProperty(event, 'which', {
+
+                    if (eventConfig.type === 'keypress') {
+                        Object.defineProperty(event, 'charCode', {
                             get: function() {
                                 return keyCode;
                             }
                         });
-
                     }
+
+                    Object.defineProperty(event, 'which', {
+                        get: function() {
+                            return keyCode;
+                        }
+                    });
+
+
 
                 } else if (Stimuli.core.Support.isGecko) {
                     event = eventConfig.view.document.createEvent('KeyboardEvent');

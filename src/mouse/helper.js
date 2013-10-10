@@ -72,10 +72,9 @@
             if (href || hash || form) {
                 // click doesn't fire on the window in ie8 but on the document.
                 var isIE8 = Stimuli.core.Support.isIE8,
-                    isIE9 = Stimuli.core.Support.isIE9,
-                    isIE10 = Stimuli.core.Support.isIE10,
+                    isIE11 = Stimuli.core.Support.isIE11,
                     isIOS = Stimuli.core.Support.isIOS,
-                    observer = new Stimuli.event.Observer(isIE8  ? win.document : win);
+                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
 
                 observer.once('click', function(e) {
                     observer = null;
@@ -94,9 +93,15 @@
                             if (match) {
                                 prefix = prefix.replace(match[0], '');
                             }
-
+                            // TODO: (yhwh) remove when sizzle is fixed (current 1.10.9)
+                            if (isIE11) {
+                                Sizzle('body', document);
+                            }
                             win.location.href = prefix + href;
                         } else if (form) {
+                            if (isIE11) {
+                                Sizzle('body', document);
+                            }
                             form.submit();
                         }
 

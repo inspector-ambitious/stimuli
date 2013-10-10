@@ -25,6 +25,7 @@
        isIE = true;
 
    }
+
 Stimuli.core.Support = {
 
     /**
@@ -71,6 +72,12 @@ Stimuli.core.Support = {
      * Is true if browser is ie10
      */
     isIE10: isIE && IEVersion === 10,
+
+    /**
+     * @property {Boolean}
+     * Is true if browser is ie11
+     */
+    isIE11: /Trident\/7\.0/.test(navigator.userAgent),
 
     /**
      * @property {Boolean}
