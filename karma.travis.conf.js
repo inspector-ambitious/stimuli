@@ -107,7 +107,7 @@ module.exports = function(config) {
         BS_ANDROID_4: {
             base: 'BrowserStack',
             os: 'android',
-            device: 'HTC One X',
+            device: 'Samsung Galaxy Nexus',
             browser: 'Android Browser',
             os_version: '4.0',
             browser_version: null
