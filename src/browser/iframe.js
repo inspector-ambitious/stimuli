@@ -50,6 +50,8 @@
         istyle.padding = 0;
         iframe.frameBorder = 0;
 
+        iframe.id = 'stimuliframe';
+
         // ie8 hack: iframe src must be set see http://aspnetresources.com/blog/always_set_iframe_source
         if (Stimuli.core.Support.isIE8) {
             iframe.src = 'about:blank';
@@ -90,6 +92,7 @@
                             var winObserver = new Stimuli.event.Observer(win);
                             self.context.loading = false;
                             winObserver.once('beforeunload', function() {
+                                winObserver = null;
                                 self.context.loading = true;
                             });
                         }
@@ -165,6 +168,7 @@
         return self.defer(function(done) {
             if (self.iframeObserver) {
                 self.iframeObserver.unsubscribeAll();
+                self.iframeObserver = null;
             }
 
             if (self.iframeEl) {
@@ -177,7 +181,7 @@
                 self.wrapEl = null;
             }
 
-            self.context.destroy();
+            self.context = null;
             done();
         }, callback);
     };

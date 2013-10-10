@@ -90,11 +90,4 @@
     };
 
 
-    /**
-     * Destroys the current context.
-     */
-    Context.prototype.destroy = function() {
-        this.win = null;
-    };
-
 })();

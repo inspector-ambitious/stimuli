@@ -40,7 +40,7 @@ describe('Stimuli.keyboard.Helper', function() {
 
 
             before(function(done) {
-                stimuli = new Stimuli;
+                stimuli = new Stimuli();
                 stimuli
                     .browser
                     .navigateTo('/base/test/fixtures/inputs.html')
@@ -54,6 +54,7 @@ describe('Stimuli.keyboard.Helper', function() {
             });
 
             after(function() {
+                test = null;
                 stimuli.destroy();
             });
 

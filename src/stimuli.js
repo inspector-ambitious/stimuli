@@ -73,7 +73,21 @@ Stimuli.keyboard = {};
  * @param {Object} options
  */
 Stimuli.prototype.destroy = function(callback) {
-    return this.browser.destroy(callback);
+    var self = this;
+
+    this.context = null;
+    this.viewport = null;
+    this.mouse = null;
+    this.keyboard = null;
+    this.recorder = null;
+    this.scheduler = null;
+    this.listeners = null;
+    this.browser.destroy();
+
+    this.browser = null;
+    if (callback) {
+        callback();
+    }
 };
 
 /**

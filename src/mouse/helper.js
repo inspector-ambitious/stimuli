@@ -77,8 +77,8 @@
                     isIOS = Stimuli.core.Support.isIOS,
                     observer = new Stimuli.event.Observer(isIE8  ? win.document : win);
 
-                observer.subscribe('click', function(e) {
-                    observer.unsubscribeAll();
+                observer.once('click', function(e) {
+                    observer = null;
                     var canceled = isIE8 ? e.returnValue === false : e.defaultPrevented;
 
                     if (!canceled) {

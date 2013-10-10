@@ -23,6 +23,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
 
     after(function() {
         stimuli.destroy();
+        body = null;
     });
 
     beforeEach(function() {
@@ -31,6 +32,7 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
 
     afterEach(function() {
         bodyObserver.unsubscribeAll();
+        bodyObserver = null;
     });
 
     describe('inject', function() {
@@ -84,6 +86,8 @@ describe('Stimuli.event.synthetizer.Mouse', function() {
 
         afterEach(function() {
             divObserver.unsubscribeAll();
+            divObserver = null;
+            div = null;
         });
 
         if (Stimuli.core.Support.documentCreateEvent) {

@@ -23,6 +23,7 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
 
     after(function() {
         stimuli.destroy();
+        textInput = null;
     });
 
     beforeEach(function() {
@@ -31,6 +32,7 @@ describe('Stimuli.event.synthetizer.keyboard', function() {
 
     afterEach(function() {
         textInputObserver.unsubscribeAll();
+        textInputObserver = null;
     });
 
     describe('inject', function() {

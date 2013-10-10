@@ -54,8 +54,8 @@ describe('Stimuli.browser.Iframe', function() {
             iframe
             .load('/base/test/fixtures/divinfront.html')
             .destroy(function() {
-                expect(context.getWindow()).to.be(null);
-                expect(document.getElementsByTagName('iframe').length).to.be(0);
+                expect(iframe.context).to.be(null);
+                expect(!!iframe.getRootDocument().getElementById('stimuliframe')).to.be(false);
                 done();
             });
         });
