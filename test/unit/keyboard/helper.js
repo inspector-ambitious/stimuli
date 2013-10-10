@@ -25,6 +25,12 @@ describe('Stimuli.keyboard.Helper', function() {
         for (var j = 0; j < nottypables.length; j++) {
             it('should return false for "' + nottypables[j] +'"', test(nottypables[j], false));
         }
+
+        after(function() {
+            typables = null;
+            nottypables = null;
+            test = null;
+        });
     });
 
     describe('isEditable', function() {
@@ -55,6 +61,7 @@ describe('Stimuli.keyboard.Helper', function() {
 
             after(function() {
                 test = null;
+                helper = null;
                 stimuli.destroy();
             });
 

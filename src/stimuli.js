@@ -83,7 +83,8 @@ Stimuli.prototype.destroy = function(callback) {
     this.scheduler = null;
     this.listeners = null;
     this.browser.destroy();
-
+    // force sizzle to release an eventual reference to the iframe document
+    Sizzle('body', document);
     this.browser = null;
     if (callback) {
         callback();
