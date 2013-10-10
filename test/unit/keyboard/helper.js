@@ -12,11 +12,12 @@ describe('Stimuli.keyboard.Helper', function() {
                 '©®™•§†‡¶½÷‰±°¢£€¥¤¡¿'
             ).split('');
 
-        function test(key, value) {
+        var test = function(key, value) {
             return function() {
                 expect(Stimuli.keyboard.Helper.isTypableCharacter(key)).to.be(value);
             };
-        }
+        };
+
         for (var i = 0; i < typables.length; i++) {
             it('should return true for ' + typables[i], test(typables[i], true));
         }
