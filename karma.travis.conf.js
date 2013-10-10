@@ -17,7 +17,7 @@ module.exports = function(config) {
         startTunnel: true,
         retryLimit: 10
     };
-    conf.captureTimeout = 120000; // 2 mins
+    conf.captureTimeout = 90000; // 1 min 30
     conf.logLevel = config.LOG_INFO;
     conf.reportSlowerThan = 30000;
     conf.disconnectTolerance = 5;
@@ -107,7 +107,7 @@ module.exports = function(config) {
         BS_ANDROID_4: {
             base: 'BrowserStack',
             os: 'android',
-            device: 'Samsung Galaxy Tab 2 10.1',
+            device: 'HTC One X',
             browser: 'Android Browser',
             os_version: '4.0',
             browser_version: null
