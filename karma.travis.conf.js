@@ -76,7 +76,7 @@ module.exports = function(config) {
             browser: 'ie',
             browser_version: '11.0',
             os: 'Windows',
-            os_version: '8'
+            os_version: '7'
         },
 
         BS_SAFARI51: {
@@ -97,9 +97,9 @@ module.exports = function(config) {
 
         BS_OPERA16: {
             base: 'BrowserStack',
-            os: 'Windows',
+            os: 'OS X',
             browser: 'opera',
-            os_version: 'XP',
+            os_version: 'Mountain Lion',
             browser_version: '16.0'
         },
 
