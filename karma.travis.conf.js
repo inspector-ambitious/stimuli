@@ -117,7 +117,7 @@ module.exports = function(config) {
         BS_ANDROID_41: {
             base: 'BrowserStack',
             os: 'android',
-            device: 'Motorola Razr Maxx HD',
+            device: 'Samsung Galaxy Note II',
             browser: 'Android Browser',
             os_version: '4.1',
             browser_version: null
