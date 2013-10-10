@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+
+    <script>
+        // IE 11 doesn't fire load when designMode is set to on right away ^^
+        window.onload = function() {
+            setTimeout(function() {
+                document.designMode = 'on';
+            }, 1);
+        };
+    </script>
+</head>
+<body></body>
+</html>

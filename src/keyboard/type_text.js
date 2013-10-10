@@ -17,10 +17,10 @@
         var self = this,
             Obj = Stimuli.core.Object,
             defaultConfig,
-            target;
+            target = self.getTarget();
 
         self.configure(function() {
-            target = self.getTarget();
+
             defaultConfig = {
                 bubbles: true,
                 cancelable: true,
@@ -41,47 +41,56 @@
                 }, defaultConfig);
             });
 
-            self.inject(function() {
-                return Obj.merge({
-                    type: 'keypress'
-                }, defaultConfig);
-            });
-
-            if (Stimuli.core.Support.isWebkit) {
-
-                 self.inject(function() {
-                   return Obj.merge({
-                         type: 'textInput'
-                     }, defaultConfig);
-                });
-
-            } else if (idx === 0 &&
-                      (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10)) {
+            if (self.isEditable(target)) {
 
                 self.inject(function() {
                     return Obj.merge({
-                        type: 'textinput'
+                        type: 'keypress'
                     }, defaultConfig);
                 });
 
-            }
+                if (Stimuli.core.Support.isWebkit) {
 
-            if (!Stimuli.core.Support.isWebkit) {
+                     self.inject(function() {
+                       return Obj.merge({
+                             type: 'textInput'
+                         }, defaultConfig);
+                    });
 
-                self.then(function() {
-                    self.fixTextualValue(defaultConfig.target, defaultConfig.key);
-                });
+                }
 
-            if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isWebkit) {
-                self.inject(function() {
-                    return {
-                        type: 'input',
-                        bubbles: true,
-                        cancelable: false,
-                        target: target
-                    };
-                });
-            }
+                if (idx === 0 && self.isEditableInput(target) && (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10)) {
+
+                    self.inject(function() {
+                        return Obj.merge({
+                            type: 'textinput'
+                        }, defaultConfig);
+                    });
+
+                }
+
+                if (!Stimuli.core.Support.isWebkit) {
+
+                    self.then(function() {
+                        if (self.isEditableInput(target) || self.isTextArea(target)) {
+                            self.updateEditableValue(target, defaultConfig.key);
+                        } else {
+                            self.updateEditableHtml(target, defaultConfig.key);
+                        }
+                    });
+
+                    if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isWebkit &&
+                        (self.isEditableInput(target) || self.isTextArea(target))) {
+                        self.inject(function() {
+                            return {
+                                type: 'input',
+                                bubbles: true,
+                                cancelable: false,
+                                target: target
+                            };
+                        });
+                    }
+                }
             }
 
             self.inject(function() {

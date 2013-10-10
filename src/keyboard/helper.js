@@ -76,37 +76,66 @@
 
         }()),
 
-        isEditable: function(target) {
-            var self = this,
-                tagName = target.tagName.toLowerCase(),
+        isDesignMode: function(target) {
+            return target.ownerDocument.designMode.toLowerCase() === 'on';
+        },
+
+        isEditableInput: function(target) {
+            var tagName = target.tagName.toLowerCase(),
                 type = target.getAttribute('type');
 
-            // editable input
-            if (tagName === 'input' &&
-                Stimuli.core.Array.contains(self.editableInputs, type)) {
-                return true;
-            } else if (tagName === 'textarea') {
-                return true;
-            } else if (self.viewport.getDocument().designMode === 'on') {   // design mode
-                return true;
-            } else {    // contentEditable
-                var parentNode = target;
-                while(parentNode) {
-                    if (parentNode.contentEditable === 'true') {
-                        return true;
-                    }
-                    parentNode = parentNode.parentNode;
-                }
+            if (tagName === 'input') {
+                return Stimuli.core.Array.contains(this.editableInputs, type);
             }
 
             return false;
         },
 
-        hasValue: function(target) {
-            return typeof target.value !== 'undefined';
+        isTextArea: function(target) {
+            return target.tagName.toLowerCase() === 'textarea';
         },
 
-        fixTextualValue: function(target, key) {
+        isContentEditable: function(target) {
+            var parentNode = target;
+            while(parentNode) {
+                if (parentNode.contentEditable === 'true') {
+                    return true;
+                }
+                parentNode = parentNode.parentNode;
+            }
+            return false;
+        },
+
+        isEditable: function(target) {
+            var self = this;
+            return self.isEditableInput(target) || self.isTextArea(target) ||
+                self.isDesignMode(target) || self.isContentEditable(target);
+        },
+
+        updateEditableHtml: function(target, key) {
+            var doc = target.ownerDocument,
+                range;
+            if (typeof doc.createRange === 'function') {
+                var div, frag;
+                range = doc.createRange();
+                range.selectNodeContents(target);
+                range.collapse(false);
+                div = doc.createElement("div");
+                div.innerHTML = key;
+                frag = doc.createDocumentFragment();
+                frag.appendChild(div.firstChild);
+                range.insertNode(frag);
+                div = null;
+                frag = null;
+            } else if (doc.selection && doc.selection.createRange) {
+                range = doc.selection.createRange();
+                range.collapse(true);
+                range.pasteHTML(key);
+                range.collapse(false);
+            }
+        },
+
+        updateEditableValue: function(target, key) {
             var startPos;
             if (typeof target.selectionStart === 'number') {
                 var endPos, value, before, after;
@@ -122,15 +151,14 @@
                 target.selectionEnd = startPos + 1;
 
             } else {
-                var range = this.viewport.getDocument().selection.createRange();
+                var range = target.ownerDocument.selection.createRange();
 
                 startPos = range.text.length;
 
                 if (range.parentElement() === target) {
                     range.text = key;
-                    range.collapse(true);
+                    range.collapse(false);
                     range.move('character', startPos +1);
-                    range.select();
                 }
             }
         }
