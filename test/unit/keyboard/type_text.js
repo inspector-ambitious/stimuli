@@ -1,20 +1,90 @@
 'use strict';
 
 describe('Stimuli.keyboard.TypeText', function() {
-    var stimuli;
+    var stimuli,
+        observe,
+        events,
+        spyFn,
+        forceFocus,
+        obs;
 
     beforeEach(function() {
         stimuli = new Stimuli();
+        events = [];
+        spyFn = function(e) {
+            events.push(e.type);
+        };
+        forceFocus = function(el) {  // ie8 may have some difficulties to focus an element
+            el.focus();
+            if (el !== el.ownerDocument.activeElement) {
+                el.focus();
+            }
+        };
+        observe = function(el) {
+            obs =  new Stimuli.event.Observer(el);
+            obs.subscribe('keydown', spyFn);
+            obs.subscribe('keypress', spyFn);
+            obs.subscribe('textInput', spyFn);
+            obs.subscribe('textinput', spyFn);
+            obs.subscribe('input', spyFn);
+            obs.subscribe('keyup', spyFn);
+            return obs;
+        };
     });
 
     afterEach(function() {
+        events = null;
+        forceFocus = null;
+        spyFn = null;
+        if (obs) {
+            obs.unsubscribeAll();
+            obs = null;
+        }
+        observe = null;
         stimuli.destroy();
     });
+
+    describe('a simple div', function() {
+
+        it('should fire keydown and keyup events only', function(done) {
+            var body;
+            var observer;
+            var html;
+            stimuli
+                .browser
+                .navigateTo('/base/test/fixtures/simplediv.html')
+                .then(function() {
+                    body = this.$('body');
+                    html = body.innerHTML;
+                    forceFocus(body);
+                    observer = observe(body);
+                })
+                .keyboard
+                .typeText('Ni1')
+                .then(function() {
+                    expect(events[0]).to.be('keydown'); // shift pressed
+                    expect(events[1]).to.be('keydown'); //N
+                    expect(events[2]).to.be('keypress');
+                    expect(events[3]).to.be('keyup');
+                    expect(events[4]).to.be('keyup'); // shift released
+                    expect(events[5]).to.be('keydown');//i
+                    expect(events[6]).to.be('keypress');
+                    expect(events[7]).to.be('keyup');
+                    expect(events[8]).to.be('keydown');//1
+                    expect(events[9]).to.be('keypress');
+                    expect(events[10]).to.be('keyup');
+                    expect(events.length).to.be(11);
+                    expect(html).to.be(body.innerHTML);  // should not edit the body html
+                    done();
+                });
+        });
+
+    });
+
 
     describe('input[type="text"]', function() {
 
         it('should fire keydown, keypress and keyup events', function(done) {
-            var events = [];
             var textInput;
             var observer;
             stimuli
@@ -22,92 +92,87 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .navigateTo('/base/test/fixtures/form.html')
                 .then(function() {
                     textInput = this.$('#text_input');
-                    textInput.focus();
-
-                    observer = new Stimuli.event.Observer(textInput);
-                    var spyFn = function(e) {
-                        events.push(e.type);
-                    };
-                    observer.subscribe('keydown', spyFn);
-                    observer.subscribe('keypress', spyFn);
-                    observer.subscribe('textInput', spyFn);
-                    observer.subscribe('textinput', spyFn);
-                    observer.subscribe('input', spyFn);
-                    observer.subscribe('keyup', spyFn);
-
+                    forceFocus(textInput);
+                    observer = observe(textInput);
                 })
                 .keyboard
-                .typeText('NIC')
+                .typeText('Ni1')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('textInput');
-                        expect(events[3]).to.be('input');
-                        expect(events[4]).to.be('keyup');
-                        expect(events[5]).to.be('keydown');
-                        expect(events[6]).to.be('keypress');
-                        expect(events[7]).to.be('textInput');
-                        expect(events[8]).to.be('input');
-                        expect(events[9]).to.be('keyup');
-                        expect(events[10]).to.be('keydown');
-                        expect(events[11]).to.be('keypress');
-                        expect(events[12]).to.be('textInput');
-                        expect(events[13]).to.be('input');
-                        expect(events[14]).to.be('keyup');
-                        expect(events.length).to.be(15);
+                        expect(events[0]).to.be('keydown'); // shift pressed
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('textInput');
+                        expect(events[4]).to.be('input');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keyup'); // shift released
+                        expect(events[7]).to.be('keydown');
+                        expect(events[8]).to.be('keypress');
+                        expect(events[9]).to.be('textInput');
+                        expect(events[10]).to.be('input');
+                        expect(events[11]).to.be('keyup');
+                        expect(events[12]).to.be('keydown');
+                        expect(events[13]).to.be('keypress');
+                        expect(events[14]).to.be('textInput');
+                        expect(events[15]).to.be('input');
+                        expect(events[16]).to.be('keyup');
+                        expect(events.length).to.be(17);
                     }
 
                     if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11) {
                         expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('textinput');
-                        expect(events[3]).to.be('input');
-                        expect(events[4]).to.be('keyup');
-                        expect(events[5]).to.be('keydown');
-                        expect(events[6]).to.be('keypress');
-                        expect(events[7]).to.be('textinput');
-                        expect(events[8]).to.be('input');
-                        expect(events[9]).to.be('keyup');
-                        expect(events[10]).to.be('keydown');
-                        expect(events[11]).to.be('keypress');
-                        expect(events[12]).to.be('textinput');
-                        expect(events[13]).to.be('input');
-                        expect(events[14]).to.be('keyup');
-                        expect(events.length).to.be(15);
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('textinput');
+                        expect(events[4]).to.be('input');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keyup');
+                        expect(events[7]).to.be('keydown');
+                        expect(events[8]).to.be('keypress');
+                        expect(events[9]).to.be('textinput');
+                        expect(events[10]).to.be('input');
+                        expect(events[11]).to.be('keyup');
+                        expect(events[12]).to.be('keydown');
+                        expect(events[13]).to.be('keypress');
+                        expect(events[14]).to.be('textinput');
+                        expect(events[15]).to.be('input');
+                        expect(events[16]).to.be('keyup');
+                        expect(events.length).to.be(17);
                     }
 
                     if (Stimuli.core.Support.isGecko) {
                         expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('input');
-                        expect(events[3]).to.be('keyup');
-                        expect(events[4]).to.be('keydown');
-                        expect(events[5]).to.be('keypress');
-                        expect(events[6]).to.be('input');
-                        expect(events[7]).to.be('keyup');
-                        expect(events[8]).to.be('keydown');
-                        expect(events[9]).to.be('keypress');
-                        expect(events[10]).to.be('input');
-                        expect(events[11]).to.be('keyup');
-                        expect(events.length).to.be(12);
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('input');
+                        expect(events[4]).to.be('keyup');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keydown');
+                        expect(events[7]).to.be('keypress');
+                        expect(events[8]).to.be('input');
+                        expect(events[9]).to.be('keyup');
+                        expect(events[10]).to.be('keydown');
+                        expect(events[11]).to.be('keypress');
+                        expect(events[12]).to.be('input');
+                        expect(events[13]).to.be('keyup');
+                        expect(events.length).to.be(14);
                     }
 
                     if (Stimuli.core.Support.isIE8) {
                         expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('keyup');
-                        expect(events[3]).to.be('keydown');
-                        expect(events[4]).to.be('keypress');
-                        expect(events[5]).to.be('keyup');
-                        expect(events[6]).to.be('keydown');
-                        expect(events[7]).to.be('keypress');
-                        expect(events[8]).to.be('keyup');
-                        expect(events.length).to.be(9);
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('keyup');
+                        expect(events[4]).to.be('keyup');
+                        expect(events[5]).to.be('keydown');
+                        expect(events[6]).to.be('keypress');
+                        expect(events[7]).to.be('keyup');
+                        expect(events[8]).to.be('keydown');
+                        expect(events[9]).to.be('keypress');
+                        expect(events[10]).to.be('keyup');
+                        expect(events.length).to.be(11);
                     }
-
-                    observer.unsubscribeAll();
-                    expect(textInput.value).to.be('NIC');
+                    expect(textInput.value).to.be('Ni1');
                     done();
                 });
         });
@@ -119,7 +184,7 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .navigateTo('/base/test/fixtures/form.html')
                 .then(function() {
                     textinput = this.$('#text_input');
-                    textinput.focus();
+                    forceFocus(textinput);
                 })
                 .keyboard
                 .typeText('ABC')
@@ -135,7 +200,6 @@ describe('Stimuli.keyboard.TypeText', function() {
     describe('textarea', function() {
 
         it('should fire keydown, keypress and keyup events', function(done) {
-            var events = [];
             var textarea;
             var observer;
             stimuli
@@ -143,92 +207,87 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .navigateTo('/base/test/fixtures/textarea.html')
                 .then(function() {
                     textarea = this.$('#textarea');
-                    textarea.focus();
-
-                    observer = new Stimuli.event.Observer(textarea);
-                    var spyFn = function(e) {
-                        events.push(e.type);
-                    };
-                    observer.subscribe('keydown', spyFn);
-                    observer.subscribe('keypress', spyFn);
-                    observer.subscribe('textInput', spyFn);
-                    observer.subscribe('textinput', spyFn);
-                    observer.subscribe('input', spyFn);
-                    observer.subscribe('keyup', spyFn);
-
+                    forceFocus(textarea);
+                    observer = observe(textarea);
                 })
                 .keyboard
-                .typeText('NIC')
+                .typeText('Ni1')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('textInput');
-                        expect(events[3]).to.be('input');
-                        expect(events[4]).to.be('keyup');
-                        expect(events[5]).to.be('keydown');
-                        expect(events[6]).to.be('keypress');
-                        expect(events[7]).to.be('textInput');
-                        expect(events[8]).to.be('input');
-                        expect(events[9]).to.be('keyup');
-                        expect(events[10]).to.be('keydown');
-                        expect(events[11]).to.be('keypress');
-                        expect(events[12]).to.be('textInput');
-                        expect(events[13]).to.be('input');
-                        expect(events[14]).to.be('keyup');
-                        expect(events.length).to.be(15);
+                        expect(events[0]).to.be('keydown'); // shift pressed
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('textInput');
+                        expect(events[4]).to.be('input');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keyup'); // shift released
+                        expect(events[7]).to.be('keydown');
+                        expect(events[8]).to.be('keypress');
+                        expect(events[9]).to.be('textInput');
+                        expect(events[10]).to.be('input');
+                        expect(events[11]).to.be('keyup');
+                        expect(events[12]).to.be('keydown');
+                        expect(events[13]).to.be('keypress');
+                        expect(events[14]).to.be('textInput');
+                        expect(events[15]).to.be('input');
+                        expect(events[16]).to.be('keyup');
+                        expect(events.length).to.be(17);
                     }
 
                     if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11) {
                         expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('textinput');
-                        expect(events[3]).to.be('input');
-                        expect(events[4]).to.be('keyup');
-                        expect(events[5]).to.be('keydown');
-                        expect(events[6]).to.be('keypress');
-                        expect(events[7]).to.be('textinput');
-                        expect(events[8]).to.be('input');
-                        expect(events[9]).to.be('keyup');
-                        expect(events[10]).to.be('keydown');
-                        expect(events[11]).to.be('keypress');
-                        expect(events[12]).to.be('textinput');
-                        expect(events[13]).to.be('input');
-                        expect(events[14]).to.be('keyup');
-                        expect(events.length).to.be(15);
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('textinput');
+                        expect(events[4]).to.be('input');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keyup');
+                        expect(events[7]).to.be('keydown');
+                        expect(events[8]).to.be('keypress');
+                        expect(events[9]).to.be('textinput');
+                        expect(events[10]).to.be('input');
+                        expect(events[11]).to.be('keyup');
+                        expect(events[12]).to.be('keydown');
+                        expect(events[13]).to.be('keypress');
+                        expect(events[14]).to.be('textinput');
+                        expect(events[15]).to.be('input');
+                        expect(events[16]).to.be('keyup');
+                        expect(events.length).to.be(17);
                     }
 
                     if (Stimuli.core.Support.isGecko) {
                         expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('input');
-                        expect(events[3]).to.be('keyup');
-                        expect(events[4]).to.be('keydown');
-                        expect(events[5]).to.be('keypress');
-                        expect(events[6]).to.be('input');
-                        expect(events[7]).to.be('keyup');
-                        expect(events[8]).to.be('keydown');
-                        expect(events[9]).to.be('keypress');
-                        expect(events[10]).to.be('input');
-                        expect(events[11]).to.be('keyup');
-                        expect(events.length).to.be(12);
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('input');
+                        expect(events[4]).to.be('keyup');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keydown');
+                        expect(events[7]).to.be('keypress');
+                        expect(events[8]).to.be('input');
+                        expect(events[9]).to.be('keyup');
+                        expect(events[10]).to.be('keydown');
+                        expect(events[11]).to.be('keypress');
+                        expect(events[12]).to.be('input');
+                        expect(events[13]).to.be('keyup');
+                        expect(events.length).to.be(14);
                     }
 
                     if (Stimuli.core.Support.isIE8) {
                         expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('keyup');
-                        expect(events[3]).to.be('keydown');
-                        expect(events[4]).to.be('keypress');
-                        expect(events[5]).to.be('keyup');
-                        expect(events[6]).to.be('keydown');
-                        expect(events[7]).to.be('keypress');
-                        expect(events[8]).to.be('keyup');
-                        expect(events.length).to.be(9);
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('keyup');
+                        expect(events[4]).to.be('keyup');
+                        expect(events[5]).to.be('keydown');
+                        expect(events[6]).to.be('keypress');
+                        expect(events[7]).to.be('keyup');
+                        expect(events[8]).to.be('keydown');
+                        expect(events[9]).to.be('keypress');
+                        expect(events[10]).to.be('keyup');
+                        expect(events.length).to.be(11);
                     }
-
-                    observer.unsubscribeAll();
-                    expect(textarea.value).to.be('NIC');
+                    expect(textarea.value).to.be('Ni1');
                     done();
                 });
         });
@@ -240,7 +299,7 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .navigateTo('/base/test/fixtures/textarea.html')
                 .then(function() {
                     textarea = this.$('#textarea');
-                    textarea.focus();
+                    forceFocus(textarea);
                 })
                 .keyboard
                 .typeText('ABC')
@@ -256,7 +315,6 @@ describe('Stimuli.keyboard.TypeText', function() {
     describe('div.contentEditable=true', function() {
 
         it('should fire keydown, keypress and keyup events', function(done) {
-            var events = [];
             var div;
             var observer;
             stimuli
@@ -264,58 +322,50 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .navigateTo('/base/test/fixtures/content_editable.html')
                 .then(function() {
                     div = this.$('#content_editable');
-                    div.focus();
-                    observer = new Stimuli.event.Observer(div);
-                    var spyFn = function(e) {
-                        events.push(e.type);
-                    };
-                    observer.subscribe('keydown', spyFn);
-                    observer.subscribe('keypress', spyFn);
-                    observer.subscribe('textInput', spyFn);
-                    observer.subscribe('textinput', spyFn);
-                    observer.subscribe('input', spyFn);
-                    observer.subscribe('keyup', spyFn);
-
+                    forceFocus(div);
+                    observer = observe(div);
                 })
                 .keyboard
-                .typeText('NIC')
+                .typeText('Ni1')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('textInput');
-                        expect(events[3]).to.be('input');
-                        expect(events[4]).to.be('keyup');
-                        expect(events[5]).to.be('keydown');
-                        expect(events[6]).to.be('keypress');
-                        expect(events[7]).to.be('textInput');
-                        expect(events[8]).to.be('input');
-                        expect(events[9]).to.be('keyup');
-                        expect(events[10]).to.be('keydown');
-                        expect(events[11]).to.be('keypress');
-                        expect(events[12]).to.be('textInput');
-                        expect(events[13]).to.be('input');
-                        expect(events[14]).to.be('keyup');
-                        expect(events.length).to.be(15);
+                        expect(events[0]).to.be('keydown'); // shift pressed
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('textInput');
+                        expect(events[4]).to.be('input');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keyup'); // shift released
+                        expect(events[7]).to.be('keydown');
+                        expect(events[8]).to.be('keypress');
+                        expect(events[9]).to.be('textInput');
+                        expect(events[10]).to.be('input');
+                        expect(events[11]).to.be('keyup');
+                        expect(events[12]).to.be('keydown');
+                        expect(events[13]).to.be('keypress');
+                        expect(events[14]).to.be('textInput');
+                        expect(events[15]).to.be('input');
+                        expect(events[16]).to.be('keyup');
+                        expect(events.length).to.be(17);
                     }
 
                     if (Stimuli.core.Support.isIE8 || Stimuli.core.Support.isIE9 ||
                         Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11 ||
                         Stimuli.core.Support.isGecko) {
                         expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('keyup');
-                        expect(events[3]).to.be('keydown');
-                        expect(events[4]).to.be('keypress');
-                        expect(events[5]).to.be('keyup');
-                        expect(events[6]).to.be('keydown');
-                        expect(events[7]).to.be('keypress');
-                        expect(events[8]).to.be('keyup');
-                        expect(events.length).to.be(9);
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('keyup');
+                        expect(events[4]).to.be('keyup');
+                        expect(events[5]).to.be('keydown');
+                        expect(events[6]).to.be('keypress');
+                        expect(events[7]).to.be('keyup');
+                        expect(events[8]).to.be('keydown');
+                        expect(events[9]).to.be('keypress');
+                        expect(events[10]).to.be('keyup');
+                        expect(events.length).to.be(11);
                     }
-
-                    observer.unsubscribeAll();
-                    expect(div.innerHTML).to.be('NIC');
+                    expect(div.innerHTML).to.be('Ni1');
                     done();
                 });
         });
@@ -327,7 +377,7 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .navigateTo('/base/test/fixtures/content_editable.html')
                 .then(function() {
                     div = this.$('#content_editable');
-                    div.focus();
+                    forceFocus(div);
                 })
                 .keyboard
                 .typeText('ABC')
@@ -344,7 +394,6 @@ describe('Stimuli.keyboard.TypeText', function() {
         describe('document.designMode="on"', function() {
 
         it('should fire keydown, keypress and keyup events', function(done) {
-            var events = [];
             var body;
             var observer;
             stimuli
@@ -352,61 +401,53 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .navigateTo('/base/test/fixtures/design_mode.html')
                 .then(function() {
                     body = this.$('body');
-                    body.focus();
-                    observer = new Stimuli.event.Observer(body);
-                    var spyFn = function(e) {
-                        events.push(e.type);
-                    };
-                    observer.subscribe('keydown', spyFn);
-                    observer.subscribe('keypress', spyFn);
-                    observer.subscribe('textInput', spyFn);
-                    observer.subscribe('textinput', spyFn);
-                    observer.subscribe('input', spyFn);
-                    observer.subscribe('keyup', spyFn);
-
+                    forceFocus(body);
+                    observer = observe(body);
                 })
                 .keyboard
-                .typeText('NIC')
+                .typeText('Ni1')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('textInput');
-                        expect(events[3]).to.be('input');
-                        expect(events[4]).to.be('keyup');
-                        expect(events[5]).to.be('keydown');
-                        expect(events[6]).to.be('keypress');
-                        expect(events[7]).to.be('textInput');
-                        expect(events[8]).to.be('input');
-                        expect(events[9]).to.be('keyup');
-                        expect(events[10]).to.be('keydown');
-                        expect(events[11]).to.be('keypress');
-                        expect(events[12]).to.be('textInput');
-                        expect(events[13]).to.be('input');
-                        expect(events[14]).to.be('keyup');
-                        expect(events.length).to.be(15);
+                        expect(events[0]).to.be('keydown'); // shift pressed
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('textInput');
+                        expect(events[4]).to.be('input');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keyup'); // shift released
+                        expect(events[7]).to.be('keydown');
+                        expect(events[8]).to.be('keypress');
+                        expect(events[9]).to.be('textInput');
+                        expect(events[10]).to.be('input');
+                        expect(events[11]).to.be('keyup');
+                        expect(events[12]).to.be('keydown');
+                        expect(events[13]).to.be('keypress');
+                        expect(events[14]).to.be('textInput');
+                        expect(events[15]).to.be('input');
+                        expect(events[16]).to.be('keyup');
+                        expect(events.length).to.be(17);
                     }
 
                     if (Stimuli.core.Support.isIE8 || Stimuli.core.Support.isIE9 ||
                         Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11 ||
                         Stimuli.core.Support.isGecko) {
                         expect(events[0]).to.be('keydown');
-                        expect(events[1]).to.be('keypress');
-                        expect(events[2]).to.be('keyup');
-                        expect(events[3]).to.be('keydown');
-                        expect(events[4]).to.be('keypress');
-                        expect(events[5]).to.be('keyup');
-                        expect(events[6]).to.be('keydown');
-                        expect(events[7]).to.be('keypress');
-                        expect(events[8]).to.be('keyup');
-                        expect(events.length).to.be(9);
+                        expect(events[1]).to.be('keydown');
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('keyup');
+                        expect(events[4]).to.be('keyup');
+                        expect(events[5]).to.be('keydown');
+                        expect(events[6]).to.be('keypress');
+                        expect(events[7]).to.be('keyup');
+                        expect(events[8]).to.be('keydown');
+                        expect(events[9]).to.be('keypress');
+                        expect(events[10]).to.be('keyup');
+                        expect(events.length).to.be(11);
                     }
-
-                    observer.unsubscribeAll();
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(body.innerHTML).to.be('NIC');
+                        expect(body.innerHTML).to.be('Ni1');
                     } else {
-                        expect(body.innerHTML).to.be('\nNIC');
+                        expect(body.innerHTML).to.be('\nNi1');
                     }
                     done();
                 });
@@ -419,7 +460,7 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .navigateTo('/base/test/fixtures/design_mode.html')
                 .then(function() {
                     body = this.$('body');
-                    body.focus();
+                    forceFocus(body);
                 })
                 .keyboard
                 .typeText('ABC')

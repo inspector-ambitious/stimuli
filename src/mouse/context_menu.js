@@ -4,7 +4,7 @@
 
     Stimuli.mouse.ContextMenu = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var ContextMenu = Stimuli.mouse.ContextMenu;

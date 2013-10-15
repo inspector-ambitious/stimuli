@@ -27,7 +27,6 @@ var stimuliFiles = [
     'src/event/synthetizer/mouse.js',
     'src/event/synthetizer/keyboard.js',
     'src/event/synthetizer/text.js',
-    'src/event/synthetizer/input.js',
 
     'src/shared/recorder.js',
     'src/shared/viewport.js',
@@ -49,6 +48,8 @@ var stimuliFiles = [
 
 
     'src/virtual/keyboard.js',
+    'src/keyboard/layout/generic.js',
+    'src/keyboard/layout/macosx/us.js',
     'src/keyboard/helper.js',
     'src/keyboard/type_text.js'
 
@@ -77,17 +78,11 @@ var sharedTestFiles = [
 ];
 
 // Files loaded by karma test runner for development
-var testFilesDev = [{
-    pattern: 'src/blank.html',
-    included: false
-}];
+var testFilesDev = [];
 
 // Files loaded by karma test runner for continuous integration (build)
 var testFilesBuild = [{
     pattern: distFolder + pkg.name + '.js'
-},{
-    pattern: distFolder + 'blank.html',
-    included: false
 }];
 
 // Add all stimulis sources for development

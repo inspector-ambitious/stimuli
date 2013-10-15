@@ -6,25 +6,16 @@
  * Abstraction layer for cross-browsers synthetic keyboard events injection.
  */
 (function() {
-
+    var isGecko = Stimuli.core.Support.isGecko;
     Stimuli.event.synthetizer.Keyboard = {
 
         /**
          * Injects an a synthetic keyboard event into the dom.
          * @param {Object} eventConfig The keyboard event configuration
          */
-
-        // TODO: (yhwh) check location, key and keyIdentifier
         inject: function(eventConfig) {
             var event,
-                canceled,
-                modifiers = eventConfig.modifiers,
-                alt = /Alt/.test(modifiers),
-                shift = /Shift/.test(modifiers),
-                control =/Control/.test(modifiers),
-                meta = /Meta/.test(modifiers),
-                altGraph = /AltGraph/.test(modifiers),
-                keyCode = eventConfig.key.charCodeAt(0);
+                canceled;
 
             if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
 
@@ -37,17 +28,38 @@
                         eventConfig.cancelable,
                         eventConfig.view
                     );
-                    event.ctrlKey = control;
-                    event.altKey = alt;
-                    event.shiftKey = shift;
-                    event.metaKey = meta;
-                    event.keyCode = keyCode;
-                    event.charCode = eventConfig.type === 'keypress' ? keyCode : 0;
-                    event.location = 0;
-                    event.keyIdentifier = eventConfig.key;
-                    event.which = keyCode;
+                    event.ctrlKey = !!eventConfig.ctrlKey;
+                    event.altKey = !!eventConfig.altKey;
+                    event.shiftKey = !!eventConfig.shiftKey;
+                    event.metaKey = eventConfig.metaKey;
+                    event.keyCode = eventConfig.keyCode;
+                    event.charCode = eventConfig.charCode;
+                    event.location = eventConfig.location;
+                    event.which = eventConfig.which;
 
                 } else if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11) {
+
+                    var modifiers = [];
+
+                    if (eventConfig.altKey) {
+                        modifiers.push('Alt');
+                    }
+
+                    if (eventConfig.altGraphKey) {
+                        modifiers.push('AltGraph');
+                    }
+
+                    if (eventConfig.ctrlKey) {
+                        modifiers.push('Control');
+                    }
+
+                    if (eventConfig.metaKey) {
+                        modifiers.push('Meta');
+                    }
+
+                    if (eventConfig.shiftKey) {
+                        modifiers.push('Shift');
+                    }
 
                     event = eventConfig.view.document.createEvent('KeyboardEvent');
                     event.initKeyboardEvent(
@@ -56,10 +68,10 @@
                         eventConfig.cancelable,
                         eventConfig.view,
                         eventConfig.key,
-                        0,
-                        eventConfig.modifiers,
+                        eventConfig.location,
+                        modifiers.join(' '),
                         1,
-                        'en-US'
+                        eventConfig.locale
                     );
 
 
@@ -67,7 +79,7 @@
                     // Setting read-only properties for legacy (initKeyboardEvent doesn't update them)
                     Object.defineProperty(event, 'keyCode', {
                         get: function() {
-                            return keyCode;
+                            return eventConfig.keyCode;
                         }
                     });
 
@@ -75,18 +87,16 @@
                     if (eventConfig.type === 'keypress') {
                         Object.defineProperty(event, 'charCode', {
                             get: function() {
-                                return keyCode;
+                                return eventConfig.keyCode;
                             }
                         });
                     }
 
                     Object.defineProperty(event, 'which', {
                         get: function() {
-                            return keyCode;
+                            return eventConfig.keyCode;
                         }
                     });
-
-
 
                 } else if (Stimuli.core.Support.isGecko) {
                     event = eventConfig.view.document.createEvent('KeyboardEvent');
@@ -95,12 +105,12 @@
                         eventConfig.bubbles,
                         eventConfig.cancelable,
                         eventConfig.view,
-                        control,
-                        alt,
-                        shift,
-                        meta,
-                        eventConfig.key.charCodeAt(0),
-                        eventConfig.key.charCodeAt(0)
+                        eventConfig.ctrlKey,
+                        eventConfig.altKey,
+                        eventConfig.shiftKey,
+                        eventConfig.metaKey,
+                        eventConfig.keyCode,
+                        eventConfig.charCode
                     );
                 }
 
@@ -131,11 +141,11 @@
 
                 event = eventConfig.view.document.createEventObject();
 
-                event.ctrlKey = control;
-                event.altKey = alt;
-                event.shiftKey = shift;
-                event.metaKey = meta;
-                event.keyCode = keyCode;
+                event.ctrlKey = eventConfig.ctrKey;
+                event.altKey = eventConfig.altKey;
+                event.shiftKey = eventConfig.shiftKey;
+                event.metaKey = eventConfig.metaKey;
+                event.keyCode = eventConfig.keyCode;
 
 
                 eventConfig.target.fireEvent(eventName, event);

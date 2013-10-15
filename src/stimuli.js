@@ -66,7 +66,15 @@ Stimuli.browser = {};
 
 Stimuli.mouse = {};
 
-Stimuli.keyboard = {};
+Stimuli.keyboard = {
+    layout: {
+        android: {},
+        linux: {},
+        ios: {},
+        macosx: {},
+        windows: {}
+    }
+};
 
 /**
  * Destroy the stimuli instance

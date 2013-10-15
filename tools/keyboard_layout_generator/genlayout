@@ -1,0 +1,93 @@
+#!/usr/bin/env node
+
+var program = require('commander');
+program
+    .version('0.1.0')
+    .usage('[options]')
+    .option('--layout <name>', 'Layout name')
+    .option('--port', 'Server port (default: 9999)')
+    .option('--unicode', 'Is the keyboard layout unicode capable')
+    .option('--deadkeys', 'Generate combinations with dead keys')
+    .option('--shift', 'Generate combinations with the shift modifier keys')
+    .option('--opts', 'Generate combinations with the options modifier keys for MacOSX')
+    .option('--altgr', 'Generate combinations with the AltGr modifier keys for Windows and Linux')
+    .option('--unicode', 'Does the keyboard table can generate Unicode characters (AltGr + Unicode)')
+    .parse(process.argv);
+
+program.port = program.port || 9000;
+
+if (!program.layout) {
+    console.log('You must specify a layout name, see options with --help');
+    process.exit();
+}
+var firefox = new (require(__dirname + '/firefox_launcher'));
+var chrome = new (require(__dirname + '/chrome_launcher'));
+var browser;
+var browsers = [];
+var browserIndex = 0;
+var browserEngine = null;
+
+
+browsers.push(function() {
+    browserEngine = 'gecko';
+    browser = firefox;
+    browser.start('http://localhost:' + program.port);
+    browserIndex++;
+});
+
+browsers.push(function() {
+    browserEngine = 'webkit';
+    browser = chrome.start('http://localhost:9000');
+    browserIndex++;
+});
+
+if (process.platform === 'win32')  {
+    browsers.push(function() {
+        browserEngine = 'trident';
+        browser = ie.start('http://localhost:9000');
+        browserIndex++;
+    });
+}
+
+var generator = require('./generator');
+var brute = require('./brute');
+var fs = require('fs');
+var results = {};
+var server = require('./server');
+
+server.onBrowserConnected = function() {
+    setTimeout(function() {
+        var count = brute({
+            deadkeys: program.deadkeys,
+            shift: program.shift,
+            options: program.opts,
+            altgr: program.altgr
+        });
+
+        console.log(browserEngine.toUpperCase() + ': Sent ' + count + ' combinations.');
+    }, 1000);
+};
+
+server.onResults = function(partialResults) {
+    results[browserEngine] = partialResults;
+
+    console.log(browserEngine.toUpperCase() + ': brute forcing done.');
+
+    browser.kill();
+
+    if (browsers[browserIndex]) {
+        browsers[browserIndex]();
+    } else {
+        var layout = generator.createLayout(results, program)
+        fs.createWriteStream(__dirname + '/' + program.layout + '.js', {flags: 'w'})
+            .write(layout, function() {
+                console.log(program.layout + '.js created.')
+                process.exit();
+            });
+
+    }
+};
+
+server.start(9000);
+
+browsers[0]();

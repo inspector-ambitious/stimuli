@@ -4,7 +4,8 @@
 
     Stimuli.keyboard.TypeText = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.layout = arguments[1];
+        this.parseArguments(arguments[2]);
     };
 
     var TypeText = Stimuli.keyboard.TypeText;
@@ -16,88 +17,74 @@
 
         var self = this,
             Obj = Stimuli.core.Object,
-            defaultConfig,
             target = self.getTarget();
 
-        self.configure(function() {
 
-            defaultConfig = {
-                bubbles: true,
-                cancelable: true,
-                modifiers: self.viewport.getModifiers(),
-                target: target
-            };
-        });
 
         Stimuli.core.Array.forEach(self.options.keys.split(''), function(key, idx) {
 
-            self.then(function() {
-                defaultConfig.key = key;
-            });
 
-            self.inject(function() {
-                return Obj.merge({
-                    type: 'keydown'
-                }, defaultConfig);
-            });
+            var defaultConfig = {
+                bubbles: true,
+                cancelable: true,
+                target: target,
+                key: key
+            };
 
-            if (self.isEditable(target)) {
+            var flow = self.layout.getEventsFlow(key);
 
-                self.inject(function() {
-                    return Obj.merge({
-                        type: 'keypress'
-                    }, defaultConfig);
-                });
+            Stimuli.core.Array.forEach(flow, function(eventConfig) {
+                Stimuli.core.Object.merge(eventConfig, defaultConfig);
 
-                if (Stimuli.core.Support.isWebkit) {
+                if (eventConfig.type === 'input') {
 
-                     self.inject(function() {
-                       return Obj.merge({
-                             type: 'textInput'
-                         }, defaultConfig);
-                    });
+                    if (self.isEditable(target)) {
 
-                }
+                        if (Stimuli.core.Support.isWebkit) {
 
-                if (idx === 0 && self.isEditableInput(target) && (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10)) {
+                            self.inject(function() {
+                                return Obj.merge({
+                                    type: 'textInput'
+                                }, defaultConfig);
+                            });
 
-                    self.inject(function() {
-                        return Obj.merge({
-                            type: 'textinput'
-                        }, defaultConfig);
-                    });
-
-                }
-
-                if (!Stimuli.core.Support.isWebkit) {
-
-                    self.then(function() {
-                        if (self.isEditableInput(target) || self.isTextArea(target)) {
-                            self.updateEditableValue(target, defaultConfig.key);
-                        } else {
-                            self.updateEditableHtml(target, defaultConfig.key);
                         }
-                    });
 
-                    if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isWebkit &&
-                        (self.isEditableInput(target) || self.isTextArea(target))) {
-                        self.inject(function() {
-                            return {
-                                type: 'input',
-                                bubbles: true,
-                                cancelable: false,
-                                target: target
-                            };
-                        });
+                        if (idx === 0 && self.isEditableInput(target) && (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10)) {
+
+                            self.inject(function() {
+                                return Obj.merge({
+                                    type: 'textinput'
+                                }, defaultConfig);
+                            });
+
+                        }
+
+                        if (!Stimuli.core.Support.isWebkit) {
+
+                            self.then(function() {
+                                if (self.isEditableInput(target) || self.isTextArea(target)) {
+                                    self.updateEditableValue(target, defaultConfig.key);
+                                } else {
+                                    self.updateEditableHtml(target, defaultConfig.key);
+                                }
+                            });
+
+                            if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isWebkit &&
+                                (self.isEditableInput(target) || self.isTextArea(target))) {
+                                self.inject(function() {
+                                    return eventConfig;
+                                });
+                            }
+                        }
                     }
-                }
-            }
 
-            self.inject(function() {
-                return Obj.merge({
-                    type: 'keyup'
-                }, defaultConfig);
-            }, 25);
+                } else {
+                    self.inject(function() {
+                        return eventConfig;
+                    }, 5);
+                }
+            });
 
         });
 

@@ -118,6 +118,15 @@ function MainCtrl($scope, $http, $location, $templateCache) {
             defaultPrevented: event.defaultPrevented
         };
 
+        for (var prop in event) {
+            if (event.hasOwnProperty(prop)) {
+                if (typeof event[prop] === 'object') {
+                    formattedEvent[prop] = 'object';
+                } else {
+                    formattedEvent[prop] = event[prop];
+                }
+            }
+        }
 
         if (target.id) {
             formattedEvent.targetId = '#' + target.id;

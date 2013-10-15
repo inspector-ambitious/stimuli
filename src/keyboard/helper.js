@@ -4,10 +4,13 @@
 
     Stimuli.keyboard.Helper = {
 
-        parseOptions: function() {
-            var self = this,
-                args = self.args;
+        parseArguments: function(args) {
+            var self = this;
+
+
+
             self.options = {};
+
             if (typeof args[0] === 'string') {
                 self.options.keys = args[0];
             }

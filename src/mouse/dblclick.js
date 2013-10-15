@@ -4,7 +4,7 @@
 
     Stimuli.mouse.DblClick = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var DblClick = Stimuli.mouse.DblClick;

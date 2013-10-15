@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <meta http-equiv="content-type"
+          content="text/html;charset=utf-8" />
+    <script src="/src/stimuli.js"></script>
+    <script src="/src/core/ajax.js"></script>
+    <script src="/src/core/support.js"></script>
+</head>
+<body>
+<h4>Keyboard Layout brute forcing in progress, it's time to grab a coffee... </h4>
+<textarea id="input" tabindex="1" style="background-color:yellow;"></textarea>
+<div id="last" style="white-space: pre;"></div>
+
+<script>
+
+    var layout;
+
+    var chars = [];
+    var automated = false;
+    var automateTimeout;
+
+    var getEventDescription = function(e) {
+        var eventDescription = {
+            type: e.type,
+            location: e.location
+        };
+
+        if (e.type !== 'keypress') {
+            eventDescription.keyCode = e.keyCode;
+        }
+        if (e.altKey) {
+            eventDescription.altKey = e.altKey;
+        }
+        if (e.ctrlKey) {
+            eventDescription.ctrlKey = e.ctrlKey;
+        }
+        if (e.metaKey) {
+            eventDescription.metaKey = e.metaKey;
+        }
+        if (e.shiftKey) {
+            eventDescription.shiftKey = e.shiftKey;
+        }
+        if (e.altGraphKey) {
+            eventDescription.altGraphKey = e.altGraphKey;
+        }
+        return eventDescription;
+    };
+
+
+    var input = document.getElementById('input');
+    input.value = '';
+    var sequence = [];
+    var sequences = {};
+
+    input.onkeydown = function(e) {
+        if (e.keyCode === 0x0D) {
+            return;
+        }
+
+        clearTimeout(automateTimeout);
+        automateTimeout = setTimeout(function() {
+            Stimuli.core.Ajax.post('/results', sequences, function() {});
+        }, 1000);
+
+        sequence.push(getEventDescription(e));
+    };
+
+    input.onkeypress = function(e) {
+        if (e.keyCode === 0x0D) {
+            return;
+        }
+        sequence.push(getEventDescription(e));
+    };
+
+
+    input.oninput = function(e) {
+        if (input.value.length === 1) {
+            sequence.push({type: 'input', character: input.value[0]});
+        }
+    };
+
+    input.onkeyup = function(e) {
+
+        if (e.keyCode === 0x0D) {
+
+            var char = input.value[0];
+
+            if (input.value.length === 2 && typeof char !== 'undefined' &&
+               (!sequences[char] || sequences[char].length > sequence.length)) {
+
+                sequences[char] = sequence;
+                chars.push(char);
+
+                var last = document.getElementById('last');
+
+                last.innerHTML = 'Printable character found: ' + char;
+            }
+
+            sequence = [];
+
+            input.value = '';
+
+            return;
+        }
+
+        sequence.push(getEventDescription(e));
+    };
+
+
+
+    window.onload = function() {
+        input.focus();
+        Stimuli.core.Ajax.get('/connect', function() {});
+    };
+
+
+</script>
+</body>
+</html>

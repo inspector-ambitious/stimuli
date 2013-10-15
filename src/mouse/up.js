@@ -4,7 +4,7 @@
 
     Stimuli.mouse.Up = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var Up = Stimuli.mouse.Up;

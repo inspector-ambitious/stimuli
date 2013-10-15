@@ -101,6 +101,21 @@
             </div>
         </div>
 
+        <div class="t-template-container">
+            <h1>
+                Template
+            </h1>
+
+            <div class="t-template-wrapper" ng-include="getTemplateUrl()" onload="resetCapture()"></div>
+
+            <div class="t-template-toolbar">
+
+                <a href="" class="t-link-button t-template-reload-link" ng-click="reloadTemplate()">
+                    <i class="icon-repeat"> Reload</i>
+                </a>
+            </div>
+        </div>
+
         <div class="t-event-console">
 
             <h1>
@@ -154,20 +169,7 @@
             </div>
         </div>
 
-        <div class="t-template-container">
-            <h1>
-                Template
-            </h1>
 
-            <div class="t-template-wrapper" ng-include="getTemplateUrl()" onload="resetCapture()"></div> 
-
-            <div class="t-template-toolbar">
-
-                <a href="" class="t-link-button t-template-reload-link" ng-click="reloadTemplate()">
-                <i class="icon-repeat"> Reload</i>
-                </a>
-            </div>
-        </div>
 
 
 
