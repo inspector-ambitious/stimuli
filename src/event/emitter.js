@@ -63,7 +63,8 @@
          */
         isHtmlEvent: function(eventType) {
             return {
-                input: true
+                input: true,
+                paste: true
             }[eventType] || false;
         },
 

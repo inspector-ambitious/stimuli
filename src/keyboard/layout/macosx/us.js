@@ -82,6 +82,48 @@
                 type: "keydown",
                 location: locations[0],
                 keyCode: keyCodes[0],
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[1],
+                altKey: true,
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[2],
+                altKey: true,
+                shiftKey: true
+            }, {
+                type: "keypress",
+                location: locations[1],
+                altKey: true,
+                shiftKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[2],
+                altKey: true,
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
                 altKey: true
             }, {
                 type: "keydown",
@@ -190,66 +232,6 @@
                 type: "keyup",
                 location: locations[1],
                 keyCode: keyCodes[2]
-            } ];
-        }, function(keyCodes, characters, locations) {
-            return [ {
-                type: "keydown",
-                location: locations[0],
-                keyCode: keyCodes[0],
-                shiftKey: true
-            }, {
-                type: "keydown",
-                location: locations[0],
-                keyCode: keyCodes[1],
-                altKey: true,
-                shiftKey: true
-            }, {
-                type: "keydown",
-                location: locations[1],
-                keyCode: keyCodes[2],
-                altKey: true,
-                shiftKey: true
-            }, {
-                type: "keypress",
-                location: locations[1],
-                altKey: true,
-                shiftKey: true
-            }, {
-                type: "input",
-                character: characters[0]
-            }, {
-                type: "keyup",
-                location: locations[1],
-                keyCode: keyCodes[2],
-                altKey: true,
-                shiftKey: true
-            }, {
-                type: "keyup",
-                location: locations[0],
-                keyCode: keyCodes[1],
-                shiftKey: true
-            }, {
-                type: "keyup",
-                location: locations[0],
-                keyCode: keyCodes[0]
-            } ];
-        }, function(keyCodes, characters, locations) {
-            return [ {
-                type: "keydown",
-                location: locations[0],
-                keyCode: keyCodes[0],
-                altKey: true
-            }, {
-                type: "keydown",
-                location: locations[1],
-                keyCode: keyCodes[1],
-                altKey: true
-            }, {
-                type: "input",
-                character: characters[0]
-            }, {
-                type: "input",
-                character: characters[0]
             } ];
         } ],
         table: {
@@ -493,16 +475,16 @@
                 characters: [ "`" ],
                 locations: [ 0 ]
             },
-            "[": {
-                pattern: 0,
-                keyCodes: [ 219 ],
-                characters: [ "[" ],
-                locations: [ 0 ]
-            },
             "-": {
                 pattern: 0,
                 keyCodes: isGecko ? [ 173 ] : [ 189 ],
                 characters: [ "-" ],
+                locations: [ 0 ]
+            },
+            "[": {
+                pattern: 0,
+                keyCodes: [ 219 ],
+                characters: [ "[" ],
                 locations: [ 0 ]
             },
             ".": {
@@ -775,16 +757,16 @@
                 characters: [ "~" ],
                 locations: [ 1, 0 ]
             },
-            "{": {
-                pattern: 1,
-                keyCodes: [ 16, 219 ],
-                characters: [ "{" ],
-                locations: [ 1, 0 ]
-            },
             _: {
                 pattern: 1,
                 keyCodes: isGecko ? [ 16, 173 ] : [ 16, 189 ],
                 characters: [ "_" ],
+                locations: [ 1, 0 ]
+            },
+            "{": {
+                pattern: 1,
+                keyCodes: [ 16, 219 ],
+                characters: [ "{" ],
                 locations: [ 1, 0 ]
             },
             ">": {
@@ -901,36 +883,6 @@
                 characters: [ "∂" ],
                 locations: [ 1, 0 ]
             },
-            é: {
-                pattern: isGecko ? 4 : 3,
-                keyCodes: isGecko ? [ 18, 69 ] : [ 18, 229, 69 ],
-                characters: [ "´", "é" ],
-                locations: [ 1, 0 ]
-            },
-            í: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 69, 73 ] : [ 18, 229, 69, 73 ],
-                characters: [ "´", "í" ],
-                locations: [ 1, 0 ]
-            },
-            ó: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 69, 79 ] : [ 18, 229, 69, 79 ],
-                characters: [ "´", "ó" ],
-                locations: [ 1, 0 ]
-            },
-            ú: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 69, 85 ] : [ 18, 229, 69, 85 ],
-                characters: [ "´", "ú" ],
-                locations: [ 1, 0 ]
-            },
-            "´": {
-                pattern: isGecko ? 8 : 7,
-                keyCodes: isGecko ? [ 18, 69 ] : [ 16, 18, 69 ],
-                characters: [ "´" ],
-                locations: [ 1, 0 ]
-            },
             ƒ: {
                 pattern: 2,
                 keyCodes: [ 18, 70 ],
@@ -947,36 +899,6 @@
                 pattern: 2,
                 keyCodes: [ 18, 72 ],
                 characters: [ "˙" ],
-                locations: [ 1, 0 ]
-            },
-            ê: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 73, 69 ] : [ 18, 229, 73, 69 ],
-                characters: [ "ˆ", "ê" ],
-                locations: [ 1, 0 ]
-            },
-            î: {
-                pattern: isGecko ? 4 : 3,
-                keyCodes: isGecko ? [ 18, 73 ] : [ 18, 229, 73 ],
-                characters: [ "ˆ", "î" ],
-                locations: [ 1, 0 ]
-            },
-            ô: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 73, 79 ] : [ 18, 229, 73, 79 ],
-                characters: [ "ˆ", "ô" ],
-                locations: [ 1, 0 ]
-            },
-            û: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 73, 85 ] : [ 18, 229, 73, 85 ],
-                characters: [ "ˆ", "û" ],
-                locations: [ 1, 0 ]
-            },
-            ˆ: {
-                pattern: isGecko ? 8 : 7,
-                keyCodes: isGecko ? [ 18, 73 ] : [ 16, 18, 73 ],
-                characters: [ "ˆ" ],
                 locations: [ 1, 0 ]
             },
             "∆": {
@@ -1001,24 +923,6 @@
                 pattern: 2,
                 keyCodes: [ 18, 77 ],
                 characters: [ "µ" ],
-                locations: [ 1, 0 ]
-            },
-            ñ: {
-                pattern: isGecko ? 4 : 3,
-                keyCodes: isGecko ? [ 18, 78 ] : [ 18, 229, 78 ],
-                characters: [ "˜", "ñ" ],
-                locations: [ 1, 0 ]
-            },
-            õ: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 78, 79 ] : [ 18, 229, 78, 79 ],
-                characters: [ "˜", "õ" ],
-                locations: [ 1, 0 ]
-            },
-            "˜": {
-                pattern: isGecko ? 8 : 7,
-                keyCodes: isGecko ? [ 18, 78 ] : [ 16, 18, 78 ],
-                characters: [ "˜" ],
                 locations: [ 1, 0 ]
             },
             ø: {
@@ -1055,42 +959,6 @@
                 pattern: 2,
                 keyCodes: [ 18, 84 ],
                 characters: [ "†" ],
-                locations: [ 1, 0 ]
-            },
-            ë: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 85, 69 ] : [ 18, 229, 85, 69 ],
-                characters: [ "¨", "ë" ],
-                locations: [ 1, 0 ]
-            },
-            ï: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 85, 73 ] : [ 18, 229, 85, 73 ],
-                characters: [ "¨", "ï" ],
-                locations: [ 1, 0 ]
-            },
-            ö: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 85, 79 ] : [ 18, 229, 85, 79 ],
-                characters: [ "¨", "ö" ],
-                locations: [ 1, 0 ]
-            },
-            ü: {
-                pattern: isGecko ? 4 : 3,
-                keyCodes: isGecko ? [ 18, 85 ] : [ 18, 229, 85 ],
-                characters: [ "¨", "ü" ],
-                locations: [ 1, 0 ]
-            },
-            ÿ: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 85, 89 ] : [ 18, 229, 85, 89 ],
-                characters: [ "¨", "ÿ" ],
-                locations: [ 1, 0 ]
-            },
-            "¨": {
-                pattern: isGecko ? 8 : 7,
-                keyCodes: isGecko ? [ 18, 85 ] : [ 16, 18, 85 ],
-                characters: [ "¨" ],
                 locations: [ 1, 0 ]
             },
             "√": {
@@ -1141,40 +1009,16 @@
                 characters: [ "≠" ],
                 locations: [ 1, 0 ]
             },
-            è: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 192, 69 ] : [ 18, 229, 192, 69 ],
-                characters: [ "`", "è" ],
-                locations: [ 1, 0 ]
-            },
-            ì: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 192, 73 ] : [ 18, 229, 192, 73 ],
-                characters: [ "`", "ì" ],
-                locations: [ 1, 0 ]
-            },
-            ò: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 192, 79 ] : [ 18, 229, 192, 79 ],
-                characters: [ "`", "ò" ],
-                locations: [ 1, 0 ]
-            },
-            ù: {
-                pattern: isGecko ? 6 : 5,
-                keyCodes: isGecko ? [ 18, 192, 85 ] : [ 18, 229, 192, 85 ],
-                characters: [ "`", "ù" ],
+            "–": {
+                pattern: 2,
+                keyCodes: isGecko ? [ 18, 173 ] : [ 18, 189 ],
+                characters: [ "–" ],
                 locations: [ 1, 0 ]
             },
             "“": {
                 pattern: 2,
                 keyCodes: [ 18, 219 ],
                 characters: [ "“" ],
-                locations: [ 1, 0 ]
-            },
-            "–": {
-                pattern: 2,
-                keyCodes: isGecko ? [ 18, 173 ] : [ 18, 189 ],
-                characters: [ "–" ],
                 locations: [ 1, 0 ]
             },
             "≥": {
@@ -1208,255 +1052,393 @@
                 locations: [ 1, 0 ]
             },
             "‚": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 48 ],
                 characters: [ "‚" ],
                 locations: [ 1, 0 ]
             },
             "⁄": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 49 ],
                 characters: [ "⁄" ],
                 locations: [ 1, 0 ]
             },
             "€": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 50 ],
                 characters: [ "€" ],
                 locations: [ 1, 0 ]
             },
             "‹": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 51 ],
                 characters: [ "‹" ],
                 locations: [ 1, 0 ]
             },
             "›": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 52 ],
                 characters: [ "›" ],
                 locations: [ 1, 0 ]
             },
             ﬁ: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 53 ],
                 characters: [ "ﬁ" ],
                 locations: [ 1, 0 ]
             },
             ﬂ: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 54 ],
                 characters: [ "ﬂ" ],
                 locations: [ 1, 0 ]
             },
             "‡": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 55 ],
                 characters: [ "‡" ],
                 locations: [ 1, 0 ]
             },
             "°": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 56 ],
                 characters: [ "°" ],
                 locations: [ 1, 0 ]
             },
             "·": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 57 ],
                 characters: [ "·" ],
                 locations: [ 1, 0 ]
             },
             Å: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 65 ],
                 characters: [ "Å" ],
                 locations: [ 1, 0 ]
             },
             ı: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 66 ],
                 characters: [ "ı" ],
                 locations: [ 1, 0 ]
             },
             Ç: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 67 ],
                 characters: [ "Ç" ],
                 locations: [ 1, 0 ]
             },
             Î: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 68 ],
                 characters: [ "Î" ],
                 locations: [ 1, 0 ]
             },
+            "´": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 69 ],
+                characters: [ "´" ],
+                locations: [ 1, 0 ]
+            },
             Ï: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 70 ],
                 characters: [ "Ï" ],
                 locations: [ 1, 0 ]
             },
             "˝": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 71 ],
                 characters: [ "˝" ],
                 locations: [ 1, 0 ]
             },
             Ó: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 72 ],
                 characters: [ "Ó" ],
                 locations: [ 1, 0 ]
             },
+            ˆ: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 73 ],
+                characters: [ "ˆ" ],
+                locations: [ 1, 0 ]
+            },
             Ô: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 74 ],
                 characters: [ "Ô" ],
                 locations: [ 1, 0 ]
             },
             "": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 75 ],
                 characters: [ "" ],
                 locations: [ 1, 0 ]
             },
             Ò: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 76 ],
                 characters: [ "Ò" ],
                 locations: [ 1, 0 ]
             },
             Â: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 77 ],
                 characters: [ "Â" ],
                 locations: [ 1, 0 ]
             },
+            "˜": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 78 ],
+                characters: [ "˜" ],
+                locations: [ 1, 0 ]
+            },
             Ø: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 79 ],
                 characters: [ "Ø" ],
                 locations: [ 1, 0 ]
             },
             "∏": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 80 ],
                 characters: [ "∏" ],
                 locations: [ 1, 0 ]
             },
             Œ: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 81 ],
                 characters: [ "Œ" ],
                 locations: [ 1, 0 ]
             },
             "‰": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 82 ],
                 characters: [ "‰" ],
                 locations: [ 1, 0 ]
             },
             Í: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 83 ],
                 characters: [ "Í" ],
                 locations: [ 1, 0 ]
             },
             ˇ: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 84 ],
                 characters: [ "ˇ" ],
                 locations: [ 1, 0 ]
             },
+            "¨": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 85 ],
+                characters: [ "¨" ],
+                locations: [ 1, 0 ]
+            },
             "◊": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 86 ],
                 characters: [ "◊" ],
                 locations: [ 1, 0 ]
             },
             "„": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 87 ],
                 characters: [ "„" ],
                 locations: [ 1, 0 ]
             },
             "˛": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 88 ],
                 characters: [ "˛" ],
                 locations: [ 1, 0 ]
             },
             Á: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 89 ],
                 characters: [ "Á" ],
                 locations: [ 1, 0 ]
             },
             "¸": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 90 ],
                 characters: [ "¸" ],
                 locations: [ 1, 0 ]
             },
             "»": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 220 ],
                 characters: [ "»" ],
                 locations: [ 1, 0 ]
             },
             "¯": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 188 ],
                 characters: [ "¯" ],
                 locations: [ 1, 0 ]
             },
             "±": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: isGecko ? [ 16, 18, 61 ] : [ 16, 18, 187 ],
                 characters: [ "±" ],
                 locations: [ 1, 0 ]
             },
-            "”": {
-                pattern: 7,
-                keyCodes: [ 16, 18, 219 ],
-                characters: [ "”" ],
-                locations: [ 1, 0 ]
-            },
             "—": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: isGecko ? [ 16, 18, 173 ] : [ 16, 18, 189 ],
                 characters: [ "—" ],
                 locations: [ 1, 0 ]
             },
+            "”": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 219 ],
+                characters: [ "”" ],
+                locations: [ 1, 0 ]
+            },
             "˘": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 190 ],
                 characters: [ "˘" ],
                 locations: [ 1, 0 ]
             },
             Æ: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 222 ],
                 characters: [ "Æ" ],
                 locations: [ 1, 0 ]
             },
             "’": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 221 ],
                 characters: [ "’" ],
                 locations: [ 1, 0 ]
             },
             Ú: {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: isGecko ? [ 16, 18, 59 ] : [ 16, 18, 186 ],
                 characters: [ "Ú" ],
                 locations: [ 1, 0 ]
             },
             "¿": {
-                pattern: 7,
+                pattern: 3,
                 keyCodes: [ 16, 18, 191 ],
                 characters: [ "¿" ],
+                locations: [ 1, 0 ]
+            },
+            é: {
+                pattern: isGecko ? 5 : 4,
+                keyCodes: isGecko ? [ 18, 69 ] : [ 18, 229, 69 ],
+                characters: [ "´", "é" ],
+                locations: [ 1, 0 ]
+            },
+            í: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 69, 73 ] : [ 18, 229, 69, 73 ],
+                characters: [ "´", "í" ],
+                locations: [ 1, 0 ]
+            },
+            ó: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 69, 79 ] : [ 18, 229, 69, 79 ],
+                characters: [ "´", "ó" ],
+                locations: [ 1, 0 ]
+            },
+            ú: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 69, 85 ] : [ 18, 229, 69, 85 ],
+                characters: [ "´", "ú" ],
+                locations: [ 1, 0 ]
+            },
+            ê: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 73, 69 ] : [ 18, 229, 73, 69 ],
+                characters: [ "ˆ", "ê" ],
+                locations: [ 1, 0 ]
+            },
+            î: {
+                pattern: isGecko ? 5 : 4,
+                keyCodes: isGecko ? [ 18, 73 ] : [ 18, 229, 73 ],
+                characters: [ "ˆ", "î" ],
+                locations: [ 1, 0 ]
+            },
+            ô: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 73, 79 ] : [ 18, 229, 73, 79 ],
+                characters: [ "ˆ", "ô" ],
+                locations: [ 1, 0 ]
+            },
+            û: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 73, 85 ] : [ 18, 229, 73, 85 ],
+                characters: [ "ˆ", "û" ],
+                locations: [ 1, 0 ]
+            },
+            ñ: {
+                pattern: isGecko ? 5 : 4,
+                keyCodes: isGecko ? [ 18, 78 ] : [ 18, 229, 78 ],
+                characters: [ "˜", "ñ" ],
+                locations: [ 1, 0 ]
+            },
+            õ: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 78, 79 ] : [ 18, 229, 78, 79 ],
+                characters: [ "˜", "õ" ],
+                locations: [ 1, 0 ]
+            },
+            ë: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 85, 69 ] : [ 18, 229, 85, 69 ],
+                characters: [ "¨", "ë" ],
+                locations: [ 1, 0 ]
+            },
+            ï: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 85, 73 ] : [ 18, 229, 85, 73 ],
+                characters: [ "¨", "ï" ],
+                locations: [ 1, 0 ]
+            },
+            ö: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 85, 79 ] : [ 18, 229, 85, 79 ],
+                characters: [ "¨", "ö" ],
+                locations: [ 1, 0 ]
+            },
+            ü: {
+                pattern: isGecko ? 5 : 4,
+                keyCodes: isGecko ? [ 18, 85 ] : [ 18, 229, 85 ],
+                characters: [ "¨", "ü" ],
+                locations: [ 1, 0 ]
+            },
+            ÿ: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 85, 89 ] : [ 18, 229, 85, 89 ],
+                characters: [ "¨", "ÿ" ],
+                locations: [ 1, 0 ]
+            },
+            è: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 192, 69 ] : [ 18, 229, 192, 69 ],
+                characters: [ "`", "è" ],
+                locations: [ 1, 0 ]
+            },
+            ì: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 192, 73 ] : [ 18, 229, 192, 73 ],
+                characters: [ "`", "ì" ],
+                locations: [ 1, 0 ]
+            },
+            ò: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 192, 79 ] : [ 18, 229, 192, 79 ],
+                characters: [ "`", "ò" ],
+                locations: [ 1, 0 ]
+            },
+            ù: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 192, 85 ] : [ 18, 229, 192, 85 ],
+                characters: [ "`", "ù" ],
                 locations: [ 1, 0 ]
             }
         }
