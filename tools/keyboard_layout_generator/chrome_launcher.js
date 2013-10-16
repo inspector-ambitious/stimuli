@@ -9,7 +9,7 @@ var ChromeLauncher =  function() {
     return {
 
         startCmd: {
-            linux: 'chrome',
+            linux: 'google-chrome',
             darwin: 'open',
             win32: process.env.ProgramFiles + '\\Mozilla Chrome\\chrome.exe'
         },
@@ -45,6 +45,11 @@ var ChromeLauncher =  function() {
                     self.destroyTmpDir();
                 });
             }
+            if (process.platform === 'linux') {
+                spawn('killall', ['-9', 'chrome'], function() {
+                    self.destroyTmpDir();
+                });				
+			}
         },
 
         destroyTmpDir: function() {

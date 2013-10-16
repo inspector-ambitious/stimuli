@@ -34,7 +34,7 @@ var FirefoxLauncher =  function() {
         },
 
         kill: function() {
-            if (process.platform === 'darwin') {
+            if (process.platform === 'darwin' || process.platform === 'linux') {
                 spawn('killall', ['-9', 'firefox'], function() {
                     this.destroyTmpDir();
                 });
