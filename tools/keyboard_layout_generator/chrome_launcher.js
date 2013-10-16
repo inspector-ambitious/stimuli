@@ -48,8 +48,8 @@ var ChromeLauncher =  function() {
             if (process.platform === 'linux') {
                 spawn('killall', ['-9', 'chrome'], function() {
                     self.destroyTmpDir();
-                });				
-			}
+                });                
+            }
         },
 
         destroyTmpDir: function() {

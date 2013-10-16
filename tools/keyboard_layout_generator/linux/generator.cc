@@ -78,109 +78,109 @@ Handle<Value> sendCombo(const Arguments& args) {
   struct input_event keyEv, shiftEv, altgrEv, numLockEv;
 
 
-	
-	if (numlock) {
-		// Type numlock
-		usleep(delay);
-		memset(&numLockEv, 0, sizeof(numLockEv));
-		numLockEv.type = EV_KEY;
-		numLockEv.code = KEY_NUMLOCK;
-		numLockEv.value = 1;
-		write(fd, &numLockEv, sizeof(numLockEv));
-		numLockEv.code = KEY_NUMLOCK;
-		numLockEv.value = 0;
-		write(fd, &numLockEv, sizeof(numLockEv));
-	}
-	
-	// Press shift
-	if (shift) {
-		usleep(delay);
-		memset(&shiftEv, 0, sizeof(shiftEv));
-		shiftEv.type = EV_KEY;
-		shiftEv.code = KEY_RIGHTSHIFT;
-		shiftEv.value = 1;
-		write(fd, &shiftEv, sizeof(shiftEv));
+    
+    if (numlock) {
+        // Type numlock
+        usleep(delay);
+        memset(&numLockEv, 0, sizeof(numLockEv));
+        numLockEv.type = EV_KEY;
+        numLockEv.code = KEY_NUMLOCK;
+        numLockEv.value = 1;
+        write(fd, &numLockEv, sizeof(numLockEv));
+        numLockEv.code = KEY_NUMLOCK;
+        numLockEv.value = 0;
+        write(fd, &numLockEv, sizeof(numLockEv));
+    }
+    
+    // Press shift
+    if (shift) {
+        usleep(delay);
+        memset(&shiftEv, 0, sizeof(shiftEv));
+        shiftEv.type = EV_KEY;
+        shiftEv.code = KEY_RIGHTSHIFT;
+        shiftEv.value = 1;
+        write(fd, &shiftEv, sizeof(shiftEv));
     }
     
     // Press altgr
     if (altgr) {
-		usleep(delay);
-		memset(&altgrEv, 0, sizeof(altgrEv));
-		altgrEv.type = EV_KEY;
-		altgrEv.code = KEY_ISO;
-		altgrEv.value = 1;
-		write(fd, &altgrEv, sizeof(altgrEv));
+        usleep(delay);
+        memset(&altgrEv, 0, sizeof(altgrEv));
+        altgrEv.type = EV_KEY;
+        altgrEv.code = KEY_ISO;
+        altgrEv.value = 1;
+        write(fd, &altgrEv, sizeof(altgrEv));
     }
     
-	// Type key
-	usleep(delay);
-	memset(&keyEv, 0, sizeof(keyEv));
-	keyEv.type = EV_KEY;
-	keyEv.code = key1;
-	keyEv.value = 1;
-	write(fd, &keyEv, sizeof(keyEv));
-	keyEv.code = key1;
-	keyEv.value = 0;
+    // Type key
+    usleep(delay);
+    memset(&keyEv, 0, sizeof(keyEv));
+    keyEv.type = EV_KEY;
+    keyEv.code = key1;
+    keyEv.value = 1;
+    write(fd, &keyEv, sizeof(keyEv));
+    keyEv.code = key1;
+    keyEv.value = 0;
     write(fd, &keyEv, sizeof(keyEv));
     
     // Release altgr
     if (altgr) {
-		usleep(delay);
-		memset(&altgrEv, 0, sizeof(altgrEv));
-		altgrEv.type = EV_KEY;
-		altgrEv.code = KEY_ISO;
-		altgrEv.value = 0;
-		write(fd, &altgrEv, sizeof(altgrEv));
+        usleep(delay);
+        memset(&altgrEv, 0, sizeof(altgrEv));
+        altgrEv.type = EV_KEY;
+        altgrEv.code = KEY_ISO;
+        altgrEv.value = 0;
+        write(fd, &altgrEv, sizeof(altgrEv));
     }
     
     // Release shift
-	if (shift) {
-		usleep(delay);
-		memset(&shiftEv, 0, sizeof(shiftEv));
-		shiftEv.type = EV_KEY;
-		shiftEv.code = KEY_RIGHTSHIFT;
-		shiftEv.value = 0;
-		write(fd, &shiftEv, sizeof(shiftEv));
+    if (shift) {
+        usleep(delay);
+        memset(&shiftEv, 0, sizeof(shiftEv));
+        shiftEv.type = EV_KEY;
+        shiftEv.code = KEY_RIGHTSHIFT;
+        shiftEv.value = 0;
+        write(fd, &shiftEv, sizeof(shiftEv));
     }
     
     // Type 2 key
     if (key2) {
-		usleep(delay);
-		memset(&keyEv, 0, sizeof(keyEv));
-		keyEv.type = EV_KEY;
-		keyEv.code = key2;
-		keyEv.value = 1;
-		write(fd, &keyEv, sizeof(keyEv));
-		keyEv.code = key2;
-		keyEv.value = 0;
-		write(fd, &keyEv, sizeof(keyEv));
-	}
-	
+        usleep(delay);
+        memset(&keyEv, 0, sizeof(keyEv));
+        keyEv.type = EV_KEY;
+        keyEv.code = key2;
+        keyEv.value = 1;
+        write(fd, &keyEv, sizeof(keyEv));
+        keyEv.code = key2;
+        keyEv.value = 0;
+        write(fd, &keyEv, sizeof(keyEv));
+    }
+    
     if (numlock) {
-		//Type numlock again to release
-		usleep(delay);
-		memset(&numLockEv, 0, sizeof(numLockEv));
-		numLockEv.type = EV_KEY;
-		numLockEv.code = KEY_NUMLOCK;
-		numLockEv.value = 1;
-		write(fd, &numLockEv, sizeof(numLockEv));
-		numLockEv.code = KEY_NUMLOCK;
-		numLockEv.value = 0;
-		write(fd, &numLockEv, sizeof(numLockEv));
-	}
-	
-	// Press space
-	usleep(delay);
-	memset(&numLockEv, 0, sizeof(numLockEv));
-	numLockEv.type = EV_KEY;
-	numLockEv.code = KEY_SPACE;
-	numLockEv.value = 1;
-	write(fd, &numLockEv, sizeof(numLockEv));
-	numLockEv.code = KEY_SPACE;
-	numLockEv.value = 0;
-	write(fd, &numLockEv, sizeof(numLockEv));
-	
-	close(fd);
+        //Type numlock again to release
+        usleep(delay);
+        memset(&numLockEv, 0, sizeof(numLockEv));
+        numLockEv.type = EV_KEY;
+        numLockEv.code = KEY_NUMLOCK;
+        numLockEv.value = 1;
+        write(fd, &numLockEv, sizeof(numLockEv));
+        numLockEv.code = KEY_NUMLOCK;
+        numLockEv.value = 0;
+        write(fd, &numLockEv, sizeof(numLockEv));
+    }
+    
+    // Press space
+    usleep(delay);
+    memset(&numLockEv, 0, sizeof(numLockEv));
+    numLockEv.type = EV_KEY;
+    numLockEv.code = KEY_SPACE;
+    numLockEv.value = 1;
+    write(fd, &numLockEv, sizeof(numLockEv));
+    numLockEv.code = KEY_SPACE;
+    numLockEv.value = 0;
+    write(fd, &numLockEv, sizeof(numLockEv));
+    
+    close(fd);
     return scope.Close(Integer::New(count));
 }
 
