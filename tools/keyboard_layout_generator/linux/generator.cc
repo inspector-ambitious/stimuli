@@ -47,12 +47,6 @@ Handle<Value> sendCombo(const Arguments& args) {
         key2 = config->Get(String::New("key2"))->IntegerValue();
     }
 
-    bool numlock = false;
-
-    if (!(config->Get(String::New("numLock"))->IsUndefined())) {
-        numlock = config->Get(String::New("numLock"))->BooleanValue();
-    }
-
     int delay = 0;
 
     if (!(config->Get(String::New("delay"))->IsUndefined())) {
@@ -75,22 +69,8 @@ Handle<Value> sendCombo(const Arguments& args) {
     int count = 0;
   
   
-  struct input_event keyEv, shiftEv, altgrEv, numLockEv;
+    struct input_event keyEv, shiftEv, altgrEv;
 
-
-    
-    if (numlock) {
-        // Type numlock
-        usleep(delay);
-        memset(&numLockEv, 0, sizeof(numLockEv));
-        numLockEv.type = EV_KEY;
-        numLockEv.code = KEY_NUMLOCK;
-        numLockEv.value = 1;
-        write(fd, &numLockEv, sizeof(numLockEv));
-        numLockEv.code = KEY_NUMLOCK;
-        numLockEv.value = 0;
-        write(fd, &numLockEv, sizeof(numLockEv));
-    }
     
     // Press shift
     if (shift) {
@@ -156,29 +136,16 @@ Handle<Value> sendCombo(const Arguments& args) {
         write(fd, &keyEv, sizeof(keyEv));
     }
     
-    if (numlock) {
-        //Type numlock again to release
-        usleep(delay);
-        memset(&numLockEv, 0, sizeof(numLockEv));
-        numLockEv.type = EV_KEY;
-        numLockEv.code = KEY_NUMLOCK;
-        numLockEv.value = 1;
-        write(fd, &numLockEv, sizeof(numLockEv));
-        numLockEv.code = KEY_NUMLOCK;
-        numLockEv.value = 0;
-        write(fd, &numLockEv, sizeof(numLockEv));
-    }
-    
     // Press space
     usleep(delay);
-    memset(&numLockEv, 0, sizeof(numLockEv));
-    numLockEv.type = EV_KEY;
-    numLockEv.code = KEY_SPACE;
-    numLockEv.value = 1;
-    write(fd, &numLockEv, sizeof(numLockEv));
-    numLockEv.code = KEY_SPACE;
-    numLockEv.value = 0;
-    write(fd, &numLockEv, sizeof(numLockEv));
+    memset(&keyEv, 0, sizeof(keyEv));
+    keyEv.type = EV_KEY;
+    keyEv.code = KEY_SPACE;
+    keyEv.value = 1;
+    write(fd, &keyEv, sizeof(keyEv));
+    keyEv.code = KEY_SPACE;
+    keyEv.value = 0;
+    write(fd, &keyEv, sizeof(keyEv));
     
     close(fd);
     return scope.Close(Integer::New(count));

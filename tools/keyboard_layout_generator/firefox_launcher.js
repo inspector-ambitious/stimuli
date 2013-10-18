@@ -36,7 +36,12 @@ var FirefoxLauncher =  function() {
         kill: function() {
             if (process.platform === 'darwin' || process.platform === 'linux') {
                 spawn('killall', ['-9', 'firefox'], function() {
-                    this.destroyTmpDir();
+                    self.destroyTmpDir();
+                });
+            } else {
+
+                spawn('C:\\windows\\system32\\taskkill.exe', ['/F', '/IM', 'firefox.exe'], function() {
+                    self.destroyTmpDir();
                 });
             }
 

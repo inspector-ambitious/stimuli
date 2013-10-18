@@ -29,12 +29,6 @@ Handle<Value> sendCombo(const Arguments& args) {
         key2 = (CGKeyCode)(config->Get(String::New("key2"))->IntegerValue());
     }
 
-    bool numlock = false;
-
-    if (!(config->Get(String::New("numLock"))->IsUndefined())) {
-        numlock = config->Get(String::New("numLock"))->BooleanValue();
-    }
-
     int delay = 0;
 
     if (!(config->Get(String::New("delay"))->IsUndefined())) {
@@ -61,12 +55,6 @@ Handle<Value> sendCombo(const Arguments& args) {
     CGEventRef keyUp;
 
     CGEventFlags flags = (CGEventFlags) NULL;
-
-
-    // Activate numlock
-    if (numlock) {
-        flags |= kCGEventFlagMaskNumericPad;
-    }
 
     // Press shift
     if (shift) {
@@ -150,37 +138,6 @@ Handle<Value> sendCombo(const Arguments& args) {
     CFRelease(source);
     return scope.Close(Integer::New(count));
 }
-
-//Handle<Value> sendKeys(const Arguments& args) {
-//    HandleScope scope;
-//
-//        int idx, idx2;
-//        int count = 0;
-//        bool numlock = false;
-//        bool deadkeys = false;
-//
-//        if (args.Length() > 0 && args[0]->IsBoolean()) {
-//            deadkeys = args[0]->BooleanValue();
-//        }
-//
-//        // This implementation should support all ISO mac layouts
-//        // See http://www.forlang.wsu.edu/help/keyboards2.asp for an example with the US Layout
-//        for (idx = 0; idx < 65; idx++) {
-//            numlock = idx > 46; // numpad keys
-//
-//            // simple: press one key  up to 2 modifiers
-//            count += sendKeys(keymap[idx], (CGKeyCode)NULL, args, numlock); // normal
-//
-//            if (deadkeys) {
-//                // deadkeys: press one key up to 2 modifiers and then press another key without any modifier
-//                for (idx2 = 0; idx2 < 65; idx2++) {
-//                    count += sendKeys(keymap[idx], keymap[idx2], args, numlock); // normal
-//                }
-//            }
-//        }
-//
-//        return scope.Close(Integer::New(count));
-//}
 
 void init(Handle<Object> target) {
   NODE_SET_METHOD(target, "sendCombo", sendCombo);

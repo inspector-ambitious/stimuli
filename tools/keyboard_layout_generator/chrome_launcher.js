@@ -11,7 +11,7 @@ var ChromeLauncher =  function() {
         startCmd: {
             linux: 'google-chrome',
             darwin: 'open',
-            win32: process.env.ProgramFiles + '\\Mozilla Chrome\\chrome.exe'
+            win32: process.env.ProgramFiles + '\\Google\\Chrome\\Application\\chrome.exe'
         },
 
         startArgs: {
@@ -44,11 +44,15 @@ var ChromeLauncher =  function() {
                 spawn('killall', ['-9', 'Google Chrome'], function() {
                     self.destroyTmpDir();
                 });
-            }
-            if (process.platform === 'linux') {
+            } else if (process.platform === 'linux') {
                 spawn('killall', ['-9', 'chrome'], function() {
                     self.destroyTmpDir();
                 });                
+            } else {
+
+                spawn('C:\\windows\\system32\\taskkill.exe', ['/F', '/IM', 'chrome.exe'], function() {
+                    self.destroyTmpDir();
+                });
             }
         },
 

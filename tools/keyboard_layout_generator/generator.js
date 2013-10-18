@@ -113,22 +113,21 @@ module.exports = {
         };
 
         if (!table[char]) {
-            table[char] = JSON.stringify(tableEntry);
+            table[char] = tableEntry;
         } else {
-            var previousTableEntry = JSON.parse(table[char]);
+            var previousTableEntry = table[char];
             var previousVal;
             var currentVal;
+            var realVal;
             for (var prop in tableEntry) {
                 if (tableEntry.hasOwnProperty(prop)) {
                     previousVal = JSON.stringify(previousTableEntry[prop]);
                     currentVal = JSON.stringify(tableEntry[prop]);
                     if (previousVal !== currentVal) {
-                        currentVal = conditionName + ' ? ' + currentVal + ' : ' + previousVal;
+                        previousTableEntry[prop][conditionName] = tableEntry[prop];
                     }
-                    tableEntry[prop] = currentVal;
                 }
             }
-            table[char] = JSON.stringify(tableEntry);
         }
 
     },
@@ -206,7 +205,7 @@ module.exports = {
 
         for (var prop in table) {
             if (table.hasOwnProperty(prop)) {
-                array.push(JSON.stringify(prop) +  ': ' + this.convertTableEntryToString(table[prop]));
+                array.push(JSON.stringify(prop)+ ': ' + this.convertTableEntryToString(table[prop]));
             }
         }
 
@@ -216,11 +215,19 @@ module.exports = {
     convertTableEntryToString: function (tableEntry) {
         var array = [];
 
-        var obj = JSON.parse(tableEntry);
+        var obj = tableEntry;
 
         for (var prop in obj) {
             if (obj.hasOwnProperty(prop)) {
-                array.push(prop +  ': ' + obj[prop]);
+                var val =  JSON.stringify(obj[prop]);
+
+                if (typeof obj[prop].isGecko !== 'undefined') {
+                    val = 'isGecko ? ' + JSON.stringify(obj[prop].isGecko) + ' : ' + val;
+                }
+                if (typeof obj[prop].isIE !== 'undefined') {
+                    val = 'isIE ? ' + JSON.stringify(obj[prop].isIE) + ' : ' + val;
+                }
+                array.push('"' + prop +  '": ' + val);
             }
         }
 

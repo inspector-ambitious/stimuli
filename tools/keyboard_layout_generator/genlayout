@@ -6,6 +6,7 @@ program
     .usage('[options]')
     .option('--layout <name>', 'Layout name')
     .option('--port', 'Server port (default: 9999)')
+    .option('--delay <delay>', 'Delay between each keyboard event')
     .option('--unicode', 'Is the keyboard layout unicode capable')
     .option('--deadkeys', 'Generate combinations with dead keys')
     .option('--shift', 'Generate combinations with the shift modifier keys')
@@ -22,6 +23,7 @@ if (!program.layout) {
 }
 var firefox = new (require(__dirname + '/firefox_launcher'));
 var chrome = new (require(__dirname + '/chrome_launcher'));
+var ie = new (require(__dirname + '/ie_launcher'));
 var browser;
 var browsers = [];
 var browserIndex = 0;
@@ -43,7 +45,7 @@ browsers.push(function() {
 
 if (process.platform === 'win32')  {
     browsers.push(function() {
-        browserEngine = 'trident';
+        browserEngine = 'ie';
         browser = ie.start('http://localhost:9000');
         browserIndex++;
     });
@@ -61,7 +63,8 @@ server.onBrowserConnected = function() {
             deadkeys: program.deadkeys,
             shift: program.shift,
             options: program.opts,
-            altgr: program.altgr
+            altgr: program.altgr,
+            delay: program.delay
         });
 
         console.log(browserEngine.toUpperCase() + ': Sent ' + count + ' combinations.');
