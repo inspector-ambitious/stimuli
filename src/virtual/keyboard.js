@@ -14,7 +14,7 @@
 
     Stimuli.virtual.Keyboard = function(viewport) {
         this.viewport = viewport;
-        this.layout = Stimuli.keyboard.layout[Stimuli.core.Support.getOS()].us;
+        this.layout = Stimuli.core.Support.getDefaultKeyboardLayout();
     };
 
     var Keyboard = Stimuli.virtual.Keyboard;
@@ -25,10 +25,9 @@
      * Sets the keyboard layout.
      *
      * @param {String} name The layout name, see keyboard/layout folder to see a complete list
-     * @param {String=} os The layout os can be windows, macosx or linux. (default to current os)
+     * @param {String} os The layout os can be windows, macosx or linux. (default to current os)
      */
     Keyboard.prototype.setLayout = function(name, os) {
-        os = os || Stimuli.core.Support.getOS();
         this.layout = Stimuli.keyboard.layout[os][name];
     };
 

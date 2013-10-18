@@ -17,6 +17,7 @@
         isWindows = /Windows\sNT/.test(userAgent),
         isMacOSX = /Intel\sMac\sOS\sX/.test(userAgent),
         isIOS = /(iPad|iPhone|iPod)/.test(userAgent),
+        isAndroid = /Android/.test(userAgent),
         isIE = false,
         IEVersion = 0,
         jscriptMap = {
@@ -102,6 +103,12 @@ Stimuli.core.Support = {
 
     /**
      * @property {Boolean}
+     * Is true if browser is Android
+     */
+    isAndroid: isAndroid,
+
+    /**
+     * @property {Boolean}
      * Is true if browser rendering engine is Webkit
      */
     isWebkit: isWebkit,
@@ -149,21 +156,21 @@ Stimuli.core.Support = {
     isLinux: isLinux,
 
     /**
-     * Returns the current OS name, "windows", "macosx", "linux", "ios", "android"
+     * Returns the default keyboard layout.
      * @return {String}
      */
-    getOS: function() {
+    getDefaultKeyboardLayout: function() {
+        if (isAndroid || isIOS) {
+            return Stimuli.keyboard.layout.Virtual;
+        }
         if (isLinux) {
-            return 'linux';
+            return Stimuli.keyboard.layout.linux.US;
         }
         if (isMacOSX) {
-            return 'macosx';
+            return Stimuli.keyboard.layout.macosx.US;
         }
         if (isWindows) {
-            return 'windows';
-        }
-        if (isIOS) {
-            return 'ios';
+            return Stimuli.keyboard.layout.windows.US;
         }
     }
 };

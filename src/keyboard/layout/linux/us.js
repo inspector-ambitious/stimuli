@@ -3,7 +3,7 @@
 (function() {
     var isGecko = Stimuli.core.Support.isGecko;
     var isIE = Stimuli.core.Support.isIE;
-    Stimuli.keyboard.layout.linux.us = {
+    Stimuli.keyboard.layout.linux.US = {
         unicode: false,
         patterns: [ function(keyCodes, characters, locations) {
             return [ {
@@ -668,5 +668,5 @@
             }
         }
     };
-    Stimuli.core.Object.merge(Stimuli.keyboard.layout.linux.us, Stimuli.keyboard.layout.Generic);
+    Stimuli.core.Object.merge(Stimuli.keyboard.layout.linux.US, Stimuli.keyboard.layout.Generic);
 })();

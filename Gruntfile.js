@@ -101,7 +101,12 @@ module.exports = function(grunt) {
 
                 // extra options
                 options: {
-                    'title': "Stimuli <%= pkg.version %> Documentation"
+                    exclude: [
+                        'src/keyboard/layout/macosx',
+                        'src/keyboard/layout/linux',
+                        'src/keyboard/layout/windows'
+                    ],
+                    title: "Stimuli <%= pkg.version %> Documentation"
                 }
             }
         }

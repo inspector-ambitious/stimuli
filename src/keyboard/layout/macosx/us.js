@@ -3,7 +3,7 @@
 (function() {
     var isGecko = Stimuli.core.Support.isGecko;
     var isIE = Stimuli.core.Support.isIE;
-    Stimuli.keyboard.layout.macosx.us = {
+    Stimuli.keyboard.layout.macosx.US = {
         unicode: false,
         patterns: [ function(keyCodes, characters, locations) {
             return [ {
@@ -1159,7 +1159,7 @@
                 characters: [ "Ó" ],
                 locations: [ 1, 0 ]
             },
-            ˆ: {
+            "ˆ": {
                 pattern: 3,
                 keyCodes: [ 16, 18, 73 ],
                 characters: [ "ˆ" ],
@@ -1225,7 +1225,7 @@
                 characters: [ "Í" ],
                 locations: [ 1, 0 ]
             },
-            ˇ: {
+            "ˇ": {
                 pattern: 3,
                 keyCodes: [ 16, 18, 84 ],
                 characters: [ "ˇ" ],
@@ -1443,5 +1443,5 @@
             }
         }
     };
-    Stimuli.core.Object.merge(Stimuli.keyboard.layout.macosx.us, Stimuli.keyboard.layout.Generic);
+    Stimuli.core.Object.merge(Stimuli.keyboard.layout.macosx.US, Stimuli.keyboard.layout.Generic);
 })();

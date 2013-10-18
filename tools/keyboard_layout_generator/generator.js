@@ -177,7 +177,7 @@ module.exports = {
         var code = ((fs.readFileSync('./template.tpl')).toString())
             .replace(/__patterns__/g, this.convertPatternsToString())
             .replace(/__table__/g, this.convertTableToString())
-            .replace(/__layout__/g, config.layout)
+            .replace(/__layout__/g, config.layout.toUpperCase())
             .replace(/__platform__/g, platforms[process.platform])
             .replace(/__unicode__/g, !!config.unicode);
 

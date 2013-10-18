@@ -62,18 +62,31 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .keyboard
                 .typeText('Ni1')
                 .then(function() {
-                    expect(events[0]).to.be('keydown'); // shift pressed
-                    expect(events[1]).to.be('keydown'); //N
-                    expect(events[2]).to.be('keypress');
-                    expect(events[3]).to.be('keyup');
-                    expect(events[4]).to.be('keyup'); // shift released
-                    expect(events[5]).to.be('keydown');//i
-                    expect(events[6]).to.be('keypress');
-                    expect(events[7]).to.be('keyup');
-                    expect(events[8]).to.be('keydown');//1
-                    expect(events[9]).to.be('keypress');
-                    expect(events[10]).to.be('keyup');
-                    expect(events.length).to.be(11);
+                    if (Stimuli.core.Support.isIOS || Stimuli.core.Support.isAndroid) {
+                        expect(events[0]).to.be('keydown'); // shift pressed
+                        expect(events[1]).to.be('keypress');
+                        expect(events[2]).to.be('keyup');
+                        expect(events[3]).to.be('keydown');//i
+                        expect(events[4]).to.be('keypress');
+                        expect(events[5]).to.be('keyup');
+                        expect(events[6]).to.be('keydown');//1
+                        expect(events[7]).to.be('keypress');
+                        expect(events[8]).to.be('keyup');
+                        expect(events.length).to.be(9);
+                    } else {
+                        expect(events[0]).to.be('keydown'); // shift pressed
+                        expect(events[1]).to.be('keydown'); //N
+                        expect(events[2]).to.be('keypress');
+                        expect(events[3]).to.be('keyup');
+                        expect(events[4]).to.be('keyup'); // shift released
+                        expect(events[5]).to.be('keydown');//i
+                        expect(events[6]).to.be('keypress');
+                        expect(events[7]).to.be('keyup');
+                        expect(events[8]).to.be('keydown');//1
+                        expect(events[9]).to.be('keypress');
+                        expect(events[10]).to.be('keyup');
+                        expect(events.length).to.be(11);
+                    }
                     expect(html).to.be(body.innerHTML);  // should not edit the body html
                     done();
                 });
@@ -99,24 +112,43 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .typeText('Ni1')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(events[0]).to.be('keydown'); // shift pressed
-                        expect(events[1]).to.be('keydown');
-                        expect(events[2]).to.be('keypress');
-                        expect(events[3]).to.be('textInput');
-                        expect(events[4]).to.be('input');
-                        expect(events[5]).to.be('keyup');
-                        expect(events[6]).to.be('keyup'); // shift released
-                        expect(events[7]).to.be('keydown');
-                        expect(events[8]).to.be('keypress');
-                        expect(events[9]).to.be('textInput');
-                        expect(events[10]).to.be('input');
-                        expect(events[11]).to.be('keyup');
-                        expect(events[12]).to.be('keydown');
-                        expect(events[13]).to.be('keypress');
-                        expect(events[14]).to.be('textInput');
-                        expect(events[15]).to.be('input');
-                        expect(events[16]).to.be('keyup');
-                        expect(events.length).to.be(17);
+                        if (Stimuli.core.Support.isIOS || Stimuli.core.Support.isAndroid) {
+                            expect(events[0]).to.be('keydown');
+                            expect(events[1]).to.be('keypress');
+                            expect(events[2]).to.be('textInput');
+                            expect(events[3]).to.be('input');
+                            expect(events[4]).to.be('keyup');
+                            expect(events[5]).to.be('keydown');
+                            expect(events[6]).to.be('keypress');
+                            expect(events[7]).to.be('textInput');
+                            expect(events[8]).to.be('input');
+                            expect(events[9]).to.be('keyup');
+                            expect(events[10]).to.be('keydown');
+                            expect(events[11]).to.be('keypress');
+                            expect(events[12]).to.be('textInput');
+                            expect(events[13]).to.be('input');
+                            expect(events[14]).to.be('keyup');
+                            expect(events.length).to.be(15);
+                        } else {
+                            expect(events[0]).to.be('keydown'); // shift pressed
+                            expect(events[1]).to.be('keydown');
+                            expect(events[2]).to.be('keypress');
+                            expect(events[3]).to.be('textInput');
+                            expect(events[4]).to.be('input');
+                            expect(events[5]).to.be('keyup');
+                            expect(events[6]).to.be('keyup'); // shift released
+                            expect(events[7]).to.be('keydown');
+                            expect(events[8]).to.be('keypress');
+                            expect(events[9]).to.be('textInput');
+                            expect(events[10]).to.be('input');
+                            expect(events[11]).to.be('keyup');
+                            expect(events[12]).to.be('keydown');
+                            expect(events[13]).to.be('keypress');
+                            expect(events[14]).to.be('textInput');
+                            expect(events[15]).to.be('input');
+                            expect(events[16]).to.be('keyup');
+                            expect(events.length).to.be(17);
+                        }
                     }
 
                     if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11) {
@@ -214,24 +246,43 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .typeText('Ni1')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(events[0]).to.be('keydown'); // shift pressed
-                        expect(events[1]).to.be('keydown');
-                        expect(events[2]).to.be('keypress');
-                        expect(events[3]).to.be('textInput');
-                        expect(events[4]).to.be('input');
-                        expect(events[5]).to.be('keyup');
-                        expect(events[6]).to.be('keyup'); // shift released
-                        expect(events[7]).to.be('keydown');
-                        expect(events[8]).to.be('keypress');
-                        expect(events[9]).to.be('textInput');
-                        expect(events[10]).to.be('input');
-                        expect(events[11]).to.be('keyup');
-                        expect(events[12]).to.be('keydown');
-                        expect(events[13]).to.be('keypress');
-                        expect(events[14]).to.be('textInput');
-                        expect(events[15]).to.be('input');
-                        expect(events[16]).to.be('keyup');
-                        expect(events.length).to.be(17);
+                        if (Stimuli.core.Support.isIOS || Stimuli.core.Support.isAndroid) {
+                            expect(events[0]).to.be('keydown');
+                            expect(events[1]).to.be('keypress');
+                            expect(events[2]).to.be('textInput');
+                            expect(events[3]).to.be('input');
+                            expect(events[4]).to.be('keyup');
+                            expect(events[5]).to.be('keydown');
+                            expect(events[6]).to.be('keypress');
+                            expect(events[7]).to.be('textInput');
+                            expect(events[8]).to.be('input');
+                            expect(events[9]).to.be('keyup');
+                            expect(events[10]).to.be('keydown');
+                            expect(events[11]).to.be('keypress');
+                            expect(events[12]).to.be('textInput');
+                            expect(events[13]).to.be('input');
+                            expect(events[14]).to.be('keyup');
+                            expect(events.length).to.be(15);
+                        } else {
+                            expect(events[0]).to.be('keydown'); // shift pressed
+                            expect(events[1]).to.be('keydown');
+                            expect(events[2]).to.be('keypress');
+                            expect(events[3]).to.be('textInput');
+                            expect(events[4]).to.be('input');
+                            expect(events[5]).to.be('keyup');
+                            expect(events[6]).to.be('keyup'); // shift released
+                            expect(events[7]).to.be('keydown');
+                            expect(events[8]).to.be('keypress');
+                            expect(events[9]).to.be('textInput');
+                            expect(events[10]).to.be('input');
+                            expect(events[11]).to.be('keyup');
+                            expect(events[12]).to.be('keydown');
+                            expect(events[13]).to.be('keypress');
+                            expect(events[14]).to.be('textInput');
+                            expect(events[15]).to.be('input');
+                            expect(events[16]).to.be('keyup');
+                            expect(events.length).to.be(17);
+                        }
                     }
 
                     if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11) {
@@ -329,24 +380,43 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .typeText('Ni1')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(events[0]).to.be('keydown'); // shift pressed
-                        expect(events[1]).to.be('keydown');
-                        expect(events[2]).to.be('keypress');
-                        expect(events[3]).to.be('textInput');
-                        expect(events[4]).to.be('input');
-                        expect(events[5]).to.be('keyup');
-                        expect(events[6]).to.be('keyup'); // shift released
-                        expect(events[7]).to.be('keydown');
-                        expect(events[8]).to.be('keypress');
-                        expect(events[9]).to.be('textInput');
-                        expect(events[10]).to.be('input');
-                        expect(events[11]).to.be('keyup');
-                        expect(events[12]).to.be('keydown');
-                        expect(events[13]).to.be('keypress');
-                        expect(events[14]).to.be('textInput');
-                        expect(events[15]).to.be('input');
-                        expect(events[16]).to.be('keyup');
-                        expect(events.length).to.be(17);
+                        if (Stimuli.core.Support.isIOS || Stimuli.core.Support.isAndroid) {
+                            expect(events[0]).to.be('keydown');
+                            expect(events[1]).to.be('keypress');
+                            expect(events[2]).to.be('textInput');
+                            expect(events[3]).to.be('input');
+                            expect(events[4]).to.be('keyup');
+                            expect(events[5]).to.be('keydown');
+                            expect(events[6]).to.be('keypress');
+                            expect(events[7]).to.be('textInput');
+                            expect(events[8]).to.be('input');
+                            expect(events[9]).to.be('keyup');
+                            expect(events[10]).to.be('keydown');
+                            expect(events[11]).to.be('keypress');
+                            expect(events[12]).to.be('textInput');
+                            expect(events[13]).to.be('input');
+                            expect(events[14]).to.be('keyup');
+                            expect(events.length).to.be(15);
+                        } else {
+                            expect(events[0]).to.be('keydown'); // shift pressed
+                            expect(events[1]).to.be('keydown');
+                            expect(events[2]).to.be('keypress');
+                            expect(events[3]).to.be('textInput');
+                            expect(events[4]).to.be('input');
+                            expect(events[5]).to.be('keyup');
+                            expect(events[6]).to.be('keyup'); // shift released
+                            expect(events[7]).to.be('keydown');
+                            expect(events[8]).to.be('keypress');
+                            expect(events[9]).to.be('textInput');
+                            expect(events[10]).to.be('input');
+                            expect(events[11]).to.be('keyup');
+                            expect(events[12]).to.be('keydown');
+                            expect(events[13]).to.be('keypress');
+                            expect(events[14]).to.be('textInput');
+                            expect(events[15]).to.be('input');
+                            expect(events[16]).to.be('keyup');
+                            expect(events.length).to.be(17);
+                        }
                     }
 
                     if (Stimuli.core.Support.isIE8 || Stimuli.core.Support.isIE9 ||
@@ -408,24 +478,43 @@ describe('Stimuli.keyboard.TypeText', function() {
                 .typeText('Ni1')
                 .then(function() {
                     if (Stimuli.core.Support.isWebkit) {
-                        expect(events[0]).to.be('keydown'); // shift pressed
-                        expect(events[1]).to.be('keydown');
-                        expect(events[2]).to.be('keypress');
-                        expect(events[3]).to.be('textInput');
-                        expect(events[4]).to.be('input');
-                        expect(events[5]).to.be('keyup');
-                        expect(events[6]).to.be('keyup'); // shift released
-                        expect(events[7]).to.be('keydown');
-                        expect(events[8]).to.be('keypress');
-                        expect(events[9]).to.be('textInput');
-                        expect(events[10]).to.be('input');
-                        expect(events[11]).to.be('keyup');
-                        expect(events[12]).to.be('keydown');
-                        expect(events[13]).to.be('keypress');
-                        expect(events[14]).to.be('textInput');
-                        expect(events[15]).to.be('input');
-                        expect(events[16]).to.be('keyup');
-                        expect(events.length).to.be(17);
+                        if (Stimuli.core.Support.isIOS || Stimuli.core.Support.isAndroid) {
+                            expect(events[0]).to.be('keydown');
+                            expect(events[1]).to.be('keypress');
+                            expect(events[2]).to.be('textInput');
+                            expect(events[3]).to.be('input');
+                            expect(events[4]).to.be('keyup');
+                            expect(events[5]).to.be('keydown');
+                            expect(events[6]).to.be('keypress');
+                            expect(events[7]).to.be('textInput');
+                            expect(events[8]).to.be('input');
+                            expect(events[9]).to.be('keyup');
+                            expect(events[10]).to.be('keydown');
+                            expect(events[11]).to.be('keypress');
+                            expect(events[12]).to.be('textInput');
+                            expect(events[13]).to.be('input');
+                            expect(events[14]).to.be('keyup');
+                            expect(events.length).to.be(15);
+                        } else {
+                            expect(events[0]).to.be('keydown'); // shift pressed
+                            expect(events[1]).to.be('keydown');
+                            expect(events[2]).to.be('keypress');
+                            expect(events[3]).to.be('textInput');
+                            expect(events[4]).to.be('input');
+                            expect(events[5]).to.be('keyup');
+                            expect(events[6]).to.be('keyup'); // shift released
+                            expect(events[7]).to.be('keydown');
+                            expect(events[8]).to.be('keypress');
+                            expect(events[9]).to.be('textInput');
+                            expect(events[10]).to.be('input');
+                            expect(events[11]).to.be('keyup');
+                            expect(events[12]).to.be('keydown');
+                            expect(events[13]).to.be('keypress');
+                            expect(events[14]).to.be('textInput');
+                            expect(events[15]).to.be('input');
+                            expect(events[16]).to.be('keyup');
+                            expect(events.length).to.be(17);
+                        }
                     }
 
                     if (Stimuli.core.Support.isIE8 || Stimuli.core.Support.isIE9 ||
