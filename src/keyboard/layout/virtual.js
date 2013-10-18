@@ -71,7 +71,7 @@
         },
 
         getEventsFlow: function(key) {
-            var keyCode = this.vkTable[key.toUpperCase()] || 0
+            var keyCode = this.vkTable[key.toUpperCase()] || 0;
             return [ {
                 type: "keydown",
                 location: 0,
