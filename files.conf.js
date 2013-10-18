@@ -49,6 +49,7 @@ var stimuliFiles = [
 
     'src/virtual/keyboard.js',
     'src/keyboard/layout/generic.js',
+    'src/keyboard/layout/windows/us.js',
     'src/keyboard/layout/macosx/us.js',
     'src/keyboard/layout/linux/us.js', 
     'src/keyboard/helper.js',

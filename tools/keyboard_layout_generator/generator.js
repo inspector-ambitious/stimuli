@@ -120,11 +120,12 @@ module.exports = {
             var currentVal;
             var realVal;
             for (var prop in tableEntry) {
-                if (tableEntry.hasOwnProperty(prop)) {
+                if (tableEntry.hasOwnProperty(prop) && prop !== 'isGecko' && prop !== 'isIE') {
                     previousVal = JSON.stringify(previousTableEntry[prop]);
                     currentVal = JSON.stringify(tableEntry[prop]);
                     if (previousVal !== currentVal) {
-                        previousTableEntry[prop][conditionName] = tableEntry[prop];
+                        previousTableEntry[conditionName] =  previousTableEntry[conditionName] || {};
+                        previousTableEntry[conditionName][prop] = tableEntry[prop];
                     }
                 }
             }
@@ -218,14 +219,14 @@ module.exports = {
         var obj = tableEntry;
 
         for (var prop in obj) {
-            if (obj.hasOwnProperty(prop)) {
-                var val =  JSON.stringify(obj[prop]);
+            if (obj.hasOwnProperty(prop) && prop !== 'isGecko' && prop !== 'isIE') {
+                var val = JSON.stringify(obj[prop]);
 
-                if (typeof obj[prop].isGecko !== 'undefined') {
-                    val = 'isGecko ? ' + JSON.stringify(obj[prop].isGecko) + ' : ' + val;
+                if (obj.isGecko && typeof obj.isGecko[prop] !== 'undefined') {
+                    val = 'isGecko ? ' + JSON.stringify(obj.isGecko[prop]) + ' : ' + val;
                 }
-                if (typeof obj[prop].isIE !== 'undefined') {
-                    val = 'isIE ? ' + JSON.stringify(obj[prop].isIE) + ' : ' + val;
+                if (obj.isIE && typeof obj.isIE[prop] !== 'undefined') {
+                    val = 'isIE ? ' + JSON.stringify(obj.isIE[prop]) + ' : ' + val;
                 }
                 array.push('"' + prop +  '": ' + val);
             }
