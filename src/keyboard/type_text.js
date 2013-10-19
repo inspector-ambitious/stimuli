@@ -50,16 +50,6 @@
 
                         }
 
-                        if (idx === 0 && self.isEditableInput(target) && (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10)) {
-
-                            self.inject(function() {
-                                return Obj.merge({
-                                    type: 'textinput'
-                                }, defaultConfig);
-                            });
-
-                        }
-
                         if (!Stimuli.core.Support.isWebkit) {
 
                             self.then(function() {
@@ -70,7 +60,8 @@
                                 }
                             });
 
-                            if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isWebkit &&
+                            if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isIE9 &&
+                                !Stimuli.core.Support.isIE10 && !Stimuli.core.Support.isWebkit &&
                                 (self.isEditableInput(target) || self.isTextArea(target))) {
                                 self.inject(function() {
                                     return eventConfig;
@@ -82,7 +73,7 @@
                 } else {
                     self.inject(function() {
                         return eventConfig;
-                    }, 5);
+                    }, 25);
                 }
             });
 

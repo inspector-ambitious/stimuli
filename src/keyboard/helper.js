@@ -140,7 +140,19 @@
 
         updateEditableValue: function(target, key) {
             var startPos;
-            if (typeof target.selectionStart === 'number') {
+            if (Stimuli.core.Support.isIE8 || Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
+
+                var range = target.ownerDocument.selection.createRange();
+
+                startPos = range.text.length;
+
+                if (range.parentElement() === target) {
+                    range.text = key;
+                    range.collapse(false);
+                    range.move('character', startPos +1);
+                }
+
+            } else if (typeof target.selectionStart === 'number') {
                 var endPos, value, before, after;
 
                 startPos = target.selectionStart;
@@ -153,16 +165,6 @@
                 target.selectionStart = startPos + 1;
                 target.selectionEnd = startPos + 1;
 
-            } else {
-                var range = target.ownerDocument.selection.createRange();
-
-                startPos = range.text.length;
-
-                if (range.parentElement() === target) {
-                    range.text = key;
-                    range.collapse(false);
-                    range.move('character', startPos +1);
-                }
             }
         }
 
