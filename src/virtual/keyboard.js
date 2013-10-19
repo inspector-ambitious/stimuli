@@ -32,6 +32,13 @@
     };
 
     /**
+     * Types a key in the active element.
+     */
+    Keyboard.prototype.type = function() {
+        return this.then(this.generateCommand('Type', arguments));
+    };
+
+    /**
      * Types text in the active element.
      */
     Keyboard.prototype.typeText = function() {

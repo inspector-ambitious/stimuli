@@ -67,6 +67,7 @@ Stimuli.browser = {};
 Stimuli.mouse = {};
 
 Stimuli.keyboard = {
+    specialKey: {},
     layout: {
         android: {},
         linux: {},

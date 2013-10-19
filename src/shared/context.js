@@ -44,7 +44,9 @@
         var self = this,
             callbackWrapper = function() {
             self.unsubscribe('new', callbackWrapper);
-            callback();
+            if (callback) {
+                callback();
+            }
         };
 
         if (Stimuli.core.Support.isIOS) {
