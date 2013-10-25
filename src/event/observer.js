@@ -60,10 +60,12 @@
     Observer.prototype.once = function(type, listener, scope) {
         var self = this;
 
-        function listenerWrap() {
+        var listenerWrap = function() {
             self.unsubscribe(type, listenerWrap);
             listener.apply(scope, arguments);
-        }
+        };
+
+        listenerWrap.origListener = listener;
 
         self.subscribe(type, listenerWrap, scope);
     };
@@ -81,7 +83,8 @@
             wrappedListener;
 
         for (; i < length; i++) {
-            if (listeners[i].listener === listener) {
+            if (listeners[i].listener === listener ||
+                listeners[i].listener.origListener === listener) {
                 wrappedListener = listeners[i].wrappedListener;
                 listeners.splice(i, 1);
                 break;

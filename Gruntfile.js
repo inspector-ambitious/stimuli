@@ -101,7 +101,12 @@ module.exports = function(grunt) {
 
                 // extra options
                 options: {
-                    'title': "Stimuli <%= pkg.version %> Documentation"
+                    exclude: [
+                        'src/keyboard/layout/macosx',
+                        'src/keyboard/layout/linux',
+                        'src/keyboard/layout/windows'
+                    ],
+                    title: "Stimuli <%= pkg.version %> Documentation"
                 }
             }
         }
@@ -136,7 +141,7 @@ module.exports = function(grunt) {
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.travis.conf.js', '--browsers',
-            'BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'
+            'BS_IE8,BS_IE9,BS_IE10,BS_IE11,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6'
             ],
             opts: {stdio: 'inherit'}
         },done);
@@ -160,6 +165,24 @@ module.exports = function(grunt) {
         },done);
     });
 
+    grunt.registerTask('nginx_start', function(){
+      var done = this.async();
+      grunt.util.spawn({
+        cmd: 'nginx',
+        args: ['-c', '.nginx/nginx.conf', '-p', '.'],
+        opts: {stdio: 'inherit'}
+      },done);
+    });
+
+    grunt.registerTask('nginx_stop', function(){
+      var done = this.async();
+      grunt.util.spawn({
+        cmd: 'nginx',
+        args: ['-c', '.nginx/nginx.conf', '-p', '.', '-s', 'stop'],
+        opts: {stdio: 'inherit'}
+      },done);
+    });
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -169,4 +192,6 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
     grunt.registerTask('travis', ['jshint', 'build', 'karma_phantom', 'karma_browserstack']);
+
+    grunt.registerTask('travis_local', ['nginx_start', 'build', 'karma_browserstack', 'nginx_stop']);
 };

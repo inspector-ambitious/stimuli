@@ -74,10 +74,12 @@ Stimuli.core.Observable = {
     once: function(eventName, fn, scope, sneak) {
         var self = this;
 
-        function fnWrap() {
+        var fnWrap = function() {
             self.unsubscribe(eventName, fnWrap);
             fn.apply(scope, arguments);
-        }
+        };
+
+        fnWrap.origFn = fn;
 
         self.subscribe(eventName, fnWrap, scope, sneak);
     },
@@ -95,7 +97,8 @@ Stimuli.core.Observable = {
 
         for (; i < length; i++) {
             listener = listeners[i];
-            if (listeners[i].fn === fn) {
+            if (listeners[i].fn === fn ||
+                listeners[i].fn.origFn === fn) {
                 listeners.splice(i, 1);
                 break;
             }

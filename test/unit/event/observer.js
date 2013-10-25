@@ -85,8 +85,74 @@ describe('Stimuli.event.Observer', function() {
 
     });
 
+    describe('once', function() {
+
+        it('should call the listener once', function() {
+            var wasCalled = false;
+            var scope = {foobar: true};
+            var eventName = null;
+            var capturedScope = null;
+            var count = 0;
+
+            var listener = function(e) {
+                wasCalled = true;
+                capturedScope = this;
+                eventName = e.type;
+                count++;
+            };
+
+            observer.once('mouseover', listener, scope);
+
+
+            Stimuli.event.synthetizer.Mouse.inject({
+                target: stimuli.$('#textinput'),
+                type: 'mouseover',
+                button: 0,
+                view: stimuli.getWindow()
+            });
+
+            Stimuli.event.synthetizer.Mouse.inject({
+                target: stimuli.$('#textinput'),
+                type: 'mouseover',
+                button: 0,
+                view: stimuli.getWindow()
+            });
+
+            expect(wasCalled).to.be(true);
+            expect(capturedScope).to.be(scope);
+            expect(eventName).to.be('mouseover');
+            expect(count).to.be(1);
+        });
+
+
+    });
+
     describe('unsubscribe', function() {
 
+        it('should not call a listener binded with once method', function() {
+            var wasCalled = false;
+            var scope = null;
+            var eventName = null;
+            var listener = function(e) {
+                wasCalled = true;
+                scope = this;
+                eventName = e.type;
+            };
+
+            observer.once('mouseover', listener);
+            observer.unsubscribe('mouseover', listener);
+
+            Stimuli.event.synthetizer.Mouse.inject({
+                target: stimuli.$('#textinput'),
+                type: 'mouseover',
+                button: 0,
+                view: stimuli.getWindow()
+            });
+
+            expect(wasCalled).to.be(false);
+            expect(scope).to.be(null);
+            expect(eventName).to.be(null);
+        });
 
         it('should not call the listener if the listener is unsubscribed', function() {
             var wasCalled = false;
