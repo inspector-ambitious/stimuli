@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-event-synthetizer-Html'>/**
+</span> * @class Stimuli.event.synthetizer.Html
+ * @singleton
+ * Abstraction layer for cross-browsers synthetic html events injection.
+ */
+(function() {
+
+    Stimuli.event.synthetizer.Html = {
+
+<span id='Stimuli-event-synthetizer-Html-method-inject'>        /**
+</span>         * Injects an a synthetic html event into the dom.
+         * @param {Object} eventConfig The html event configuration
+         */
+
+        inject: function(eventConfig) {
+            var event,
+                canceled;
+
+            if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
+
+                event = eventConfig.view.document.createEvent('Event');
+
+                event.initEvent(
+                    eventConfig.type,
+                    eventConfig.bubbles,
+                    eventConfig.cancelable,
+                    eventConfig.view
+                );
+
+                canceled = !eventConfig.target.dispatchEvent(event);
+
+            } else { //IE8
+
+                var eventName = 'on' + eventConfig.type;
+
+                // Regardless of their values specified in the event object,
+                // cancelBubble is automatically initialized by fireEvent.
+                // (see http://msdn.microsoft.com/en-us/library/ie/ms536423(v=vs.85).aspx)
+                // So to bypass this limitation we create a listener which will be binded expando style,
+                // this way it will be fired before any other listener and the cancelBubble can be fixed.
+
+                var currentListener = eventConfig.target[eventName];
+
+                eventConfig.target[eventName] = function() {
+                    var e = eventConfig.view.event;
+
+                    e.cancelBubble = !eventConfig.bubbles;
+
+                    if (currentListener) {
+                        currentListener.apply(this);
+                    } else {
+                        eventConfig.target[eventName] = null;
+                    }
+                };
+
+                event = eventConfig.view.document.createEventObject();
+
+                eventConfig.target.fireEvent(eventName, event);
+                canceled = event.returnValue === false;
+            }
+
+            return {
+                event: event,
+                canceled: canceled
+            };
+        }
+    };
+
+})();
+</pre>
+</body>
+</html>

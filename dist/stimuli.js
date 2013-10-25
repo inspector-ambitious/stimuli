@@ -1,4 +1,4 @@
-/*! stimuli - v0.1.0 - 2013-10-06 */
+/*! stimuli - v0.1.0 - 2013-10-25 */
 'use strict';
 
 // Source: lib/sizzle/sizzle.js
@@ -2017,6 +2017,8 @@ var Stimuli = function() {
 
     self.mouse = new Stimuli.virtual.Mouse(self.viewport);
 
+    self.keyboard = new Stimuli.virtual.Keyboard(self.viewport);
+
     self.recorder = new Stimuli.shared.Recorder();
 
     self.synchronize(self.recorder);
@@ -2025,13 +2027,18 @@ var Stimuli = function() {
 
     self.synchronize(self.mouse);
 
+    self.synchronize(self.keyboard);
+
     function mix(obj) {
         obj.browser = self.browser;
         obj.mouse = self.mouse;
+        obj.keyboard = self.keyboard;
         obj.recorder = self.recorder;
     }
 
     mix(self.browser);
+
+    mix(self.keyboard);
 
     mix(self.mouse);
 
@@ -2058,22 +2065,38 @@ Stimuli.browser = {};
 
 Stimuli.mouse = {};
 
-(function() {
-    var els = document.getElementsByTagName("script");
-    var str = "";
-    for(var i = 0; i < els.length; i++) {
-        var src = els[i].src;
-        if(/stimuli.js/.test(src)) {
-            Stimuli.blankPage = src.replace('stimuli.js', 'blank.html');
-        }
+Stimuli.keyboard = {
+    specialKey: {},
+    layout: {
+        android: {},
+        linux: {},
+        ios: {},
+        macosx: {},
+        windows: {}
     }
-})();
+};
+
 /**
  * Destroy the stimuli instance
  * @param {Object} options
  */
 Stimuli.prototype.destroy = function(callback) {
-    return this.browser.destroy(callback);
+    var self = this;
+
+    this.context = null;
+    this.viewport = null;
+    this.mouse = null;
+    this.keyboard = null;
+    this.recorder = null;
+    this.scheduler = null;
+    this.listeners = null;
+    this.browser.destroy();
+    // force sizzle to release an eventual reference to the iframe document
+    Sizzle('body', document);
+    this.browser = null;
+    if (callback) {
+        callback();
+    }
 };
 
 /**
@@ -2111,24 +2134,36 @@ Stimuli.prototype.getDocument = function() {
  */
 
 (function() {
-
-    var isIE = false,
+    var userAgent = navigator.userAgent,
+        isWebkit = /AppleWebKit/.test(userAgent),
+        isChrome = /Chrome\//.test(userAgent),
+        isPhantomJS = /PhantomJS/.test(userAgent),
+        isSafari = isWebkit && !isChrome && isPhantomJS,
+        isGecko = /Gecko\//.test(userAgent),
+        isLinux = /Linux/.test(userAgent),
+        isWindows = /Windows\sNT/.test(userAgent),
+        isMacOSX = /Intel\sMac\sOS\sX/.test(userAgent),
+        isIOS = /(iPad|iPhone|iPod)/.test(userAgent),
+        isAndroid = /Android/.test(userAgent),
+        isIE = false,
         IEVersion = 0,
         jscriptMap = {
             "5.8": 8,
             "9": 9,
             "10": 10
         },
-        jscriptVersion = 'none';
+        jscriptVersion = 'none',
+        isIE11;
 
     /*@cc_on
      jscriptVersion = @_jscript_version;
      @*/
     IEVersion = jscriptMap[jscriptVersion];
-   if (IEVersion) {
-       isIE = true;
+    if (IEVersion) {
+        isIE = true;
+    }
+    isIE11 = /Trident\/7\.0/.test(userAgent);
 
-   }
 Stimuli.core.Support = {
 
     /**
@@ -2157,31 +2192,114 @@ Stimuli.core.Support = {
      */
     documentCreateEventObject: typeof document.createEventObject === 'function',
 
+    /**
+     * @property {Boolean}
+     * Is true if browser is Internet Explorer.
+     */
+    isIE: isIE,
 
     /**
      * @property {Boolean}
-     * Is true if browser is ie8
+     * Is true if browser is Internet Explorer 8
      */
     isIE8: isIE && IEVersion === 8,
 
     /**
      * @property {Boolean}
-     * Is true if browser is ie9
+     * Is true if browser is Internet Explorer 9
      */
     isIE9: isIE && IEVersion === 9,
 
     /**
      * @property {Boolean}
-     * Is true if browser is ie10
+     * Is true if browser is Internet Explorer 10
      */
     isIE10: isIE && IEVersion === 10,
 
     /**
      * @property {Boolean}
+     * Is true if browser is Internet Explorer 11
+     */
+    isIE11: isIE11,
+
+    /**
+     * @property {Boolean}
      * Is true if browser is IOS
      */
-    isIOS:  /(iPad|iPhone|iPod)/g.test( navigator.userAgent )
+    isIOS: isIOS,
 
+    /**
+     * @property {Boolean}
+     * Is true if browser is Android
+     */
+    isAndroid: isAndroid,
+
+    /**
+     * @property {Boolean}
+     * Is true if browser rendering engine is Webkit
+     */
+    isWebkit: isWebkit,
+
+    /**
+     * @property {Boolean}
+     * Is true if the browser is PhantomJS.
+     */
+    isPhantomJS: isPhantomJS,
+
+    /**
+     * @property {Boolean}
+     * Is true if the browser is Chrome.
+     */
+    isChrome: isChrome,
+
+    /**
+     * @property {Boolean}
+     * Is true if the browser is Safari.
+     */
+    isSafari: isSafari,
+
+    /**
+     * @property {Boolean}
+     * Is true if the browser rendering engine is Gecko
+     */
+    isGecko: isGecko,
+
+    /**
+     * @property {Boolean}
+     * Is true is the browser is running on MacOSX.
+     */
+    isMacOSX: isMacOSX,
+
+    /**
+     * @property {Boolean}
+     * Is true is the browser is running on Windows.
+     */
+    isWindows: isWindows,
+
+    /**
+     * @property {Boolean}
+     * Is true is the browser is running on Linux.
+     */
+    isLinux: isLinux,
+
+    /**
+     * Returns the default keyboard layout.
+     * @return {String}
+     */
+    getDefaultKeyboardLayout: function() {
+        if (isAndroid || isIOS) {
+            return Stimuli.keyboard.layout.Virtual;
+        }
+        if (isLinux) {
+            return Stimuli.keyboard.layout.linux.US;
+        }
+        if (isMacOSX) {
+            return Stimuli.keyboard.layout.macosx.US;
+        }
+        if (isWindows) {
+            return Stimuli.keyboard.layout.windows.US;
+        }
+    }
 };
 
 })();
@@ -2215,6 +2333,70 @@ Stimuli.core.Support = {
 
             return dest;
         }
+
+    };
+
+})();
+
+// Source: src/core/array.js
+
+/**
+ * @class Stimuli.core.Array
+ * @singleton
+ * A set of useful methods to deal with arrays.
+ */
+(function() {
+
+    Stimuli.core.Array = {
+
+        /**
+         * Determines if an array contains a specified value.
+         * @param {Array} array The array to inspect
+         * @param {Mixed} value The value to look at
+         * @return {Boolean} True is the array contains the passed value
+         */
+        contains: (function() {
+            if (typeof [].indexOf === 'function')  {
+                return function(array, value) {
+                    return array.indexOf(value) !== -1;
+                };
+            }
+            return function(array, value) {
+                var length = array.length,
+                    i = 0;
+
+                for (; i < length; i++) {
+                    if (array[i] === value) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }()),
+
+        /**
+         * Iterates through all values of an array.
+         * @param {Array} array
+         * @param {Function} fn
+         * @param fn.value The array value
+         * @param fn.idx The array idx
+         */
+        forEach: (function() {
+            if (typeof [].forEach === 'function') {
+                return function(array, fn) {
+                    array.forEach(fn);
+                };
+            }
+            return function(array, fn) {
+
+                var length = array.length,
+                    i = 0;
+
+                for (; i < length; i++) {
+                    fn.call(array, array[i], i, array);
+                }
+            };
+        }())
 
     };
 
@@ -2255,6 +2437,151 @@ Stimuli.core.Class = {
 
 };
 
+
+// Source: src/core/dom.js
+(function() {
+
+    Stimuli.core.Dom = {
+
+        editableInputs: (function() {
+
+            var editableInputs = [  // this types will always be editable
+                    'email',
+                    'number',
+                    'password',
+                    'search',
+                    'tel',
+                    'text',
+                    'url'
+                ],
+                maybeEditableInputs = [  // this types could be editable
+                    'color',
+                    'date',
+                    'datetime',
+                    'datetime-localinput',
+                    'month',
+                    'time',
+                    'week'
+                ],
+                textValue = 'foobar';
+
+            // the editability depends on the browser implementation, if an input type is not implemented on a specified
+            // browser the input becomes editable. So to check if a field is editable the trick is to try to set the
+            // input's value, then if the value is updated it means that the browser didn't do any validation, which
+            // means that the input type is probably not implemented
+            Stimuli.core.Array.forEach(maybeEditableInputs, function(type) {
+                var input = document.createElement('input');
+
+                input.setAttribute('type', type);
+
+                try {
+
+                    input.value = textValue;
+
+                    if (input.value === textValue) {
+                        editableInputs.push(type);
+                    }
+
+                } catch(e) {}
+                input = null;
+            });
+
+            return editableInputs;
+
+        }()),
+
+        isDesignMode: function(target) {
+            return target.ownerDocument.designMode.toLowerCase() === 'on';
+        },
+
+        isEditableInput: function(target) {
+            var tagName = target.tagName.toLowerCase(),
+                type = target.getAttribute('type');
+
+            if (tagName === 'input') {
+                return Stimuli.core.Array.contains(this.editableInputs, type);
+            }
+
+            return false;
+        },
+
+        isTextArea: function(target) {
+            return target.tagName.toLowerCase() === 'textarea';
+        },
+
+        isContentEditable: function(target) {
+            var parentNode = target;
+            while(parentNode) {
+                if (parentNode.contentEditable === 'true') {
+                    return true;
+                }
+                parentNode = parentNode.parentNode;
+            }
+            return false;
+        },
+
+        isEditable: function(target) {
+            var self = this;
+            return self.isEditableInput(target) || self.isTextArea(target) ||
+                self.isDesignMode(target) || self.isContentEditable(target);
+        },
+
+        updateEditableHtml: function(target, key) {
+            var doc = target.ownerDocument,
+                range;
+            if (typeof doc.createRange === 'function') {
+                var div, frag;
+                range = doc.createRange();
+                range.selectNodeContents(target);
+                range.collapse(false);
+                div = doc.createElement("div");
+                div.innerHTML = key;
+                frag = doc.createDocumentFragment();
+                frag.appendChild(div.firstChild);
+                range.insertNode(frag);
+                div = null;
+                frag = null;
+            } else if (doc.selection && doc.selection.createRange) {
+                range = doc.selection.createRange();
+                range.collapse(true);
+                range.pasteHTML(key);
+                range.collapse(false);
+            }
+        },
+
+        updateEditableValue: function(target, key) {
+            var startPos;
+            if (Stimuli.core.Support.isIE8 || Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
+
+                var range = target.ownerDocument.selection.createRange();
+
+                startPos = range.text.length;
+
+                if (range.parentElement() === target) {
+                    range.text = key;
+                    range.collapse(false);
+                    range.move('character', startPos +1);
+                }
+
+            } else if (typeof target.selectionStart === 'number') {
+                var endPos, value, before, after;
+
+                startPos = target.selectionStart;
+                endPos = target.selectionEnd;
+                value = target.value;
+                before = value.substr(0, startPos);
+                after = value.substr(endPos);
+
+                target.value = before + key + after;
+                target.selectionStart = startPos + 1;
+                target.selectionEnd = startPos + 1;
+
+            }
+        }
+
+    };
+
+})();
 
 // Source: src/core/observable.js
 
@@ -2332,10 +2659,12 @@ Stimuli.core.Observable = {
     once: function(eventName, fn, scope, sneak) {
         var self = this;
 
-        function fnWrap() {
+        var fnWrap = function() {
             self.unsubscribe(eventName, fnWrap);
             fn.apply(scope, arguments);
-        }
+        };
+
+        fnWrap.origFn = fn;
 
         self.subscribe(eventName, fnWrap, scope, sneak);
     },
@@ -2353,7 +2682,8 @@ Stimuli.core.Observable = {
 
         for (; i < length; i++) {
             listener = listeners[i];
-            if (listeners[i].fn === fn) {
+            if (listeners[i].fn === fn ||
+                listeners[i].fn.origFn === fn) {
                 listeners.splice(i, 1);
                 break;
             }
@@ -2631,24 +2961,40 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
          */
         get: function(url, callback) {
 
-            if (Stimuli.core.Support.isIE8)  {
-                xhr.onreadystatechange = function() {
-                    if(xhr.readyState === 4){
-                        xhr.onreadystatechange = null;
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState === 4) {
+                    xhr.onreadystatechange = null;
+                    if (callback) {
                         callback(this.responseText, this.status, this.statusText);
                     }
-                };
-            } else {
-                xhr.onload = function() {
-                    xhr.onload = null;
-                    callback(this.responseText, this.status, this.statusText);
-                };
-            }
-
+                }
+            };
 
             xhr.open('get', url, true);
 
             xhr.send();
+        },
+
+        /**
+         * Sends a HTTP POST requests to a remote server.
+         * @param {String} url The remote server url.
+         * @param {Object} data The data to post.
+         * @param {Function} callback The function to call when the request is complete.
+         */
+        post: function(url, data, callback) {
+
+            xhr.onreadystatechange = function() {
+                if(xhr.readyState === 4) {
+                    xhr.onreadystatechange = null;
+                    if (callback) {
+                        callback(this.responseText, this.status, this.statusText);
+                    }
+                }
+            };
+
+            xhr.open('post', url);
+            xhr.setRequestHeader("Content-Type", 'application/json;charset=UTF-8');
+            xhr.send(JSON.stringify(data));
         }
 
     };
@@ -2689,15 +3035,62 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
         },
 
         /**
+         * Determines if an event is a keyboard event
+         * @param {String} eventType The event type
+         * @return {Boolean} True if it's a keyboard event
+         */
+        isKeyboardEvent: function(eventType) {
+            return {
+                keyup: true,
+                keydown: true,
+                keypress: true
+            }[eventType] || false;
+        },
+
+        /**
+         * Determines if an event is a text event
+         * @param {String} eventType The event type
+         * @return {Boolean} True if it's a text event
+         */
+        isTextEvent: function(eventType) {
+            return {
+                textinput: true,
+                textInput: true
+            }[eventType] || false;
+        },
+
+        /**
+         * Determines if an event is a html event
+         * @param {String} eventType The event type
+         * @return {Boolean} True if it's a html event
+         */
+        isHtmlEvent: function(eventType) {
+            return {
+                input: true,
+                paste: true
+            }[eventType] || false;
+        },
+
+        /**
          * Emits the event and call the callback function
          * @param {Object} data The event configuration
          * @param {Function} callback The callback function to be called after the invent is injected.
          */
         emit: function(data, callback) {
-            var result;
+            var eventType = data.type,
+                result;
 
-            if (this.isMouseEvent(data.type)) {
+            if (this.isMouseEvent(eventType)) {
                 result = synthetizer.Mouse.inject(data);
+            }
+            else if (this.isKeyboardEvent(eventType)) {
+                result = synthetizer.Keyboard.inject(data);
+            }
+            else if (this.isTextEvent(eventType)) {
+                result = synthetizer.Text.inject(data);
+            }
+            else if (this.isHtmlEvent(eventType)) {
+                result = synthetizer.Html.inject(data);
             }
 
             callback(result.event, result.canceled);
@@ -2770,10 +3163,12 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
     Observer.prototype.once = function(type, listener, scope) {
         var self = this;
 
-        function listenerWrap() {
+        var listenerWrap = function() {
             self.unsubscribe(type, listenerWrap);
             listener.apply(scope, arguments);
-        }
+        };
+
+        listenerWrap.origListener = listener;
 
         self.subscribe(type, listenerWrap, scope);
     };
@@ -2791,7 +3186,8 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             wrappedListener;
 
         for (; i < length; i++) {
-            if (listeners[i].listener === listener) {
+            if (listeners[i].listener === listener ||
+                listeners[i].listener.origListener === listener) {
                 wrappedListener = listeners[i].wrappedListener;
                 listeners.splice(i, 1);
                 break;
@@ -2825,6 +3221,79 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
     };
 
 })();
+
+// Source: src/event/synthetizer/html.js
+
+/**
+ * @class Stimuli.event.synthetizer.Html
+ * @singleton
+ * Abstraction layer for cross-browsers synthetic html events injection.
+ */
+(function() {
+
+    Stimuli.event.synthetizer.Html = {
+
+        /**
+         * Injects an a synthetic html event into the dom.
+         * @param {Object} eventConfig The html event configuration
+         */
+
+        inject: function(eventConfig) {
+            var event,
+                canceled;
+
+            if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
+
+                event = eventConfig.view.document.createEvent('Event');
+
+                event.initEvent(
+                    eventConfig.type,
+                    eventConfig.bubbles,
+                    eventConfig.cancelable,
+                    eventConfig.view
+                );
+
+                canceled = !eventConfig.target.dispatchEvent(event);
+
+            } else { //IE8
+
+                var eventName = 'on' + eventConfig.type;
+
+                // Regardless of their values specified in the event object,
+                // cancelBubble is automatically initialized by fireEvent.
+                // (see http://msdn.microsoft.com/en-us/library/ie/ms536423(v=vs.85).aspx)
+                // So to bypass this limitation we create a listener which will be binded expando style,
+                // this way it will be fired before any other listener and the cancelBubble can be fixed.
+
+                var currentListener = eventConfig.target[eventName];
+
+                eventConfig.target[eventName] = function() {
+                    var e = eventConfig.view.event;
+
+                    e.cancelBubble = !eventConfig.bubbles;
+
+                    if (currentListener) {
+                        currentListener.apply(this);
+                    } else {
+                        eventConfig.target[eventName] = null;
+                    }
+                };
+
+                event = eventConfig.view.document.createEventObject();
+
+                eventConfig.target.fireEvent(eventName, event);
+                canceled = event.returnValue === false;
+            }
+
+            return {
+                event: event,
+                canceled: canceled
+            };
+        }
+    };
+
+})();
+
 
 // Source: src/event/synthetizer/mouse.js
 
@@ -2860,7 +3329,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
             if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
                 
-                event = eventConfig.view.document.createEvent('MouseEvents');
+                event = eventConfig.view.document.createEvent('MouseEvent');
 
                 event.initMouseEvent(
                     eventConfig.type,
@@ -2898,18 +3367,6 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                     var e = eventConfig.view.event;
 
                     e.cancelBubble = !eventConfig.bubbles;
-
-                    // A possible hack to force an event to not be cancelable
-                    // we could set the returnValue to readonly...
-                    // But don't think it's a good idea to do that. 
-                    // Leaving this commented code for now.
-                    // if (!eventConfig.cancelable) {
-                    //     Object.defineProperty( e, 'returnValue', {
-                    //         get: function () {
-                    //             return undefined;
-                    //         }
-                    //     });
-                    // }
 
                     if (currentListener) {
                         currentListener.apply(this);
@@ -2949,6 +3406,231 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                 canceled = event.returnValue === false;
             }
             
+            return {
+                event: event,
+                canceled: canceled
+            };
+        }
+    };
+
+})();
+
+
+// Source: src/event/synthetizer/keyboard.js
+
+/**
+ * @class Stimuli.event.synthetizer.Keyboard
+ * @singleton
+ * Abstraction layer for cross-browsers synthetic keyboard events injection.
+ */
+(function() {
+    var isGecko = Stimuli.core.Support.isGecko;
+    Stimuli.event.synthetizer.Keyboard = {
+
+        /**
+         * Injects an a synthetic keyboard event into the dom.
+         * @param {Object} eventConfig The keyboard event configuration
+         */
+        inject: function(eventConfig) {
+            var event,
+                canceled;
+
+            if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
+
+                if (Stimuli.core.Support.isWebkit) {
+                    // see https://bugs.webkit.org/show_bug.cgi?id=16735
+                    event = eventConfig.view.document.createEvent('Event');
+                    event.initEvent(
+                        eventConfig.type,
+                        eventConfig.bubbles,
+                        eventConfig.cancelable,
+                        eventConfig.view
+                    );
+                    event.ctrlKey = !!eventConfig.ctrlKey;
+                    event.altKey = !!eventConfig.altKey;
+                    event.shiftKey = !!eventConfig.shiftKey;
+                    event.metaKey = eventConfig.metaKey;
+                    event.keyCode = eventConfig.keyCode;
+                    event.charCode = eventConfig.charCode;
+                    event.location = eventConfig.location;
+                    event.which = eventConfig.which;
+
+                } else if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10 || Stimuli.core.Support.isIE11) {
+
+                    var modifiers = [];
+
+                    if (eventConfig.altKey) {
+                        modifiers.push('Alt');
+                    }
+
+                    if (eventConfig.altGraphKey) {
+                        modifiers.push('AltGraph');
+                    }
+
+                    if (eventConfig.ctrlKey) {
+                        modifiers.push('Control');
+                    }
+
+                    if (eventConfig.metaKey) {
+                        modifiers.push('Meta');
+                    }
+
+                    if (eventConfig.shiftKey) {
+                        modifiers.push('Shift');
+                    }
+
+                    event = eventConfig.view.document.createEvent('KeyboardEvent');
+                    event.initKeyboardEvent(
+                        eventConfig.type,
+                        eventConfig.bubbles,
+                        eventConfig.cancelable,
+                        eventConfig.view,
+                        eventConfig.key,
+                        eventConfig.location,
+                        modifiers.join(' '),
+                        1,
+                        eventConfig.locale
+                    );
+
+
+
+                    // Setting read-only properties for legacy (initKeyboardEvent doesn't update them)
+                    Object.defineProperty(event, 'keyCode', {
+                        get: function() {
+                            return eventConfig.keyCode;
+                        }
+                    });
+
+
+                    if (eventConfig.type === 'keypress') {
+                        Object.defineProperty(event, 'charCode', {
+                            get: function() {
+                                return eventConfig.keyCode;
+                            }
+                        });
+                    }
+
+                    Object.defineProperty(event, 'which', {
+                        get: function() {
+                            return eventConfig.keyCode;
+                        }
+                    });
+
+                } else if (Stimuli.core.Support.isGecko) {
+                    event = eventConfig.view.document.createEvent('KeyboardEvent');
+                    event.initKeyEvent(
+                        eventConfig.type,
+                        eventConfig.bubbles,
+                        eventConfig.cancelable,
+                        eventConfig.view,
+                        eventConfig.ctrlKey,
+                        eventConfig.altKey,
+                        eventConfig.shiftKey,
+                        eventConfig.metaKey,
+                        eventConfig.keyCode,
+                        eventConfig.charCode
+                    );
+                }
+
+                canceled = !eventConfig.target.dispatchEvent(event);
+
+            } else {
+
+                var eventName = 'on' + eventConfig.type;
+                // Regardless of their values specified in the event object,
+                // cancelBubble is automatically initialized by fireEvent.
+                // (see http://msdn.microsoft.com/en-us/library/ie/ms536423(v=vs.85).aspx)
+                // So to bypass this limitation we create a listener which will be binded expando style,
+                // this way it will be fired before any other listener and the cancelBubble can be fixed.
+
+                var currentListener = eventConfig.target[eventName];
+
+                eventConfig.target[eventName] = function() {
+                    var e = eventConfig.view.event;
+
+                    e.cancelBubble = !eventConfig.bubbles;
+
+                    if (currentListener) {
+                        currentListener.apply(this);
+                    } else {
+                        eventConfig.target[eventName] = null;
+                    }
+                };
+
+                event = eventConfig.view.document.createEventObject();
+
+                event.ctrlKey = eventConfig.ctrKey;
+                event.altKey = eventConfig.altKey;
+                event.shiftKey = eventConfig.shiftKey;
+                event.metaKey = eventConfig.metaKey;
+                event.keyCode = eventConfig.keyCode;
+
+
+                eventConfig.target.fireEvent(eventName, event);
+                canceled = event.returnValue === false;
+            }
+
+            return {
+                event: event,
+                canceled: canceled
+            };
+        }
+    };
+
+})();
+
+
+// Source: src/event/synthetizer/text.js
+
+/**
+ * @class Stimuli.event.synthetizer.Text
+ * @singleton
+ * Abstraction layer for TextEvent injection  (only IE9+ and webkit)
+ */
+(function() {
+
+    Stimuli.event.synthetizer.Text = {
+
+        /**
+         * Injects an a synthetic keyboard event into the dom.
+         * @param {Object} eventConfig The keyboard event configuration
+         */
+
+        inject: function(eventConfig) {
+            var event,
+                canceled;
+
+            if (Stimuli.core.Support.documentCreateEvent) {
+
+                event = eventConfig.view.document.createEvent('TextEvent');
+
+                if (Stimuli.core.Support.isWebkit) {
+                    event.initTextEvent(
+                        eventConfig.type,
+                        eventConfig.bubbles,
+                        eventConfig.cancelable,
+                        eventConfig.view,
+                        eventConfig.key
+                    );
+
+                } else if (Stimuli.core.Support.isIE9 || Stimuli.core.Support.isIE10) {
+                    event.initTextEvent(
+                        eventConfig.type,
+                        eventConfig.bubbles,
+                        eventConfig.cancelable,
+                        eventConfig.view,
+                        eventConfig.key,
+                        1,
+                        'en-US'
+                    );
+
+
+                }
+
+                canceled = !eventConfig.target.dispatchEvent(event);
+
+            }
+
             return {
                 event: event,
                 canceled: canceled
@@ -3079,6 +3761,13 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
         this.context = context || null;
 
+        this.modifiers = {
+            alt: false,
+            shift: false,
+            control: false,
+            meta: false
+        };
+
     };
 
     var Viewport = Stimuli.shared.Viewport;
@@ -3175,6 +3864,53 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
 
     /**
+     * Returns the currently active keyboard modifiers
+     * @return {String} The modifiers list separated by a whitespace
+     */
+    Viewport.prototype.getModifiers = function() {
+        var array = [],
+            modifiers = this.modifiers,
+            prop;
+
+        for (prop in modifiers) {
+            if (modifiers.hasOwnProperty(prop) && modifiers[prop]) {
+                array.push(prop);
+            }
+
+        }
+
+        return array.join(' ');
+    };
+
+    /**
+     * Returns the state of a keyboard modifier
+     * @param {String} modifierName The modifier name (Shift, Control, Alt or Meta)
+     * @return {Boolean} True is the modifier is active
+     */
+    Viewport.prototype.getModifierState = function(modifierName) {
+
+        return this.modifiers[modifierName];
+    };
+
+    /**
+     * Sets a keyboard modifier active.
+     * @param {String} modifierName The modifier name (Shift, Control, Alt or Meta)
+     */
+    Viewport.prototype.setModifier = function(modifierName) {
+        this.modifiers[modifierName] = true;
+    };
+
+    /**
+     * Sets a keyboard modifier inactive
+     * @param {String} modifierName The modifier name (Shift, Control, Alt or Meta)
+     */
+
+    Viewport.prototype.unsetModifier = function(modifierName) {
+        this.modifiers[modifierName] = true;
+    };
+
+
+    /**
      * Returns the first {HTMLElement} matching the css selector.
      * @param {string} selector The css selector (see http://sizzlejs.com/)
      * @param {Boolean=} all If set to True all elements matching the css selector will be returned in an {Array}. 
@@ -3238,7 +3974,9 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
         var self = this,
             callbackWrapper = function() {
             self.unsubscribe('new', callbackWrapper);
-            callback();
+            if (callback) {
+                callback();
+            }
         };
 
         if (Stimuli.core.Support.isIOS) {
@@ -3284,13 +4022,6 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
     };
 
 
-    /**
-     * Destroys the current context.
-     */
-    Context.prototype.destroy = function() {
-        this.win = null;
-    };
-
 })();
 
 // Source: src/shared/command.js
@@ -3305,9 +4036,8 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
  */
 (function() {
     
-    Stimuli.shared.Command = function(viewport, args) {
+    Stimuli.shared.Command = function(viewport) {
         var self = this;
-        self.args = args;
         self.viewport = viewport;
     };
 
@@ -3440,14 +4170,24 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
         return self.defer(function(done) {
 
             var history = self.history;
+            var iframe = self.iframe;
+            self.iframe = null;
+            self.history = null;
+            self.context = null;
+
             if (history) {
                 history.destroy();
+
             }
 
-            var iframe = self.iframe;
+
+
+
             if (iframe) {
                 iframe.destroy(done);
+
             }
+
         }, callback);
     };
 
@@ -3505,6 +4245,8 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
         istyle.padding = 0;
         iframe.frameBorder = 0;
 
+        iframe.id = 'stimuliframe';
+
         // ie8 hack: iframe src must be set see http://aspnetresources.com/blog/always_set_iframe_source
         if (Stimuli.core.Support.isIE8) {
             iframe.src = 'about:blank';
@@ -3545,6 +4287,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                             var winObserver = new Stimuli.event.Observer(win);
                             self.context.loading = false;
                             winObserver.once('beforeunload', function() {
+                                winObserver = null;
                                 self.context.loading = true;
                             });
                         }
@@ -3620,6 +4363,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
         return self.defer(function(done) {
             if (self.iframeObserver) {
                 self.iframeObserver.unsubscribeAll();
+                self.iframeObserver = null;
             }
 
             if (self.iframeEl) {
@@ -3632,7 +4376,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                 self.wrapEl = null;
             }
 
-            self.context.destroy();
+            self.context = null;
             done();
         }, callback);
     };
@@ -3811,9 +4555,9 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
     Stimuli.mouse.Helper = {
 
-        parseOptions: function() {
-            var self = this,
-                args = self.args;
+        parseArguments: function(args) {
+            var self = this;
+
             self.options = {};
             if (typeof args[0] === 'string') {
                 self.options.target = args[0];
@@ -3822,7 +4566,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                     length = args.length,
                     prop, arg;
 
-                for (i = 0; i < length; i++) {
+                for (; i < length; i++) {
                     Stimuli.core.Object.merge(self.options, args[i]);
                 }
             }
@@ -3879,13 +4623,12 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             if (href || hash || form) {
                 // click doesn't fire on the window in ie8 but on the document.
                 var isIE8 = Stimuli.core.Support.isIE8,
-                    isIE9 = Stimuli.core.Support.isIE9,
-                    isIE10 = Stimuli.core.Support.isIE10,
+                    isIE11 = Stimuli.core.Support.isIE11,
                     isIOS = Stimuli.core.Support.isIOS,
-                    observer = new Stimuli.event.Observer(isIE8  ? win.document : win);
+                    observer = new Stimuli.event.Observer(isIE8 ? win.document : win);
 
-                observer.subscribe('click', function(e) {
-                    observer.unsubscribeAll();
+                observer.once('click', function(e) {
+                    observer = null;
                     var canceled = isIE8 ? e.returnValue === false : e.defaultPrevented;
 
                     if (!canceled) {
@@ -3901,9 +4644,15 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                             if (match) {
                                 prefix = prefix.replace(match[0], '');
                             }
-
+                            // TODO: (yhwh) remove when sizzle is fixed (current 1.10.9)
+                            if (isIE11) {
+                                Sizzle('body', document);
+                            }
                             win.location.href = prefix + href;
                         } else if (form) {
+                            if (isIE11) {
+                                Sizzle('body', document);
+                            }
                             form.submit();
                         }
 
@@ -4034,7 +4783,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
     Stimuli.mouse.Click = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var Click = Stimuli.mouse.Click;
@@ -4071,10 +4820,10 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                 button: self.getButton(),
                 bubbles: true,
                 cancelable: true,
-                altKey: self.options.alt,
-                ctrlKey: self.options.ctrl,
-                shiftKey: self.options.shift,
-                metaKey: self.options.meta,
+                altKey: self.viewport.getModifierState('Alt'),
+                ctrlKey: self.viewport.getModifierState('Control'),
+                shiftKey: self.viewport.getModifierState('Shift'),
+                metaKey: self.viewport.getModifierState('Meta'),
                 target: target,
                 details: 1,
                 clientX: position.clientX,
@@ -4130,7 +4879,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
     Stimuli.mouse.ContextMenu = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var ContextMenu = Stimuli.mouse.ContextMenu;
@@ -4167,10 +4916,10 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                     button: self.getButton(),
                     bubbles: true,
                     cancelable: true,
-                    altKey: self.options.alt,
-                    ctrlKey: self.options.ctrl,
-                    shiftKey: self.options.shift,
-                    metaKey: self.options.meta,
+                    altKey: self.viewport.getModifierState('Alt'),
+                    ctrlKey: self.viewport.getModifierState('Control'),
+                    shiftKey: self.viewport.getModifierState('Shift'),
+                    metaKey: self.viewport.getModifierState('Meta'),
                     target: target,
                     details: 1,
                     clientX: position.clientX,
@@ -4225,7 +4974,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
     Stimuli.mouse.DblClick = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var DblClick = Stimuli.mouse.DblClick;
@@ -4262,10 +5011,10 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                     button: self.getButton(),
                     bubbles: true,
                     cancelable: true,
-                    altKey: self.options.alt,
-                    ctrlKey: self.options.ctrl,
-                    shiftKey: self.options.shift,
-                    metaKey: self.options.meta,
+                    altKey: self.viewport.getModifierState('Alt'),
+                    ctrlKey: self.viewport.getModifierState('Control'),
+                    shiftKey: self.viewport.getModifierState('Shift'),
+                    metaKey: self.viewport.getModifierState('Meta'),
                     target: target,
                     clientX: position.clientX,
                     clientY: position.clientY,
@@ -4393,7 +5142,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
     Stimuli.mouse.Up = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var Up = Stimuli.mouse.Up;
@@ -4433,10 +5182,10 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                     button: self.getButton(),
                     bubbles: true,
                     cancelable: true,
-                    altKey: self.options.alt,
-                    ctrlKey: self.options.ctrl,
-                    shiftKey: self.options.shift,
-                    metaKey: self.options.meta,
+                    altKey: self.viewport.getModifierState('Alt'),
+                    ctrlKey: self.viewport.getModifierState('Control'),
+                    shiftKey: self.viewport.getModifierState('Shift'),
+                    metaKey: self.viewport.getModifierState('Meta'),
                     target: target,
                     details: 1,
                     clientX: position.clientX,
@@ -4461,7 +5210,7 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
 
     Stimuli.mouse.Down = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var Down = Stimuli.mouse.Down;
@@ -4501,10 +5250,10 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
                     button: self.getButton(),
                     bubbles: true,
                     cancelable: true,
-                    altKey: self.options.alt,
-                    ctrlKey: self.options.ctrl,
-                    shiftKey: self.options.shift,
-                    metaKey: self.options.meta,
+                    altKey: self.viewport.getModifierState('Alt'),
+                    ctrlKey: self.viewport.getModifierState('Control'),
+                    shiftKey: self.viewport.getModifierState('Shift'),
+                    metaKey: self.viewport.getModifierState('Meta'),
                     target: target,
                     details: 1,
                     clientX: position.clientX,
@@ -4518,6 +5267,3389 @@ Stimuli.core.Class.mix(Stimuli, Stimuli.core.Chainable);
             .then(function() {
                 self.viewport.waitForReady(done);
             });
+
+    };
+
+})();
+
+// Source: src/virtual/keyboard.js
+
+/**
+ * @class Stimuli.virtual.Keyboard
+ * @alternateClassName Stimuli.Keyboard
+ * @mixins Stimuli.core.Chainable
+ * The virtual keyboard interface.
+ * @cfg {Stimuli.virtual.Browser} browser The browser to which the keyboard is attached to.
+ * @constructor
+ * @param {Object} The config object
+ */
+
+(function() {
+
+    Stimuli.virtual.Keyboard = function(viewport) {
+        this.viewport = viewport;
+        this.layout = Stimuli.core.Support.getDefaultKeyboardLayout();
+    };
+
+    var Keyboard = Stimuli.virtual.Keyboard;
+
+    Stimuli.core.Class.mix(Keyboard, Stimuli.core.Chainable);
+
+    /**
+     * Sets the keyboard layout.
+     *
+     * @param {String} name The layout name, see keyboard/layout folder to see a complete list
+     * @param {String} os The layout os can be windows, macosx or linux. (default to current os)
+     */
+    Keyboard.prototype.setLayout = function(name, os) {
+        this.layout = Stimuli.keyboard.layout[os][name];
+    };
+
+    /**
+     * Types a key in the active element.
+     */
+    Keyboard.prototype.type = function() {
+        return this.then(this.generateCommand('Type', arguments));
+    };
+
+    /**
+     * Types text in the active element.
+     */
+    Keyboard.prototype.typeText = function() {
+        return this.then(this.generateCommand('TypeText', arguments));
+    };
+
+    /**
+     * Abstract method to generate the corresponding keyboard command.
+     * @param {String} commandName The command name
+     * @param options
+     * @returns {Function}
+     */
+    Keyboard.prototype.generateCommand = function(commandName, args) {
+        var self = this;
+        return function(done) {
+            var command = new Stimuli.keyboard[commandName](self.viewport, self.layout, args);
+            command.execute(done);
+        };
+    };
+
+})();
+
+// Source: src/keyboard/layout/special_key/enter.js
+(function() {
+    var Dom = Stimuli.core.Dom,
+        Support = Stimuli.core.Support,
+        Obj = Stimuli.core.Object;
+
+    Stimuli.keyboard.specialKey.Enter = {
+
+        getSequence: function(target) {
+            var defaultEventConfig = {
+                bubbles: true,
+                cancelable: true,
+                target: target
+            },
+            sequence = [
+                Obj.merge({
+                    type: "keydown",
+                    location: 0,
+                    keyCode: 13
+                }, defaultEventConfig),
+                Obj.merge({
+                    type: "keypress",
+                    location: 0
+                }, defaultEventConfig)
+            ];
+
+            if (Dom.isEditable(target) && !Dom.isEditableInput(target)) {
+
+                if (Support.isWebkit) {
+                    sequence.push(Obj.merge({type: 'textInput', key: '\n'}, defaultEventConfig));
+                } else {
+                    if (Dom.isTextArea(target)) {
+                        sequence.push(function() {
+                            Dom.updateEditableValue(target, '\n');
+                        });
+                    } else {
+                        sequence.push(function() {
+                            Dom.updateEditableHtml(target, '\n');
+                        });
+                    }
+
+                    if (!Support.isIE8 && !Support.isIE9 && !Support.isIE10 && Dom.isTextArea(target)) {
+                        sequence.push(Obj.merge({type: 'input'}, defaultEventConfig));
+                    }
+                }
+            }
+
+            sequence.push(Obj.merge({
+                type: "keyup",
+                location: 0,
+                keyCode: 13
+            }, defaultEventConfig));
+
+            return sequence;
+        }
+    };
+})();
+
+// Source: src/keyboard/layout/generic.js
+
+(function() {
+    var Dom = Stimuli.core.Dom,
+        Support = Stimuli.core.Support,
+        Obj = Stimuli.core.Object;
+
+    Stimuli.keyboard.layout.Generic = {
+
+        specialKeys: [
+            'Alt',
+            'Enter',
+            'Tab',
+            'Backspace',
+            'Control',
+            'ArrowLeft',
+            'ArrowRight',
+            'ArrowUp',
+            'ArrowDown',
+            'Esc',
+            'Shift',
+            'F1',
+            'F2',
+            'F3',
+            'F4',
+            'F5',
+            'F6',
+            'F7',
+            'F8',
+            'F9',
+            'F10',
+            'F11',
+            'F12'
+        ],
+
+        isSpecialKey: function(key) {
+            return Stimuli.core.Array.contains(this.specialKeys, key);
+        },
+
+        getUnicodeSequence: function(key, target) {
+
+        },
+
+        getSpecialKeySequence: function(key, target) {
+            return Stimuli.keyboard.specialKey[key].getSequence(target);
+        },
+
+        isPrintableKey: function(key) {
+            return !!this.table[key];
+        },
+
+        getPrintableKeySequence: function(key, target) {
+            var tableEntry = this.table[key],
+                pattern = this.patterns[tableEntry.pattern],
+                fullSequence = pattern(tableEntry.keyCodes, tableEntry.characters, tableEntry.locations),
+                defaultEventConfig = {
+                    bubbles: true,
+                    cancelable: true,
+                    target: target
+                },
+                sequence = [];
+
+            Stimuli.core.Array.forEach(fullSequence, function(eventConfig) {
+                if (eventConfig.type === 'input') {
+                    if (Dom.isEditable(target)) {
+
+                        if (Support.isWebkit) {
+                            sequence.push(Obj.merge({type: 'textInput', key: eventConfig.character}, defaultEventConfig));
+                        } else {
+                            if (Dom.isEditableInput(target) || Dom.isTextArea(target)) {
+                                sequence.push(function() {
+                                    Dom.updateEditableValue(target, eventConfig.character);
+                                });
+                            } else {
+                                sequence.push(function() {
+                                    Dom.updateEditableHtml(target, eventConfig.character);
+                                });
+                            }
+
+                            if (!Support.isIE8 && !Support.isIE9 && !Support.isIE10 &&
+                                (Dom.isEditableInput(target) || Dom.isTextArea(target))) {
+                                sequence.push(Obj.merge({type: 'input'}, defaultEventConfig));
+                            }
+                        }
+
+                    }
+                } else {
+                    sequence.push(Obj.merge(eventConfig, defaultEventConfig));
+                }
+            });
+
+            return sequence;
+        },
+
+        // if there is no way to type the character in this layout we assume the user will copy and paste the character
+        getPasteSequence: function(key, target) {
+            var defaultEventConfig = {
+                    bubbles: true,
+                    cancelable: true,
+                    target: target
+                },
+                sequence = [];
+            if (Dom.isEditable(target)) {
+                sequence = [Obj.merge({type: 'paste'}, defaultEventConfig)];
+
+                if (Support.isWebkit) {
+                    sequence.push(Obj.merge({type: 'textInput', key: key}, defaultEventConfig));
+                } else {
+                    if (Dom.isEditableInput(target) || Dom.isTextArea(target)) {
+                        sequence.push(function() {
+                            Dom.updateEditableValue(target, key);
+                        });
+                    } else {
+                        sequence.push(function() {
+                            Dom.updateEditableHtml(target, key);
+                        });
+                    }
+
+                    if (!Support.isIE8 && !Support.isIE9 && !Support.isIE10 &&
+                        (Dom.isEditableInput(target) || Dom.isTextArea(target))) {
+                        sequence.push(Obj.merge({type: 'input'}, defaultEventConfig));
+                    }
+                }
+
+            }
+            return sequence;
+        },
+
+        getSequence: function(key, target) {
+            var sequence;
+
+            if (this.isSpecialKey(key)) {
+                sequence = this.getSpecialKeySequence(key, target);
+            } else if (this.isPrintableKey(key)) {
+                sequence = this.getPrintableKeySequence(key, target);
+            } else if (this.unicode) {
+                sequence = this.getUnicodeSequence(key, target);
+            } else {
+                sequence = this.getPasteSequence(key, target);
+            }
+            return  sequence;
+        }
+    };
+
+})();
+
+// Source: src/keyboard/layout/virtual.js
+
+(function() {
+    var Dom = Stimuli.core.Dom,
+        Support = Stimuli.core.Support,
+        Obj = Stimuli.core.Object;
+
+    Stimuli.keyboard.layout.Virtual = Stimuli.core.Object.merge({}, Stimuli.keyboard.layout.Generic);
+
+    var Virtual = Stimuli.keyboard.layout.Virtual;
+
+    Virtual.specialKeys = [
+    'Enter',
+    'Backspace'
+    ];
+
+    Virtual.vkTable = {
+        0: 0x30,
+        1: 0x31,
+        2: 0x32,
+        3: 0x33,
+        4: 0x34,
+        5: 0x35,
+        6: 0x36,
+        7: 0x37,
+        8: 0x38,
+        9: 0x39,
+        A: 0x41,
+        B: 0x42,
+        C: 0x43,
+        D: 0x44,
+        E: 0x45,
+        F: 0x46,
+        G: 0x47,
+        H: 0x48,
+        I: 0x49,
+        J: 0x4A,
+        K: 0x4B,
+        L: 0x4C,
+        M: 0x4D,
+        N: 0x4E,
+        O: 0x4F,
+        P: 0x50,
+        Q: 0x51,
+        R: 0x52,
+        S: 0x53,
+        T: 0x54,
+        U: 0x55,
+        V: 0x56,
+        W: 0x57,
+        X: 0x58,
+        Y: 0x59,
+        Z: 0x5A,
+        ':': 0xBA,
+        ';': 0xBA,
+        '+': 0xBB,
+        '=': 0xBB,
+        ',': 0xBC,
+        '<': 0xBC,
+        '-': 0xBD,
+        '_': 0xBD,
+        '.': 0xBE,
+        '>': 0xBE,
+        '/': 0xBF,
+        '?': 0xBF,
+        '~': 0xC0,
+        '`': 0xC0,
+        '[': 0xDB,
+        '{': 0xDB,
+        '\\': 0xDC,
+        '|': 0xDC,
+        '}': 0xDD,
+        ']': 0xDD,
+        '\'': 0xDE,
+        '"': 0xDE
+    };
+
+    Virtual.getPrintableKeySequence = function(key, target) {
+
+        var keyCode = this.vkTable[key.toUpperCase()] || 0,
+            fullSequence = [{
+                type: "keydown",
+                location: 0,
+                keyCode: keyCode
+            }, {
+                type: "keypress",
+                location: 0
+            }, {
+                type: "input",
+                character: key
+            }, {
+                type: "keyup",
+                location: 0,
+                keyCode: keyCode
+            }],
+            defaultEventConfig = {
+                bubbles: true,
+                cancelable: true,
+                target: target
+            },
+            sequence = [];
+
+        Stimuli.core.Array.forEach(fullSequence, function(eventConfig) {
+            if (eventConfig.type === 'input') {
+                if (Dom.isEditable(target)) {
+
+                    if (Support.isWebkit) {
+                        sequence.push(Obj.merge({type: 'textInput', key: eventConfig.character}, defaultEventConfig));
+                    } else {
+                        if (Dom.isEditableInput(target) || Dom.isTextArea(target)) {
+                            sequence.push(function() {
+                                Dom.updateEditableValue(target, eventConfig.character);
+                            });
+                        } else {
+                            sequence.push(function() {
+                                Dom.updateEditableHtml(target, eventConfig.character);
+                            });
+                        }
+
+                        if (!Support.isIE8 && !Support.isIE9 && !Support.isIE10 &&
+                            (Dom.isEditableInput(target) || Dom.isTextArea(target))) {
+                            sequence.push(Obj.merge({type: 'input'}, defaultEventConfig));
+                        }
+                    }
+
+                }
+            } else {
+                sequence.push(Obj.merge(eventConfig, defaultEventConfig));
+            }
+        });
+
+        return sequence;
+    };
+
+    Virtual.getSequence = function(key, target) {
+        var sequence;
+
+        if (this.isSpecialKey(key)) {
+            sequence = this.getSpecialKeySequence(key, target);
+        } else {
+            sequence = this.getPrintableKeySequence(key, target);
+        }
+        return sequence;
+
+    };
+
+})();
+
+// Source: src/keyboard/layout/windows/us.js
+"use strict";
+
+(function() {
+    var isGecko = Stimuli.core.Support.isGecko;
+    var isIE = Stimuli.core.Support.isIE;
+    Stimuli.keyboard.layout.windows.US = {
+        unicode: false,
+        patterns: [ function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            }, {
+                type: "keypress",
+                location: locations[0]
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            }, {
+                type: "keypress",
+                location: locations[1]
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keypress",
+                location: locations[1],
+                shiftKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keypress",
+                location: locations[1],
+                shiftKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keypress",
+                location: locations[2],
+                shiftKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[0]
+            } ];
+        } ],
+        table: {
+            "0": {
+                pattern: 0,
+                keyCodes: [ 48 ],
+                characters: [ "0" ],
+                locations: [ 0 ]
+            },
+            "1": {
+                pattern: 0,
+                keyCodes: [ 49 ],
+                characters: [ "1" ],
+                locations: [ 0 ]
+            },
+            "2": {
+                pattern: 0,
+                keyCodes: [ 50 ],
+                characters: [ "2" ],
+                locations: [ 0 ]
+            },
+            "3": {
+                pattern: 0,
+                keyCodes: [ 51 ],
+                characters: [ "3" ],
+                locations: [ 0 ]
+            },
+            "4": {
+                pattern: 0,
+                keyCodes: [ 52 ],
+                characters: [ "4" ],
+                locations: [ 0 ]
+            },
+            "5": {
+                pattern: 0,
+                keyCodes: [ 53 ],
+                characters: [ "5" ],
+                locations: [ 0 ]
+            },
+            "6": {
+                pattern: 0,
+                keyCodes: [ 54 ],
+                characters: [ "6" ],
+                locations: [ 0 ]
+            },
+            "7": {
+                pattern: 0,
+                keyCodes: [ 55 ],
+                characters: [ "7" ],
+                locations: [ 0 ]
+            },
+            "8": {
+                pattern: 0,
+                keyCodes: [ 56 ],
+                characters: [ "8" ],
+                locations: [ 0 ]
+            },
+            "9": {
+                pattern: 0,
+                keyCodes: [ 57 ],
+                characters: [ "9" ],
+                locations: [ 0 ]
+            },
+            a: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 65 ],
+                characters: [ "a" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            b: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 66 ],
+                characters: [ "b" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            c: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 67 ],
+                characters: [ "c" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            d: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 68 ],
+                characters: [ "d" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            e: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 69 ],
+                characters: [ "e" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            f: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 70 ],
+                characters: [ "f" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            g: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 71 ],
+                characters: [ "g" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            h: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 72 ],
+                characters: [ "h" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            i: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 73 ],
+                characters: [ "i" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            j: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 74 ],
+                characters: [ "j" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            k: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 75 ],
+                characters: [ "k" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            l: {
+                pattern: 0,
+                keyCodes: [ 76 ],
+                characters: [ "l" ],
+                locations: [ 0 ]
+            },
+            m: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 77 ],
+                characters: [ "m" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            n: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 78 ],
+                characters: [ "n" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            o: {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 79 ],
+                characters: [ "o" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            p: {
+                pattern: 0,
+                keyCodes: [ 80 ],
+                characters: [ "p" ],
+                locations: [ 0 ]
+            },
+            q: {
+                pattern: 0,
+                keyCodes: [ 81 ],
+                characters: [ "q" ],
+                locations: [ 0 ]
+            },
+            r: {
+                pattern: 0,
+                keyCodes: [ 82 ],
+                characters: [ "r" ],
+                locations: [ 0 ]
+            },
+            s: {
+                pattern: 0,
+                keyCodes: [ 83 ],
+                characters: [ "s" ],
+                locations: [ 0 ]
+            },
+            t: {
+                pattern: 0,
+                keyCodes: [ 84 ],
+                characters: [ "t" ],
+                locations: [ 0 ]
+            },
+            u: {
+                pattern: 0,
+                keyCodes: [ 85 ],
+                characters: [ "u" ],
+                locations: [ 0 ]
+            },
+            v: {
+                pattern: 0,
+                keyCodes: [ 86 ],
+                characters: [ "v" ],
+                locations: [ 0 ]
+            },
+            w: {
+                pattern: 0,
+                keyCodes: [ 87 ],
+                characters: [ "w" ],
+                locations: [ 0 ]
+            },
+            x: {
+                pattern: 0,
+                keyCodes: [ 88 ],
+                characters: [ "x" ],
+                locations: [ 0 ]
+            },
+            y: {
+                pattern: 0,
+                keyCodes: [ 89 ],
+                characters: [ "y" ],
+                locations: [ 0 ]
+            },
+            z: {
+                pattern: 0,
+                keyCodes: [ 90 ],
+                characters: [ "z" ],
+                locations: [ 0 ]
+            },
+            ";": {
+                pattern: 0,
+                keyCodes: isGecko ? [ 59 ] : [ 186 ],
+                characters: [ ";" ],
+                locations: [ 0 ]
+            },
+            "=": {
+                pattern: 0,
+                keyCodes: isGecko ? [ 61 ] : [ 187 ],
+                characters: [ "=" ],
+                locations: [ 0 ]
+            },
+            ",": {
+                pattern: 0,
+                keyCodes: [ 188 ],
+                characters: [ "," ],
+                locations: [ 0 ]
+            },
+            "-": {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: isGecko ? [ 173 ] : [ 189 ],
+                characters: [ "-" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            ".": {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 190 ],
+                characters: [ "." ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            "/": {
+                pattern: 0,
+                keyCodes: [ 191 ],
+                characters: [ "/" ],
+                locations: [ 0 ]
+            },
+            "`": {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 192 ],
+                characters: [ "`" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            "[": {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 219 ],
+                characters: [ "[" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 1 ]
+            },
+            "\\": {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 220 ],
+                characters: [ "\\" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 2 ]
+            },
+            "]": {
+                pattern: 0,
+                keyCodes: [ 221 ],
+                characters: [ "]" ],
+                locations: [ 0 ]
+            },
+            "'": {
+                pattern: isIE ? 0 : isGecko ? 0 : 1,
+                keyCodes: [ 222 ],
+                characters: [ "'" ],
+                locations: isIE ? [ 0 ] : isGecko ? [ 0 ] : [ 0, 3 ]
+            },
+            "*": {
+                pattern: isGecko ? 0 : 1,
+                keyCodes: [ 106 ],
+                characters: [ "*" ],
+                locations: isGecko ? [ 3 ] : [ 3, 0 ]
+            },
+            "+": {
+                pattern: isGecko ? 0 : 1,
+                keyCodes: [ 107 ],
+                characters: [ "+" ],
+                locations: isGecko ? [ 3 ] : [ 3, 0 ]
+            },
+            ")": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 48 ],
+                characters: [ ")" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "!": {
+                pattern: isIE ? 3 : isGecko ? 3 : 4,
+                keyCodes: [ 16, 49 ],
+                characters: [ "!" ],
+                locations: isIE ? [ 2, 0 ] : isGecko ? [ 1, 0 ] : [ 1, 0, 3 ]
+            },
+            "@": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 50 ],
+                characters: [ "@" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "#": {
+                pattern: isIE ? 3 : isGecko ? 3 : 4,
+                keyCodes: [ 16, 51 ],
+                characters: [ "#" ],
+                locations: isIE ? [ 2, 0 ] : isGecko ? [ 1, 0 ] : [ 1, 0, 3 ]
+            },
+            $: {
+                pattern: isIE ? 3 : isGecko ? 3 : 4,
+                keyCodes: [ 16, 52 ],
+                characters: [ "$" ],
+                locations: isIE ? [ 2, 0 ] : isGecko ? [ 1, 0 ] : [ 1, 0, 3 ]
+            },
+            "%": {
+                pattern: isIE ? 3 : isGecko ? 3 : 4,
+                keyCodes: [ 16, 53 ],
+                characters: [ "%" ],
+                locations: isIE ? [ 2, 0 ] : isGecko ? [ 1, 0 ] : [ 1, 0, 3 ]
+            },
+            "^": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 54 ],
+                characters: [ "^" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "&": {
+                pattern: isIE ? 3 : isGecko ? 3 : 4,
+                keyCodes: [ 16, 55 ],
+                characters: [ "&" ],
+                locations: isIE ? [ 2, 0 ] : isGecko ? [ 1, 0 ] : [ 1, 0, 3 ]
+            },
+            "(": {
+                pattern: isIE ? 3 : isGecko ? 3 : 4,
+                keyCodes: [ 16, 57 ],
+                characters: [ "(" ],
+                locations: isIE ? [ 2, 0 ] : isGecko ? [ 1, 0 ] : [ 1, 0, 3 ]
+            },
+            A: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 65 ],
+                characters: [ "A" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            B: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 66 ],
+                characters: [ "B" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            C: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 67 ],
+                characters: [ "C" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            D: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 68 ],
+                characters: [ "D" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            E: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 69 ],
+                characters: [ "E" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            F: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 70 ],
+                characters: [ "F" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            G: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 71 ],
+                characters: [ "G" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            H: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 72 ],
+                characters: [ "H" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            I: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 73 ],
+                characters: [ "I" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            J: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 74 ],
+                characters: [ "J" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            K: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 75 ],
+                characters: [ "K" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            L: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 76 ],
+                characters: [ "L" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            M: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 77 ],
+                characters: [ "M" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            N: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 78 ],
+                characters: [ "N" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            O: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 79 ],
+                characters: [ "O" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            P: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 80 ],
+                characters: [ "P" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            Q: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 81 ],
+                characters: [ "Q" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            R: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 82 ],
+                characters: [ "R" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            S: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 83 ],
+                characters: [ "S" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            T: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 84 ],
+                characters: [ "T" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            U: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 85 ],
+                characters: [ "U" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            V: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 86 ],
+                characters: [ "V" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            W: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 87 ],
+                characters: [ "W" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            X: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 88 ],
+                characters: [ "X" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            Y: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 89 ],
+                characters: [ "Y" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            Z: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 90 ],
+                characters: [ "Z" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            ":": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: isGecko ? [ 16, 59 ] : [ 16, 186 ],
+                characters: [ ":" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "<": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 188 ],
+                characters: [ "<" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            _: {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: isGecko ? [ 16, 173 ] : [ 16, 189 ],
+                characters: [ "_" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            ">": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 190 ],
+                characters: [ ">" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "?": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 191 ],
+                characters: [ "?" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "~": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 192 ],
+                characters: [ "~" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "{": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 219 ],
+                characters: [ "{" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "|": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 220 ],
+                characters: [ "|" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            "}": {
+                pattern: isIE ? 3 : isGecko ? 3 : 2,
+                keyCodes: [ 16, 221 ],
+                characters: [ "}" ],
+                locations: isIE ? [ 2, 0 ] : [ 1, 0 ]
+            },
+            '"': {
+                pattern: isIE ? 3 : isGecko ? 3 : 4,
+                keyCodes: [ 16, 222 ],
+                characters: [ '"' ],
+                locations: isIE ? [ 2, 0 ] : isGecko ? [ 1, 0 ] : [ 1, 0, 3 ]
+            }
+        }
+    };
+    Stimuli.core.Object.merge(Stimuli.keyboard.layout.windows.US, Stimuli.keyboard.layout.Generic);
+})();
+
+// Source: src/keyboard/layout/macosx/us.js
+"use strict";
+
+(function() {
+    var isGecko = Stimuli.core.Support.isGecko;
+    var isIE = Stimuli.core.Support.isIE;
+    Stimuli.keyboard.layout.macosx.US = {
+        unicode: false,
+        patterns: [ function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            }, {
+                type: "keypress",
+                location: locations[0]
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keypress",
+                location: locations[1],
+                shiftKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                altKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                altKey: true
+            }, {
+                type: "keypress",
+                location: locations[1],
+                altKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                altKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[1],
+                altKey: true,
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[2],
+                altKey: true,
+                shiftKey: true
+            }, {
+                type: "keypress",
+                location: locations[1],
+                altKey: true,
+                shiftKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[2],
+                altKey: true,
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                altKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                altKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[2],
+                altKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1]
+            }, {
+                type: "input",
+                character: characters[1]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[2]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                altKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                altKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "input",
+                character: characters[1]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[1]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                altKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                altKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[2],
+                altKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1]
+            }, {
+                type: "input",
+                character: characters[1]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[3]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                altKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                altKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "input",
+                character: characters[1]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[2]
+            } ];
+        } ],
+        table: {
+            "0": {
+                pattern: 0,
+                keyCodes: [ 48 ],
+                characters: [ "0" ],
+                locations: [ 0 ]
+            },
+            "1": {
+                pattern: 0,
+                keyCodes: [ 49 ],
+                characters: [ "1" ],
+                locations: [ 0 ]
+            },
+            "2": {
+                pattern: 0,
+                keyCodes: [ 50 ],
+                characters: [ "2" ],
+                locations: [ 0 ]
+            },
+            "3": {
+                pattern: 0,
+                keyCodes: [ 51 ],
+                characters: [ "3" ],
+                locations: [ 0 ]
+            },
+            "4": {
+                pattern: 0,
+                keyCodes: [ 52 ],
+                characters: [ "4" ],
+                locations: [ 0 ]
+            },
+            "5": {
+                pattern: 0,
+                keyCodes: [ 53 ],
+                characters: [ "5" ],
+                locations: [ 0 ]
+            },
+            "6": {
+                pattern: 0,
+                keyCodes: [ 54 ],
+                characters: [ "6" ],
+                locations: [ 0 ]
+            },
+            "7": {
+                pattern: 0,
+                keyCodes: [ 55 ],
+                characters: [ "7" ],
+                locations: [ 0 ]
+            },
+            "8": {
+                pattern: 0,
+                keyCodes: [ 56 ],
+                characters: [ "8" ],
+                locations: [ 0 ]
+            },
+            "9": {
+                pattern: 0,
+                keyCodes: [ 57 ],
+                characters: [ "9" ],
+                locations: [ 0 ]
+            },
+            a: {
+                pattern: 0,
+                keyCodes: [ 65 ],
+                characters: [ "a" ],
+                locations: [ 0 ]
+            },
+            b: {
+                pattern: 0,
+                keyCodes: [ 66 ],
+                characters: [ "b" ],
+                locations: [ 0 ]
+            },
+            c: {
+                pattern: 0,
+                keyCodes: [ 67 ],
+                characters: [ "c" ],
+                locations: [ 0 ]
+            },
+            d: {
+                pattern: 0,
+                keyCodes: [ 68 ],
+                characters: [ "d" ],
+                locations: [ 0 ]
+            },
+            e: {
+                pattern: 0,
+                keyCodes: [ 69 ],
+                characters: [ "e" ],
+                locations: [ 0 ]
+            },
+            f: {
+                pattern: 0,
+                keyCodes: [ 70 ],
+                characters: [ "f" ],
+                locations: [ 0 ]
+            },
+            g: {
+                pattern: 0,
+                keyCodes: [ 71 ],
+                characters: [ "g" ],
+                locations: [ 0 ]
+            },
+            h: {
+                pattern: 0,
+                keyCodes: [ 72 ],
+                characters: [ "h" ],
+                locations: [ 0 ]
+            },
+            i: {
+                pattern: 0,
+                keyCodes: [ 73 ],
+                characters: [ "i" ],
+                locations: [ 0 ]
+            },
+            j: {
+                pattern: 0,
+                keyCodes: [ 74 ],
+                characters: [ "j" ],
+                locations: [ 0 ]
+            },
+            k: {
+                pattern: 0,
+                keyCodes: [ 75 ],
+                characters: [ "k" ],
+                locations: [ 0 ]
+            },
+            l: {
+                pattern: 0,
+                keyCodes: [ 76 ],
+                characters: [ "l" ],
+                locations: [ 0 ]
+            },
+            m: {
+                pattern: 0,
+                keyCodes: [ 77 ],
+                characters: [ "m" ],
+                locations: [ 0 ]
+            },
+            n: {
+                pattern: 0,
+                keyCodes: [ 78 ],
+                characters: [ "n" ],
+                locations: [ 0 ]
+            },
+            o: {
+                pattern: 0,
+                keyCodes: [ 79 ],
+                characters: [ "o" ],
+                locations: [ 0 ]
+            },
+            p: {
+                pattern: 0,
+                keyCodes: [ 80 ],
+                characters: [ "p" ],
+                locations: [ 0 ]
+            },
+            q: {
+                pattern: 0,
+                keyCodes: [ 81 ],
+                characters: [ "q" ],
+                locations: [ 0 ]
+            },
+            r: {
+                pattern: 0,
+                keyCodes: [ 82 ],
+                characters: [ "r" ],
+                locations: [ 0 ]
+            },
+            s: {
+                pattern: 0,
+                keyCodes: [ 83 ],
+                characters: [ "s" ],
+                locations: [ 0 ]
+            },
+            t: {
+                pattern: 0,
+                keyCodes: [ 84 ],
+                characters: [ "t" ],
+                locations: [ 0 ]
+            },
+            u: {
+                pattern: 0,
+                keyCodes: [ 85 ],
+                characters: [ "u" ],
+                locations: [ 0 ]
+            },
+            v: {
+                pattern: 0,
+                keyCodes: [ 86 ],
+                characters: [ "v" ],
+                locations: [ 0 ]
+            },
+            w: {
+                pattern: 0,
+                keyCodes: [ 87 ],
+                characters: [ "w" ],
+                locations: [ 0 ]
+            },
+            x: {
+                pattern: 0,
+                keyCodes: [ 88 ],
+                characters: [ "x" ],
+                locations: [ 0 ]
+            },
+            y: {
+                pattern: 0,
+                keyCodes: [ 89 ],
+                characters: [ "y" ],
+                locations: [ 0 ]
+            },
+            z: {
+                pattern: 0,
+                keyCodes: [ 90 ],
+                characters: [ "z" ],
+                locations: [ 0 ]
+            },
+            "\\": {
+                pattern: 0,
+                keyCodes: [ 220 ],
+                characters: [ "\\" ],
+                locations: [ 0 ]
+            },
+            ",": {
+                pattern: 0,
+                keyCodes: [ 188 ],
+                characters: [ "," ],
+                locations: [ 0 ]
+            },
+            "=": {
+                pattern: 0,
+                keyCodes: isGecko ? [ 61 ] : [ 187 ],
+                characters: [ "=" ],
+                locations: [ 0 ]
+            },
+            "`": {
+                pattern: 0,
+                keyCodes: [ 192 ],
+                characters: [ "`" ],
+                locations: [ 0 ]
+            },
+            "-": {
+                pattern: 0,
+                keyCodes: isGecko ? [ 173 ] : [ 189 ],
+                characters: [ "-" ],
+                locations: [ 0 ]
+            },
+            "[": {
+                pattern: 0,
+                keyCodes: [ 219 ],
+                characters: [ "[" ],
+                locations: [ 0 ]
+            },
+            ".": {
+                pattern: 0,
+                keyCodes: [ 190 ],
+                characters: [ "." ],
+                locations: [ 0 ]
+            },
+            "'": {
+                pattern: 0,
+                keyCodes: [ 222 ],
+                characters: [ "'" ],
+                locations: [ 0 ]
+            },
+            "]": {
+                pattern: 0,
+                keyCodes: [ 221 ],
+                characters: [ "]" ],
+                locations: [ 0 ]
+            },
+            ";": {
+                pattern: 0,
+                keyCodes: isGecko ? [ 59 ] : [ 186 ],
+                characters: [ ";" ],
+                locations: [ 0 ]
+            },
+            "/": {
+                pattern: 0,
+                keyCodes: [ 191 ],
+                characters: [ "/" ],
+                locations: [ 0 ]
+            },
+            "*": {
+                pattern: 0,
+                keyCodes: [ 106 ],
+                characters: [ "*" ],
+                locations: [ 3 ]
+            },
+            "+": {
+                pattern: 0,
+                keyCodes: [ 107 ],
+                characters: [ "+" ],
+                locations: [ 3 ]
+            },
+            ")": {
+                pattern: 1,
+                keyCodes: [ 16, 48 ],
+                characters: [ ")" ],
+                locations: [ 1, 0 ]
+            },
+            "!": {
+                pattern: 1,
+                keyCodes: [ 16, 49 ],
+                characters: [ "!" ],
+                locations: [ 1, 0 ]
+            },
+            "@": {
+                pattern: 1,
+                keyCodes: [ 16, 50 ],
+                characters: [ "@" ],
+                locations: [ 1, 0 ]
+            },
+            "#": {
+                pattern: 1,
+                keyCodes: [ 16, 51 ],
+                characters: [ "#" ],
+                locations: [ 1, 0 ]
+            },
+            $: {
+                pattern: 1,
+                keyCodes: [ 16, 52 ],
+                characters: [ "$" ],
+                locations: [ 1, 0 ]
+            },
+            "%": {
+                pattern: 1,
+                keyCodes: [ 16, 53 ],
+                characters: [ "%" ],
+                locations: [ 1, 0 ]
+            },
+            "^": {
+                pattern: 1,
+                keyCodes: [ 16, 54 ],
+                characters: [ "^" ],
+                locations: [ 1, 0 ]
+            },
+            "&": {
+                pattern: 1,
+                keyCodes: [ 16, 55 ],
+                characters: [ "&" ],
+                locations: [ 1, 0 ]
+            },
+            "(": {
+                pattern: 1,
+                keyCodes: [ 16, 57 ],
+                characters: [ "(" ],
+                locations: [ 1, 0 ]
+            },
+            A: {
+                pattern: 1,
+                keyCodes: [ 16, 65 ],
+                characters: [ "A" ],
+                locations: [ 1, 0 ]
+            },
+            B: {
+                pattern: 1,
+                keyCodes: [ 16, 66 ],
+                characters: [ "B" ],
+                locations: [ 1, 0 ]
+            },
+            C: {
+                pattern: 1,
+                keyCodes: [ 16, 67 ],
+                characters: [ "C" ],
+                locations: [ 1, 0 ]
+            },
+            D: {
+                pattern: 1,
+                keyCodes: [ 16, 68 ],
+                characters: [ "D" ],
+                locations: [ 1, 0 ]
+            },
+            E: {
+                pattern: 1,
+                keyCodes: [ 16, 69 ],
+                characters: [ "E" ],
+                locations: [ 1, 0 ]
+            },
+            F: {
+                pattern: 1,
+                keyCodes: [ 16, 70 ],
+                characters: [ "F" ],
+                locations: [ 1, 0 ]
+            },
+            G: {
+                pattern: 1,
+                keyCodes: [ 16, 71 ],
+                characters: [ "G" ],
+                locations: [ 1, 0 ]
+            },
+            H: {
+                pattern: 1,
+                keyCodes: [ 16, 72 ],
+                characters: [ "H" ],
+                locations: [ 1, 0 ]
+            },
+            I: {
+                pattern: 1,
+                keyCodes: [ 16, 73 ],
+                characters: [ "I" ],
+                locations: [ 1, 0 ]
+            },
+            J: {
+                pattern: 1,
+                keyCodes: [ 16, 74 ],
+                characters: [ "J" ],
+                locations: [ 1, 0 ]
+            },
+            K: {
+                pattern: 1,
+                keyCodes: [ 16, 75 ],
+                characters: [ "K" ],
+                locations: [ 1, 0 ]
+            },
+            L: {
+                pattern: 1,
+                keyCodes: [ 16, 76 ],
+                characters: [ "L" ],
+                locations: [ 1, 0 ]
+            },
+            M: {
+                pattern: 1,
+                keyCodes: [ 16, 77 ],
+                characters: [ "M" ],
+                locations: [ 1, 0 ]
+            },
+            N: {
+                pattern: 1,
+                keyCodes: [ 16, 78 ],
+                characters: [ "N" ],
+                locations: [ 1, 0 ]
+            },
+            O: {
+                pattern: 1,
+                keyCodes: [ 16, 79 ],
+                characters: [ "O" ],
+                locations: [ 1, 0 ]
+            },
+            P: {
+                pattern: 1,
+                keyCodes: [ 16, 80 ],
+                characters: [ "P" ],
+                locations: [ 1, 0 ]
+            },
+            Q: {
+                pattern: 1,
+                keyCodes: [ 16, 81 ],
+                characters: [ "Q" ],
+                locations: [ 1, 0 ]
+            },
+            R: {
+                pattern: 1,
+                keyCodes: [ 16, 82 ],
+                characters: [ "R" ],
+                locations: [ 1, 0 ]
+            },
+            S: {
+                pattern: 1,
+                keyCodes: [ 16, 83 ],
+                characters: [ "S" ],
+                locations: [ 1, 0 ]
+            },
+            T: {
+                pattern: 1,
+                keyCodes: [ 16, 84 ],
+                characters: [ "T" ],
+                locations: [ 1, 0 ]
+            },
+            U: {
+                pattern: 1,
+                keyCodes: [ 16, 85 ],
+                characters: [ "U" ],
+                locations: [ 1, 0 ]
+            },
+            V: {
+                pattern: 1,
+                keyCodes: [ 16, 86 ],
+                characters: [ "V" ],
+                locations: [ 1, 0 ]
+            },
+            W: {
+                pattern: 1,
+                keyCodes: [ 16, 87 ],
+                characters: [ "W" ],
+                locations: [ 1, 0 ]
+            },
+            X: {
+                pattern: 1,
+                keyCodes: [ 16, 88 ],
+                characters: [ "X" ],
+                locations: [ 1, 0 ]
+            },
+            Y: {
+                pattern: 1,
+                keyCodes: [ 16, 89 ],
+                characters: [ "Y" ],
+                locations: [ 1, 0 ]
+            },
+            Z: {
+                pattern: 1,
+                keyCodes: [ 16, 90 ],
+                characters: [ "Z" ],
+                locations: [ 1, 0 ]
+            },
+            "|": {
+                pattern: 1,
+                keyCodes: [ 16, 220 ],
+                characters: [ "|" ],
+                locations: [ 1, 0 ]
+            },
+            "<": {
+                pattern: 1,
+                keyCodes: [ 16, 188 ],
+                characters: [ "<" ],
+                locations: [ 1, 0 ]
+            },
+            "~": {
+                pattern: 1,
+                keyCodes: [ 16, 192 ],
+                characters: [ "~" ],
+                locations: [ 1, 0 ]
+            },
+            _: {
+                pattern: 1,
+                keyCodes: isGecko ? [ 16, 173 ] : [ 16, 189 ],
+                characters: [ "_" ],
+                locations: [ 1, 0 ]
+            },
+            "{": {
+                pattern: 1,
+                keyCodes: [ 16, 219 ],
+                characters: [ "{" ],
+                locations: [ 1, 0 ]
+            },
+            ">": {
+                pattern: 1,
+                keyCodes: [ 16, 190 ],
+                characters: [ ">" ],
+                locations: [ 1, 0 ]
+            },
+            '"': {
+                pattern: 1,
+                keyCodes: [ 16, 222 ],
+                characters: [ '"' ],
+                locations: [ 1, 0 ]
+            },
+            "}": {
+                pattern: 1,
+                keyCodes: [ 16, 221 ],
+                characters: [ "}" ],
+                locations: [ 1, 0 ]
+            },
+            ":": {
+                pattern: 1,
+                keyCodes: isGecko ? [ 16, 59 ] : [ 16, 186 ],
+                characters: [ ":" ],
+                locations: [ 1, 0 ]
+            },
+            "?": {
+                pattern: 1,
+                keyCodes: [ 16, 191 ],
+                characters: [ "?" ],
+                locations: [ 1, 0 ]
+            },
+            º: {
+                pattern: 2,
+                keyCodes: [ 18, 48 ],
+                characters: [ "º" ],
+                locations: [ 1, 0 ]
+            },
+            "¡": {
+                pattern: 2,
+                keyCodes: [ 18, 49 ],
+                characters: [ "¡" ],
+                locations: [ 1, 0 ]
+            },
+            "™": {
+                pattern: 2,
+                keyCodes: [ 18, 50 ],
+                characters: [ "™" ],
+                locations: [ 1, 0 ]
+            },
+            "£": {
+                pattern: 2,
+                keyCodes: [ 18, 51 ],
+                characters: [ "£" ],
+                locations: [ 1, 0 ]
+            },
+            "¢": {
+                pattern: 2,
+                keyCodes: [ 18, 52 ],
+                characters: [ "¢" ],
+                locations: [ 1, 0 ]
+            },
+            "∞": {
+                pattern: 2,
+                keyCodes: [ 18, 53 ],
+                characters: [ "∞" ],
+                locations: [ 1, 0 ]
+            },
+            "§": {
+                pattern: 2,
+                keyCodes: [ 18, 54 ],
+                characters: [ "§" ],
+                locations: [ 1, 0 ]
+            },
+            "¶": {
+                pattern: 2,
+                keyCodes: [ 18, 55 ],
+                characters: [ "¶" ],
+                locations: [ 1, 0 ]
+            },
+            "•": {
+                pattern: 2,
+                keyCodes: [ 18, 56 ],
+                characters: [ "•" ],
+                locations: [ 1, 0 ]
+            },
+            ª: {
+                pattern: 2,
+                keyCodes: [ 18, 57 ],
+                characters: [ "ª" ],
+                locations: [ 1, 0 ]
+            },
+            å: {
+                pattern: 2,
+                keyCodes: [ 18, 65 ],
+                characters: [ "å" ],
+                locations: [ 1, 0 ]
+            },
+            "∫": {
+                pattern: 2,
+                keyCodes: [ 18, 66 ],
+                characters: [ "∫" ],
+                locations: [ 1, 0 ]
+            },
+            ç: {
+                pattern: 2,
+                keyCodes: [ 18, 67 ],
+                characters: [ "ç" ],
+                locations: [ 1, 0 ]
+            },
+            "∂": {
+                pattern: 2,
+                keyCodes: [ 18, 68 ],
+                characters: [ "∂" ],
+                locations: [ 1, 0 ]
+            },
+            ƒ: {
+                pattern: 2,
+                keyCodes: [ 18, 70 ],
+                characters: [ "ƒ" ],
+                locations: [ 1, 0 ]
+            },
+            "©": {
+                pattern: 2,
+                keyCodes: [ 18, 71 ],
+                characters: [ "©" ],
+                locations: [ 1, 0 ]
+            },
+            "˙": {
+                pattern: 2,
+                keyCodes: [ 18, 72 ],
+                characters: [ "˙" ],
+                locations: [ 1, 0 ]
+            },
+            "∆": {
+                pattern: 2,
+                keyCodes: [ 18, 74 ],
+                characters: [ "∆" ],
+                locations: [ 1, 0 ]
+            },
+            "˚": {
+                pattern: 2,
+                keyCodes: [ 18, 75 ],
+                characters: [ "˚" ],
+                locations: [ 1, 0 ]
+            },
+            "¬": {
+                pattern: 2,
+                keyCodes: [ 18, 76 ],
+                characters: [ "¬" ],
+                locations: [ 1, 0 ]
+            },
+            µ: {
+                pattern: 2,
+                keyCodes: [ 18, 77 ],
+                characters: [ "µ" ],
+                locations: [ 1, 0 ]
+            },
+            ø: {
+                pattern: 2,
+                keyCodes: [ 18, 79 ],
+                characters: [ "ø" ],
+                locations: [ 1, 0 ]
+            },
+            π: {
+                pattern: 2,
+                keyCodes: [ 18, 80 ],
+                characters: [ "π" ],
+                locations: [ 1, 0 ]
+            },
+            œ: {
+                pattern: 2,
+                keyCodes: [ 18, 81 ],
+                characters: [ "œ" ],
+                locations: [ 1, 0 ]
+            },
+            "®": {
+                pattern: 2,
+                keyCodes: [ 18, 82 ],
+                characters: [ "®" ],
+                locations: [ 1, 0 ]
+            },
+            ß: {
+                pattern: 2,
+                keyCodes: [ 18, 83 ],
+                characters: [ "ß" ],
+                locations: [ 1, 0 ]
+            },
+            "†": {
+                pattern: 2,
+                keyCodes: [ 18, 84 ],
+                characters: [ "†" ],
+                locations: [ 1, 0 ]
+            },
+            "√": {
+                pattern: 2,
+                keyCodes: [ 18, 86 ],
+                characters: [ "√" ],
+                locations: [ 1, 0 ]
+            },
+            "∑": {
+                pattern: 2,
+                keyCodes: [ 18, 87 ],
+                characters: [ "∑" ],
+                locations: [ 1, 0 ]
+            },
+            "≈": {
+                pattern: 2,
+                keyCodes: [ 18, 88 ],
+                characters: [ "≈" ],
+                locations: [ 1, 0 ]
+            },
+            "¥": {
+                pattern: 2,
+                keyCodes: [ 18, 89 ],
+                characters: [ "¥" ],
+                locations: [ 1, 0 ]
+            },
+            Ω: {
+                pattern: 2,
+                keyCodes: [ 18, 90 ],
+                characters: [ "Ω" ],
+                locations: [ 1, 0 ]
+            },
+            "«": {
+                pattern: 2,
+                keyCodes: [ 18, 220 ],
+                characters: [ "«" ],
+                locations: [ 1, 0 ]
+            },
+            "≤": {
+                pattern: 2,
+                keyCodes: [ 18, 188 ],
+                characters: [ "≤" ],
+                locations: [ 1, 0 ]
+            },
+            "≠": {
+                pattern: 2,
+                keyCodes: isGecko ? [ 18, 61 ] : [ 18, 187 ],
+                characters: [ "≠" ],
+                locations: [ 1, 0 ]
+            },
+            "–": {
+                pattern: 2,
+                keyCodes: isGecko ? [ 18, 173 ] : [ 18, 189 ],
+                characters: [ "–" ],
+                locations: [ 1, 0 ]
+            },
+            "“": {
+                pattern: 2,
+                keyCodes: [ 18, 219 ],
+                characters: [ "“" ],
+                locations: [ 1, 0 ]
+            },
+            "≥": {
+                pattern: 2,
+                keyCodes: [ 18, 190 ],
+                characters: [ "≥" ],
+                locations: [ 1, 0 ]
+            },
+            æ: {
+                pattern: 2,
+                keyCodes: [ 18, 222 ],
+                characters: [ "æ" ],
+                locations: [ 1, 0 ]
+            },
+            "‘": {
+                pattern: 2,
+                keyCodes: [ 18, 221 ],
+                characters: [ "‘" ],
+                locations: [ 1, 0 ]
+            },
+            "…": {
+                pattern: 2,
+                keyCodes: isGecko ? [ 18, 59 ] : [ 18, 186 ],
+                characters: [ "…" ],
+                locations: [ 1, 0 ]
+            },
+            "÷": {
+                pattern: 2,
+                keyCodes: [ 18, 191 ],
+                characters: [ "÷" ],
+                locations: [ 1, 0 ]
+            },
+            "‚": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 48 ],
+                characters: [ "‚" ],
+                locations: [ 1, 0 ]
+            },
+            "⁄": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 49 ],
+                characters: [ "⁄" ],
+                locations: [ 1, 0 ]
+            },
+            "€": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 50 ],
+                characters: [ "€" ],
+                locations: [ 1, 0 ]
+            },
+            "‹": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 51 ],
+                characters: [ "‹" ],
+                locations: [ 1, 0 ]
+            },
+            "›": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 52 ],
+                characters: [ "›" ],
+                locations: [ 1, 0 ]
+            },
+            ﬁ: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 53 ],
+                characters: [ "ﬁ" ],
+                locations: [ 1, 0 ]
+            },
+            ﬂ: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 54 ],
+                characters: [ "ﬂ" ],
+                locations: [ 1, 0 ]
+            },
+            "‡": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 55 ],
+                characters: [ "‡" ],
+                locations: [ 1, 0 ]
+            },
+            "°": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 56 ],
+                characters: [ "°" ],
+                locations: [ 1, 0 ]
+            },
+            "·": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 57 ],
+                characters: [ "·" ],
+                locations: [ 1, 0 ]
+            },
+            Å: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 65 ],
+                characters: [ "Å" ],
+                locations: [ 1, 0 ]
+            },
+            ı: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 66 ],
+                characters: [ "ı" ],
+                locations: [ 1, 0 ]
+            },
+            Ç: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 67 ],
+                characters: [ "Ç" ],
+                locations: [ 1, 0 ]
+            },
+            Î: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 68 ],
+                characters: [ "Î" ],
+                locations: [ 1, 0 ]
+            },
+            "´": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 69 ],
+                characters: [ "´" ],
+                locations: [ 1, 0 ]
+            },
+            Ï: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 70 ],
+                characters: [ "Ï" ],
+                locations: [ 1, 0 ]
+            },
+            "˝": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 71 ],
+                characters: [ "˝" ],
+                locations: [ 1, 0 ]
+            },
+            Ó: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 72 ],
+                characters: [ "Ó" ],
+                locations: [ 1, 0 ]
+            },
+            "ˆ": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 73 ],
+                characters: [ "ˆ" ],
+                locations: [ 1, 0 ]
+            },
+            Ô: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 74 ],
+                characters: [ "Ô" ],
+                locations: [ 1, 0 ]
+            },
+            "": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 75 ],
+                characters: [ "" ],
+                locations: [ 1, 0 ]
+            },
+            Ò: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 76 ],
+                characters: [ "Ò" ],
+                locations: [ 1, 0 ]
+            },
+            Â: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 77 ],
+                characters: [ "Â" ],
+                locations: [ 1, 0 ]
+            },
+            "˜": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 78 ],
+                characters: [ "˜" ],
+                locations: [ 1, 0 ]
+            },
+            Ø: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 79 ],
+                characters: [ "Ø" ],
+                locations: [ 1, 0 ]
+            },
+            "∏": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 80 ],
+                characters: [ "∏" ],
+                locations: [ 1, 0 ]
+            },
+            Œ: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 81 ],
+                characters: [ "Œ" ],
+                locations: [ 1, 0 ]
+            },
+            "‰": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 82 ],
+                characters: [ "‰" ],
+                locations: [ 1, 0 ]
+            },
+            Í: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 83 ],
+                characters: [ "Í" ],
+                locations: [ 1, 0 ]
+            },
+            "ˇ": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 84 ],
+                characters: [ "ˇ" ],
+                locations: [ 1, 0 ]
+            },
+            "¨": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 85 ],
+                characters: [ "¨" ],
+                locations: [ 1, 0 ]
+            },
+            "◊": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 86 ],
+                characters: [ "◊" ],
+                locations: [ 1, 0 ]
+            },
+            "„": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 87 ],
+                characters: [ "„" ],
+                locations: [ 1, 0 ]
+            },
+            "˛": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 88 ],
+                characters: [ "˛" ],
+                locations: [ 1, 0 ]
+            },
+            Á: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 89 ],
+                characters: [ "Á" ],
+                locations: [ 1, 0 ]
+            },
+            "¸": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 90 ],
+                characters: [ "¸" ],
+                locations: [ 1, 0 ]
+            },
+            "»": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 220 ],
+                characters: [ "»" ],
+                locations: [ 1, 0 ]
+            },
+            "¯": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 188 ],
+                characters: [ "¯" ],
+                locations: [ 1, 0 ]
+            },
+            "±": {
+                pattern: 3,
+                keyCodes: isGecko ? [ 16, 18, 61 ] : [ 16, 18, 187 ],
+                characters: [ "±" ],
+                locations: [ 1, 0 ]
+            },
+            "—": {
+                pattern: 3,
+                keyCodes: isGecko ? [ 16, 18, 173 ] : [ 16, 18, 189 ],
+                characters: [ "—" ],
+                locations: [ 1, 0 ]
+            },
+            "”": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 219 ],
+                characters: [ "”" ],
+                locations: [ 1, 0 ]
+            },
+            "˘": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 190 ],
+                characters: [ "˘" ],
+                locations: [ 1, 0 ]
+            },
+            Æ: {
+                pattern: 3,
+                keyCodes: [ 16, 18, 222 ],
+                characters: [ "Æ" ],
+                locations: [ 1, 0 ]
+            },
+            "’": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 221 ],
+                characters: [ "’" ],
+                locations: [ 1, 0 ]
+            },
+            Ú: {
+                pattern: 3,
+                keyCodes: isGecko ? [ 16, 18, 59 ] : [ 16, 18, 186 ],
+                characters: [ "Ú" ],
+                locations: [ 1, 0 ]
+            },
+            "¿": {
+                pattern: 3,
+                keyCodes: [ 16, 18, 191 ],
+                characters: [ "¿" ],
+                locations: [ 1, 0 ]
+            },
+            é: {
+                pattern: isGecko ? 5 : 4,
+                keyCodes: isGecko ? [ 18, 69 ] : [ 18, 229, 69 ],
+                characters: [ "´", "é" ],
+                locations: [ 1, 0 ]
+            },
+            í: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 69, 73 ] : [ 18, 229, 69, 73 ],
+                characters: [ "´", "í" ],
+                locations: [ 1, 0 ]
+            },
+            ó: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 69, 79 ] : [ 18, 229, 69, 79 ],
+                characters: [ "´", "ó" ],
+                locations: [ 1, 0 ]
+            },
+            ú: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 69, 85 ] : [ 18, 229, 69, 85 ],
+                characters: [ "´", "ú" ],
+                locations: [ 1, 0 ]
+            },
+            ê: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 73, 69 ] : [ 18, 229, 73, 69 ],
+                characters: [ "ˆ", "ê" ],
+                locations: [ 1, 0 ]
+            },
+            î: {
+                pattern: isGecko ? 5 : 4,
+                keyCodes: isGecko ? [ 18, 73 ] : [ 18, 229, 73 ],
+                characters: [ "ˆ", "î" ],
+                locations: [ 1, 0 ]
+            },
+            ô: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 73, 79 ] : [ 18, 229, 73, 79 ],
+                characters: [ "ˆ", "ô" ],
+                locations: [ 1, 0 ]
+            },
+            û: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 73, 85 ] : [ 18, 229, 73, 85 ],
+                characters: [ "ˆ", "û" ],
+                locations: [ 1, 0 ]
+            },
+            ñ: {
+                pattern: isGecko ? 5 : 4,
+                keyCodes: isGecko ? [ 18, 78 ] : [ 18, 229, 78 ],
+                characters: [ "˜", "ñ" ],
+                locations: [ 1, 0 ]
+            },
+            õ: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 78, 79 ] : [ 18, 229, 78, 79 ],
+                characters: [ "˜", "õ" ],
+                locations: [ 1, 0 ]
+            },
+            ë: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 85, 69 ] : [ 18, 229, 85, 69 ],
+                characters: [ "¨", "ë" ],
+                locations: [ 1, 0 ]
+            },
+            ï: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 85, 73 ] : [ 18, 229, 85, 73 ],
+                characters: [ "¨", "ï" ],
+                locations: [ 1, 0 ]
+            },
+            ö: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 85, 79 ] : [ 18, 229, 85, 79 ],
+                characters: [ "¨", "ö" ],
+                locations: [ 1, 0 ]
+            },
+            ü: {
+                pattern: isGecko ? 5 : 4,
+                keyCodes: isGecko ? [ 18, 85 ] : [ 18, 229, 85 ],
+                characters: [ "¨", "ü" ],
+                locations: [ 1, 0 ]
+            },
+            ÿ: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 85, 89 ] : [ 18, 229, 85, 89 ],
+                characters: [ "¨", "ÿ" ],
+                locations: [ 1, 0 ]
+            },
+            è: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 192, 69 ] : [ 18, 229, 192, 69 ],
+                characters: [ "`", "è" ],
+                locations: [ 1, 0 ]
+            },
+            ì: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 192, 73 ] : [ 18, 229, 192, 73 ],
+                characters: [ "`", "ì" ],
+                locations: [ 1, 0 ]
+            },
+            ò: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 192, 79 ] : [ 18, 229, 192, 79 ],
+                characters: [ "`", "ò" ],
+                locations: [ 1, 0 ]
+            },
+            ù: {
+                pattern: isGecko ? 7 : 6,
+                keyCodes: isGecko ? [ 18, 192, 85 ] : [ 18, 229, 192, 85 ],
+                characters: [ "`", "ù" ],
+                locations: [ 1, 0 ]
+            }
+        }
+    };
+    Stimuli.core.Object.merge(Stimuli.keyboard.layout.macosx.US, Stimuli.keyboard.layout.Generic);
+})();
+
+// Source: src/keyboard/layout/linux/us.js
+"use strict";
+
+(function() {
+    var isGecko = Stimuli.core.Support.isGecko;
+    var isIE = Stimuli.core.Support.isIE;
+    Stimuli.keyboard.layout.linux.US = {
+        unicode: false,
+        patterns: [ function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            }, {
+                type: "keypress",
+                location: locations[0]
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            }, {
+                type: "keypress",
+                location: locations[1]
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keypress",
+                location: locations[1],
+                shiftKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0]
+            } ];
+        }, function(keyCodes, characters, locations) {
+            return [ {
+                type: "keydown",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                shiftKey: true
+            }, {
+                type: "keydown",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keypress",
+                location: locations[1],
+                shiftKey: true
+            }, {
+                type: "input",
+                character: characters[0]
+            }, {
+                type: "keyup",
+                location: locations[1],
+                keyCode: keyCodes[1],
+                shiftKey: true
+            }, {
+                type: "keyup",
+                location: locations[0],
+                keyCode: keyCodes[0],
+                shiftKey: true
+            } ];
+        } ],
+        table: {
+            "0": {
+                pattern: 0,
+                keyCodes: [ 48 ],
+                characters: [ "0" ],
+                locations: [ 0 ]
+            },
+            "1": {
+                pattern: 0,
+                keyCodes: [ 49 ],
+                characters: [ "1" ],
+                locations: [ 0 ]
+            },
+            "2": {
+                pattern: 0,
+                keyCodes: [ 50 ],
+                characters: [ "2" ],
+                locations: [ 0 ]
+            },
+            "3": {
+                pattern: 0,
+                keyCodes: [ 51 ],
+                characters: [ "3" ],
+                locations: [ 0 ]
+            },
+            "4": {
+                pattern: 0,
+                keyCodes: [ 52 ],
+                characters: [ "4" ],
+                locations: [ 0 ]
+            },
+            "5": {
+                pattern: 0,
+                keyCodes: [ 53 ],
+                characters: [ "5" ],
+                locations: [ 0 ]
+            },
+            "6": {
+                pattern: 0,
+                keyCodes: [ 54 ],
+                characters: [ "6" ],
+                locations: [ 0 ]
+            },
+            "7": {
+                pattern: 0,
+                keyCodes: [ 55 ],
+                characters: [ "7" ],
+                locations: [ 0 ]
+            },
+            "8": {
+                pattern: 0,
+                keyCodes: [ 56 ],
+                characters: [ "8" ],
+                locations: [ 0 ]
+            },
+            "9": {
+                pattern: 0,
+                keyCodes: [ 57 ],
+                characters: [ "9" ],
+                locations: [ 0 ]
+            },
+            a: {
+                pattern: 0,
+                keyCodes: [ 65 ],
+                characters: [ "a" ],
+                locations: [ 0 ]
+            },
+            b: {
+                pattern: 0,
+                keyCodes: [ 66 ],
+                characters: [ "b" ],
+                locations: [ 0 ]
+            },
+            c: {
+                pattern: 0,
+                keyCodes: [ 67 ],
+                characters: [ "c" ],
+                locations: [ 0 ]
+            },
+            d: {
+                pattern: 0,
+                keyCodes: [ 68 ],
+                characters: [ "d" ],
+                locations: [ 0 ]
+            },
+            e: {
+                pattern: 0,
+                keyCodes: [ 69 ],
+                characters: [ "e" ],
+                locations: [ 0 ]
+            },
+            f: {
+                pattern: 0,
+                keyCodes: [ 70 ],
+                characters: [ "f" ],
+                locations: [ 0 ]
+            },
+            g: {
+                pattern: 0,
+                keyCodes: [ 71 ],
+                characters: [ "g" ],
+                locations: [ 0 ]
+            },
+            h: {
+                pattern: 0,
+                keyCodes: [ 72 ],
+                characters: [ "h" ],
+                locations: [ 0 ]
+            },
+            i: {
+                pattern: 0,
+                keyCodes: [ 73 ],
+                characters: [ "i" ],
+                locations: [ 0 ]
+            },
+            j: {
+                pattern: 0,
+                keyCodes: [ 74 ],
+                characters: [ "j" ],
+                locations: [ 0 ]
+            },
+            k: {
+                pattern: 0,
+                keyCodes: [ 75 ],
+                characters: [ "k" ],
+                locations: [ 0 ]
+            },
+            l: {
+                pattern: 0,
+                keyCodes: [ 76 ],
+                characters: [ "l" ],
+                locations: [ 0 ]
+            },
+            m: {
+                pattern: 0,
+                keyCodes: [ 77 ],
+                characters: [ "m" ],
+                locations: [ 0 ]
+            },
+            n: {
+                pattern: 0,
+                keyCodes: [ 78 ],
+                characters: [ "n" ],
+                locations: [ 0 ]
+            },
+            o: {
+                pattern: 0,
+                keyCodes: [ 79 ],
+                characters: [ "o" ],
+                locations: [ 0 ]
+            },
+            p: {
+                pattern: 0,
+                keyCodes: [ 80 ],
+                characters: [ "p" ],
+                locations: [ 0 ]
+            },
+            q: {
+                pattern: 0,
+                keyCodes: [ 81 ],
+                characters: [ "q" ],
+                locations: [ 0 ]
+            },
+            r: {
+                pattern: 0,
+                keyCodes: [ 82 ],
+                characters: [ "r" ],
+                locations: [ 0 ]
+            },
+            s: {
+                pattern: 0,
+                keyCodes: [ 83 ],
+                characters: [ "s" ],
+                locations: [ 0 ]
+            },
+            t: {
+                pattern: 0,
+                keyCodes: [ 84 ],
+                characters: [ "t" ],
+                locations: [ 0 ]
+            },
+            u: {
+                pattern: 0,
+                keyCodes: [ 85 ],
+                characters: [ "u" ],
+                locations: [ 0 ]
+            },
+            v: {
+                pattern: 0,
+                keyCodes: [ 86 ],
+                characters: [ "v" ],
+                locations: [ 0 ]
+            },
+            w: {
+                pattern: 0,
+                keyCodes: [ 87 ],
+                characters: [ "w" ],
+                locations: [ 0 ]
+            },
+            x: {
+                pattern: 0,
+                keyCodes: [ 88 ],
+                characters: [ "x" ],
+                locations: [ 0 ]
+            },
+            y: {
+                pattern: 0,
+                keyCodes: [ 89 ],
+                characters: [ "y" ],
+                locations: [ 0 ]
+            },
+            z: {
+                pattern: 0,
+                keyCodes: [ 90 ],
+                characters: [ "z" ],
+                locations: [ 0 ]
+            },
+            "'": {
+                pattern: 0,
+                keyCodes: [ 222 ],
+                characters: [ "'" ],
+                locations: [ 0 ]
+            },
+            "\\": {
+                pattern: isGecko ? 0 : 1,
+                keyCodes: [ 220 ],
+                characters: [ "\\" ],
+                locations: isGecko ? [ 0 ] : [ 0, 2 ]
+            },
+            ",": {
+                pattern: 0,
+                keyCodes: [ 188 ],
+                characters: [ "," ],
+                locations: [ 0 ]
+            },
+            ".": {
+                pattern: 0,
+                keyCodes: [ 190 ],
+                characters: [ "." ],
+                locations: [ 0 ]
+            },
+            "=": {
+                pattern: 0,
+                keyCodes: isGecko ? [ 61 ] : [ 187 ],
+                characters: [ "=" ],
+                locations: [ 0 ]
+            },
+            "`": {
+                pattern: 0,
+                keyCodes: [ 192 ],
+                characters: [ "`" ],
+                locations: [ 0 ]
+            },
+            "[": {
+                pattern: isGecko ? 0 : 1,
+                keyCodes: [ 219 ],
+                characters: [ "[" ],
+                locations: isGecko ? [ 0 ] : [ 0, 1 ]
+            },
+            "-": {
+                pattern: 0,
+                keyCodes: isGecko ? [ 173 ] : [ 189 ],
+                characters: [ "-" ],
+                locations: [ 0 ]
+            },
+            "]": {
+                pattern: 0,
+                keyCodes: [ 221 ],
+                characters: [ "]" ],
+                locations: [ 0 ]
+            },
+            ";": {
+                pattern: 0,
+                keyCodes: isGecko ? [ 59 ] : [ 186 ],
+                characters: [ ";" ],
+                locations: [ 0 ]
+            },
+            "/": {
+                pattern: 0,
+                keyCodes: [ 191 ],
+                characters: [ "/" ],
+                locations: [ 0 ]
+            },
+            "*": {
+                pattern: isGecko ? 0 : 1,
+                keyCodes: [ 106 ],
+                characters: [ "*" ],
+                locations: isGecko ? [ 3 ] : [ 3, 0 ]
+            },
+            "+": {
+                pattern: isGecko ? 0 : 1,
+                keyCodes: [ 107 ],
+                characters: [ "+" ],
+                locations: isGecko ? [ 3 ] : [ 3, 0 ]
+            },
+            "±": {
+                pattern: 0,
+                keyCodes: [ 0 ],
+                characters: [ "±" ],
+                locations: [ 0 ]
+            },
+            ")": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 48 ],
+                characters: [ ")" ],
+                locations: [ 2, 0 ]
+            },
+            "!": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 49 ],
+                characters: [ "!" ],
+                locations: [ 2, 0 ]
+            },
+            "@": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 50 ],
+                characters: [ "@" ],
+                locations: [ 2, 0 ]
+            },
+            "#": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 51 ],
+                characters: [ "#" ],
+                locations: [ 2, 0 ]
+            },
+            $: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 52 ],
+                characters: [ "$" ],
+                locations: [ 2, 0 ]
+            },
+            "%": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 53 ],
+                characters: [ "%" ],
+                locations: [ 2, 0 ]
+            },
+            "^": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 54 ],
+                characters: [ "^" ],
+                locations: [ 2, 0 ]
+            },
+            "&": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 55 ],
+                characters: [ "&" ],
+                locations: [ 2, 0 ]
+            },
+            "(": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 57 ],
+                characters: [ "(" ],
+                locations: [ 2, 0 ]
+            },
+            A: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 65 ],
+                characters: [ "A" ],
+                locations: [ 2, 0 ]
+            },
+            B: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 66 ],
+                characters: [ "B" ],
+                locations: [ 2, 0 ]
+            },
+            C: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 67 ],
+                characters: [ "C" ],
+                locations: [ 2, 0 ]
+            },
+            D: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 68 ],
+                characters: [ "D" ],
+                locations: [ 2, 0 ]
+            },
+            E: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 69 ],
+                characters: [ "E" ],
+                locations: [ 2, 0 ]
+            },
+            F: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 70 ],
+                characters: [ "F" ],
+                locations: [ 2, 0 ]
+            },
+            G: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 71 ],
+                characters: [ "G" ],
+                locations: [ 2, 0 ]
+            },
+            H: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 72 ],
+                characters: [ "H" ],
+                locations: [ 2, 0 ]
+            },
+            I: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 73 ],
+                characters: [ "I" ],
+                locations: [ 2, 0 ]
+            },
+            J: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 74 ],
+                characters: [ "J" ],
+                locations: [ 2, 0 ]
+            },
+            K: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 75 ],
+                characters: [ "K" ],
+                locations: [ 2, 0 ]
+            },
+            L: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 76 ],
+                characters: [ "L" ],
+                locations: [ 2, 0 ]
+            },
+            M: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 77 ],
+                characters: [ "M" ],
+                locations: [ 2, 0 ]
+            },
+            N: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 78 ],
+                characters: [ "N" ],
+                locations: [ 2, 0 ]
+            },
+            O: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 79 ],
+                characters: [ "O" ],
+                locations: [ 2, 0 ]
+            },
+            P: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 80 ],
+                characters: [ "P" ],
+                locations: [ 2, 0 ]
+            },
+            Q: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 81 ],
+                characters: [ "Q" ],
+                locations: [ 2, 0 ]
+            },
+            R: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 82 ],
+                characters: [ "R" ],
+                locations: [ 2, 0 ]
+            },
+            S: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 83 ],
+                characters: [ "S" ],
+                locations: [ 2, 0 ]
+            },
+            T: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 84 ],
+                characters: [ "T" ],
+                locations: [ 2, 0 ]
+            },
+            U: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 85 ],
+                characters: [ "U" ],
+                locations: [ 2, 0 ]
+            },
+            V: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 86 ],
+                characters: [ "V" ],
+                locations: [ 2, 0 ]
+            },
+            W: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 87 ],
+                characters: [ "W" ],
+                locations: [ 2, 0 ]
+            },
+            X: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 88 ],
+                characters: [ "X" ],
+                locations: [ 2, 0 ]
+            },
+            Y: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 89 ],
+                characters: [ "Y" ],
+                locations: [ 2, 0 ]
+            },
+            Z: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 90 ],
+                characters: [ "Z" ],
+                locations: [ 2, 0 ]
+            },
+            '"': {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 222 ],
+                characters: [ '"' ],
+                locations: [ 2, 0 ]
+            },
+            "|": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 220 ],
+                characters: [ "|" ],
+                locations: [ 2, 0 ]
+            },
+            "<": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 188 ],
+                characters: [ "<" ],
+                locations: [ 2, 0 ]
+            },
+            ">": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 190 ],
+                characters: [ ">" ],
+                locations: [ 2, 0 ]
+            },
+            "~": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 192 ],
+                characters: [ "~" ],
+                locations: [ 2, 0 ]
+            },
+            "{": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 219 ],
+                characters: [ "{" ],
+                locations: [ 2, 0 ]
+            },
+            _: {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: isGecko ? [ 16, 173 ] : [ 16, 189 ],
+                characters: [ "_" ],
+                locations: [ 2, 0 ]
+            },
+            "}": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 221 ],
+                characters: [ "}" ],
+                locations: [ 2, 0 ]
+            },
+            ":": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: isGecko ? [ 16, 59 ] : [ 16, 186 ],
+                characters: [ ":" ],
+                locations: [ 2, 0 ]
+            },
+            "?": {
+                pattern: isGecko ? 3 : 2,
+                keyCodes: [ 16, 191 ],
+                characters: [ "?" ],
+                locations: [ 2, 0 ]
+            }
+        }
+    };
+    Stimuli.core.Object.merge(Stimuli.keyboard.layout.linux.US, Stimuli.keyboard.layout.Generic);
+})();
+
+// Source: src/keyboard/helper.js
+
+(function() {
+
+    Stimuli.keyboard.Helper = {
+
+        getTarget: function() {
+            return this.viewport.getWindow().document.activeElement || null;
+        },
+
+        notTypables: ['\n', '\t', '\b', '\r', '\f'],
+
+        isTypableCharacter: function(key) {
+
+            if (typeof key !== 'string' ||
+                Stimuli.core.Array.contains(this.notTypables, key)) {
+                return false;
+            }
+
+            return String.fromCharCode(key.charCodeAt(0)).length === 1;
+        }
+
+    };
+
+    Stimuli.core.Object.merge(Stimuli.keyboard.Helper, Stimuli.core.Chainable);
+})();
+
+
+// Source: src/keyboard/type.js
+
+(function() {
+
+    Stimuli.keyboard.Type = function() {
+        var self = this;
+        Stimuli.shared.Command.apply(this, arguments);
+        self.layout = arguments[1];
+        self.options = {};
+        self.options.key = arguments[2][0];
+    };
+
+    var Type = Stimuli.keyboard.Type;
+
+    Stimuli.core.Class.mix(Type, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(Type, Stimuli.keyboard.Helper);
+
+    Type.prototype.execute = function(done) {
+
+        var self = this,
+            target = self.getTarget(),
+            key = self.options.key;
+
+        var sequence = self.layout.getSequence(key, target);
+
+        Stimuli.core.Array.forEach(sequence, function(frame) {
+
+            if (typeof frame === 'function') {
+                self.then(function() {
+                    frame();
+                });
+
+            }  else {
+                self.inject(function() {
+                    return frame;
+                }, 25);
+            }
+
+//            if (eventConfig.type === 'input') {
+//
+//                if (self.isEditable(target)) {
+//
+//                    if (Stimuli.core.Support.isWebkit) {
+//
+//                        self.inject(function() {
+//                            return Obj.merge({
+//                                type: 'textInput'
+//                            }, defaultConfig);
+//                        });
+//
+//                    }
+//
+//                    if (!Stimuli.core.Support.isWebkit) {
+//
+//                        self.then(function() {
+//                            if (self.isEditableInput(target) || self.isTextArea(target)) {
+//                                self.updateEditableValue(target, defaultConfig.key);
+//                            } else {
+//                                self.updateEditableHtml(target, defaultConfig.key);
+//                            }
+//                        });
+//
+//                        if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isIE9 &&
+//                            !Stimuli.core.Support.isIE10 && !Stimuli.core.Support.isWebkit &&
+//                            (self.isEditableInput(target) || self.isTextArea(target))) {
+//                            self.inject(function() {
+//                                return eventConfig;
+//                            });
+//                        }
+//                    }
+//                }
+
+//            }
+        });
+
+
+        self.then(function() {
+            self.viewport.waitForReady(done);
+        });
+
+    };
+
+})();
+
+// Source: src/keyboard/type_text.js
+
+(function() {
+
+    Stimuli.keyboard.TypeText = function() {
+        var self = this;
+        Stimuli.shared.Command.apply(this, arguments);
+        self.layout = arguments[1];
+        self.options = {};
+        self.options.keys = arguments[2][0];
+    };
+
+    var TypeText = Stimuli.keyboard.TypeText;
+
+    Stimuli.core.Class.mix(TypeText, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(TypeText, Stimuli.keyboard.Helper);
+
+    TypeText.prototype.execute = function(done) {
+
+        var self = this,
+            Obj = Stimuli.core.Object,
+            target = self.getTarget();
+
+        Stimuli.core.Array.forEach(self.options.keys.split(''), function(key) {
+            self.then(function(done) {
+                var command = new Stimuli.keyboard.Type(self.viewport, self.layout, key);
+                command.execute(done);
+            });
+        });
+
+        self.then(function() {
+            self.viewport.waitForReady(done);
+        });
 
     };
 

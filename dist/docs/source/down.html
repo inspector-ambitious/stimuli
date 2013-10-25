@@ -21,7 +21,7 @@
 
     Stimuli.mouse.Down = function() {
         Stimuli.shared.Command.apply(this, arguments);
-        this.parseOptions();
+        this.parseArguments(arguments[1]);
     };
 
     var Down = Stimuli.mouse.Down;
@@ -61,10 +61,10 @@
                     button: self.getButton(),
                     bubbles: true,
                     cancelable: true,
-                    altKey: self.options.alt,
-                    ctrlKey: self.options.ctrl,
-                    shiftKey: self.options.shift,
-                    metaKey: self.options.meta,
+                    altKey: self.viewport.getModifierState('Alt'),
+                    ctrlKey: self.viewport.getModifierState('Control'),
+                    shiftKey: self.viewport.getModifierState('Shift'),
+                    metaKey: self.viewport.getModifierState('Meta'),
                     target: target,
                     details: 1,
                     clientX: position.clientX,

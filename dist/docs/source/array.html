@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+<span id='Stimuli-core-Array'>/**
+</span> * @class Stimuli.core.Array
+ * @singleton
+ * A set of useful methods to deal with arrays.
+ */
+(function() {
+
+    Stimuli.core.Array = {
+
+<span id='Stimuli-core-Array-method-contains'>        /**
+</span>         * Determines if an array contains a specified value.
+         * @param {Array} array The array to inspect
+         * @param {Mixed} value The value to look at
+         * @return {Boolean} True is the array contains the passed value
+         */
+        contains: (function() {
+            if (typeof [].indexOf === 'function')  {
+                return function(array, value) {
+                    return array.indexOf(value) !== -1;
+                };
+            }
+            return function(array, value) {
+                var length = array.length,
+                    i = 0;
+
+                for (; i &lt; length; i++) {
+                    if (array[i] === value) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+        }()),
+
+<span id='Stimuli-core-Array-method-forEach'>        /**
+</span>         * Iterates through all values of an array.
+         * @param {Array} array
+         * @param {Function} fn
+         * @param fn.value The array value
+         * @param fn.idx The array idx
+         */
+        forEach: (function() {
+            if (typeof [].forEach === 'function') {
+                return function(array, fn) {
+                    array.forEach(fn);
+                };
+            }
+            return function(array, fn) {
+
+                var length = array.length,
+                    i = 0;
+
+                for (; i &lt; length; i++) {
+                    fn.call(array, array[i], i, array);
+                }
+            };
+        }())
+
+    };
+
+})();</pre>
+</body>
+</html>

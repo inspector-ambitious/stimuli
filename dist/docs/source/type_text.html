@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+(function() {
+
+    Stimuli.keyboard.TypeText = function() {
+        var self = this;
+        Stimuli.shared.Command.apply(this, arguments);
+        self.layout = arguments[1];
+        self.options = {};
+        self.options.keys = arguments[2][0];
+    };
+
+    var TypeText = Stimuli.keyboard.TypeText;
+
+    Stimuli.core.Class.mix(TypeText, Stimuli.shared.Command.prototype);
+    Stimuli.core.Class.mix(TypeText, Stimuli.keyboard.Helper);
+
+    TypeText.prototype.execute = function(done) {
+
+        var self = this,
+            Obj = Stimuli.core.Object,
+            target = self.getTarget();
+
+        Stimuli.core.Array.forEach(self.options.keys.split(''), function(key) {
+            self.then(function(done) {
+                var command = new Stimuli.keyboard.Type(self.viewport, self.layout, key);
+                command.execute(done);
+            });
+        });
+
+        self.then(function() {
+            self.viewport.waitForReady(done);
+        });
+
+    };
+
+})();</pre>
+</body>
+</html>

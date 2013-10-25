@@ -18,42 +18,145 @@
   <pre class="prettyprint lang-js">'use strict';
 
 (function() {
-    
-    Stimuli.command.Generic = function(options) {
-        var self = this;
-        self.options = {};
-        Stimuli.core.Object.merge(self.options, options);
-    };
+    var Dom = Stimuli.core.Dom,
+        Support = Stimuli.core.Support,
+        Obj = Stimuli.core.Object;
 
-    var Generic = Stimuli.command.Generic;
+    Stimuli.keyboard.layout.Generic = {
 
-    Stimuli.core.Class.mix(Generic, Stimuli.core.Deferable);
+        specialKeys: [
+            'Alt',
+            'Enter',
+            'Tab',
+            'Backspace',
+            'Control',
+            'ArrowLeft',
+            'ArrowRight',
+            'ArrowUp',
+            'ArrowDown',
+            'Esc',
+            'Shift',
+            'F1',
+            'F2',
+            'F3',
+            'F4',
+            'F5',
+            'F6',
+            'F7',
+            'F8',
+            'F9',
+            'F10',
+            'F11',
+            'F12'
+        ],
 
-    Generic.prototype.configure = Generic.prototype.then;
+        isSpecialKey: function(key) {
+            return Stimuli.core.Array.contains(this.specialKeys, key);
+        },
 
-    Generic.prototype.inject = function(generateEventConfig, delay) {
-        var self = this,
-            callback = function(event, canceled) {
-                if (!self.events) {
-                    self.events = [];
+        getUnicodeSequence: function(key, target) {
+
+        },
+
+        getSpecialKeySequence: function(key, target) {
+            return Stimuli.keyboard.specialKey[key].getSequence(target);
+        },
+
+        isPrintableKey: function(key) {
+            return !!this.table[key];
+        },
+
+        getPrintableKeySequence: function(key, target) {
+            var tableEntry = this.table[key],
+                pattern = this.patterns[tableEntry.pattern],
+                fullSequence = pattern(tableEntry.keyCodes, tableEntry.characters, tableEntry.locations),
+                defaultEventConfig = {
+                    bubbles: true,
+                    cancelable: true,
+                    target: target
+                },
+                sequence = [];
+
+            Stimuli.core.Array.forEach(fullSequence, function(eventConfig) {
+                if (eventConfig.type === 'input') {
+                    if (Dom.isEditable(target)) {
+
+                        if (Support.isWebkit) {
+                            sequence.push(Obj.merge({type: 'textInput', key: eventConfig.character}, defaultEventConfig));
+                        } else {
+                            if (Dom.isEditableInput(target) || Dom.isTextArea(target)) {
+                                sequence.push(function() {
+                                    Dom.updateEditableValue(target, eventConfig.character);
+                                });
+                            } else {
+                                sequence.push(function() {
+                                    Dom.updateEditableHtml(target, eventConfig.character);
+                                });
+                            }
+
+                            if (!Support.isIE8 &amp;&amp; !Support.isIE9 &amp;&amp; !Support.isIE10 &amp;&amp;
+                                (Dom.isEditableInput(target) || Dom.isTextArea(target))) {
+                                sequence.push(Obj.merge({type: 'input'}, defaultEventConfig));
+                            }
+                        }
+
+                    }
+                } else {
+                    sequence.push(Obj.merge(eventConfig, defaultEventConfig));
                 }
-                self.events.push({
-                    src: event,
-                    canceled: canceled
-                });
-            },
-            options;
+            });
 
-        if (!isNaN(delay)) {
-            options = {delay: delay};
+            return sequence;
+        },
+
+        // if there is no way to type the character in this layout we assume the user will copy and paste the character
+        getPasteSequence: function(key, target) {
+            var defaultEventConfig = {
+                    bubbles: true,
+                    cancelable: true,
+                    target: target
+                },
+                sequence = [];
+            if (Dom.isEditable(target)) {
+                sequence = [Obj.merge({type: 'paste'}, defaultEventConfig)];
+
+                if (Support.isWebkit) {
+                    sequence.push(Obj.merge({type: 'textInput', key: key}, defaultEventConfig));
+                } else {
+                    if (Dom.isEditableInput(target) || Dom.isTextArea(target)) {
+                        sequence.push(function() {
+                            Dom.updateEditableValue(target, key);
+                        });
+                    } else {
+                        sequence.push(function() {
+                            Dom.updateEditableHtml(target, key);
+                        });
+                    }
+
+                    if (!Support.isIE8 &amp;&amp; !Support.isIE9 &amp;&amp; !Support.isIE10 &amp;&amp;
+                        (Dom.isEditableInput(target) || Dom.isTextArea(target))) {
+                        sequence.push(Obj.merge({type: 'input'}, defaultEventConfig));
+                    }
+                }
+
+            }
+            return sequence;
+        },
+
+        getSequence: function(key, target) {
+            var sequence;
+
+            if (this.isSpecialKey(key)) {
+                sequence = this.getSpecialKeySequence(key, target);
+            } else if (this.isPrintableKey(key)) {
+                sequence = this.getPrintableKeySequence(key, target);
+            } else if (this.unicode) {
+                sequence = this.getUnicodeSequence(key, target);
+            } else {
+                sequence = this.getPasteSequence(key, target);
+            }
+            return  sequence;
         }
-
-        return self.defer(function(next) {
-            var eventConfig = generateEventConfig();
-            eventConfig.view = self.viewport.getContext();
-            Stimuli.view.event.Emitter.emit(eventConfig, next);
-        }, callback, options);
-
     };
 
 })();</pre>

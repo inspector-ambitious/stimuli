@@ -24,24 +24,36 @@
  */
 
 (function() {
-
-    var isIE = false,
+    var userAgent = navigator.userAgent,
+        isWebkit = /AppleWebKit/.test(userAgent),
+        isChrome = /Chrome\//.test(userAgent),
+        isPhantomJS = /PhantomJS/.test(userAgent),
+        isSafari = isWebkit &amp;&amp; !isChrome &amp;&amp; isPhantomJS,
+        isGecko = /Gecko\//.test(userAgent),
+        isLinux = /Linux/.test(userAgent),
+        isWindows = /Windows\sNT/.test(userAgent),
+        isMacOSX = /Intel\sMac\sOS\sX/.test(userAgent),
+        isIOS = /(iPad|iPhone|iPod)/.test(userAgent),
+        isAndroid = /Android/.test(userAgent),
+        isIE = false,
         IEVersion = 0,
         jscriptMap = {
             &quot;5.8&quot;: 8,
             &quot;9&quot;: 9,
             &quot;10&quot;: 10
         },
-        jscriptVersion = 'none';
+        jscriptVersion = 'none',
+        isIE11;
 
     /*@cc_on
      jscriptVersion = @_jscript_version;
      @*/
     IEVersion = jscriptMap[jscriptVersion];
-   if (IEVersion) {
-       isIE = true;
+    if (IEVersion) {
+        isIE = true;
+    }
+    isIE11 = /Trident\/7\.0/.test(userAgent);
 
-   }
 Stimuli.core.Support = {
 
 <span id='Stimuli-core-Support-property-documentAddEventListener'>    /**
@@ -70,31 +82,114 @@ Stimuli.core.Support = {
      */
     documentCreateEventObject: typeof document.createEventObject === 'function',
 
+<span id='Stimuli-core-Support-property-isIE'>    /**
+</span>     * @property {Boolean}
+     * Is true if browser is Internet Explorer.
+     */
+    isIE: isIE,
 
 <span id='Stimuli-core-Support-property-isIE8'>    /**
 </span>     * @property {Boolean}
-     * Is true if browser is ie8
+     * Is true if browser is Internet Explorer 8
      */
     isIE8: isIE &amp;&amp; IEVersion === 8,
 
 <span id='Stimuli-core-Support-property-isIE9'>    /**
 </span>     * @property {Boolean}
-     * Is true if browser is ie9
+     * Is true if browser is Internet Explorer 9
      */
     isIE9: isIE &amp;&amp; IEVersion === 9,
 
 <span id='Stimuli-core-Support-property-isIE10'>    /**
 </span>     * @property {Boolean}
-     * Is true if browser is ie10
+     * Is true if browser is Internet Explorer 10
      */
     isIE10: isIE &amp;&amp; IEVersion === 10,
+
+<span id='Stimuli-core-Support-property-isIE11'>    /**
+</span>     * @property {Boolean}
+     * Is true if browser is Internet Explorer 11
+     */
+    isIE11: isIE11,
 
 <span id='Stimuli-core-Support-property-isIOS'>    /**
 </span>     * @property {Boolean}
      * Is true if browser is IOS
      */
-    isIOS:  /(iPad|iPhone|iPod)/g.test( navigator.userAgent )
+    isIOS: isIOS,
 
+<span id='Stimuli-core-Support-property-isAndroid'>    /**
+</span>     * @property {Boolean}
+     * Is true if browser is Android
+     */
+    isAndroid: isAndroid,
+
+<span id='Stimuli-core-Support-property-isWebkit'>    /**
+</span>     * @property {Boolean}
+     * Is true if browser rendering engine is Webkit
+     */
+    isWebkit: isWebkit,
+
+<span id='Stimuli-core-Support-property-isPhantomJS'>    /**
+</span>     * @property {Boolean}
+     * Is true if the browser is PhantomJS.
+     */
+    isPhantomJS: isPhantomJS,
+
+<span id='Stimuli-core-Support-property-isChrome'>    /**
+</span>     * @property {Boolean}
+     * Is true if the browser is Chrome.
+     */
+    isChrome: isChrome,
+
+<span id='Stimuli-core-Support-property-isSafari'>    /**
+</span>     * @property {Boolean}
+     * Is true if the browser is Safari.
+     */
+    isSafari: isSafari,
+
+<span id='Stimuli-core-Support-property-isGecko'>    /**
+</span>     * @property {Boolean}
+     * Is true if the browser rendering engine is Gecko
+     */
+    isGecko: isGecko,
+
+<span id='Stimuli-core-Support-property-isMacOSX'>    /**
+</span>     * @property {Boolean}
+     * Is true is the browser is running on MacOSX.
+     */
+    isMacOSX: isMacOSX,
+
+<span id='Stimuli-core-Support-property-isWindows'>    /**
+</span>     * @property {Boolean}
+     * Is true is the browser is running on Windows.
+     */
+    isWindows: isWindows,
+
+<span id='Stimuli-core-Support-property-isLinux'>    /**
+</span>     * @property {Boolean}
+     * Is true is the browser is running on Linux.
+     */
+    isLinux: isLinux,
+
+<span id='Stimuli-core-Support-method-getDefaultKeyboardLayout'>    /**
+</span>     * Returns the default keyboard layout.
+     * @return {String}
+     */
+    getDefaultKeyboardLayout: function() {
+        if (isAndroid || isIOS) {
+            return Stimuli.keyboard.layout.Virtual;
+        }
+        if (isLinux) {
+            return Stimuli.keyboard.layout.linux.US;
+        }
+        if (isMacOSX) {
+            return Stimuli.keyboard.layout.macosx.US;
+        }
+        if (isWindows) {
+            return Stimuli.keyboard.layout.windows.US;
+        }
+    }
 };
 
 })();</pre>

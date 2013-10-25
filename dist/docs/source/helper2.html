@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>The source code</title>
+  <link href="../resources/prettify/prettify.css" type="text/css" rel="stylesheet" />
+  <script type="text/javascript" src="../resources/prettify/prettify.js"></script>
+  <style type="text/css">
+    .highlight { display: block; background-color: #ddd; }
+  </style>
+  <script type="text/javascript">
+    function highlight() {
+      document.getElementById(location.hash.replace(/#/, "")).className = "highlight";
+    }
+  </script>
+</head>
+<body onload="prettyPrint(); highlight();">
+  <pre class="prettyprint lang-js">'use strict';
+
+(function() {
+
+    Stimuli.keyboard.Helper = {
+
+        getTarget: function() {
+            return this.viewport.getWindow().document.activeElement || null;
+        },
+
+        notTypables: ['\n', '\t', '\b', '\r', '\f'],
+
+        isTypableCharacter: function(key) {
+
+            if (typeof key !== 'string' ||
+                Stimuli.core.Array.contains(this.notTypables, key)) {
+                return false;
+            }
+
+            return String.fromCharCode(key.charCodeAt(0)).length === 1;
+        }
+
+    };
+
+    Stimuli.core.Object.merge(Stimuli.keyboard.Helper, Stimuli.core.Chainable);
+})();
+</pre>
+</body>
+</html>

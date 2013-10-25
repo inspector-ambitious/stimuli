@@ -105,14 +105,24 @@
         return self.defer(function(done) {
 
             var history = self.history;
+            var iframe = self.iframe;
+            self.iframe = null;
+            self.history = null;
+            self.context = null;
+
             if (history) {
                 history.destroy();
+
             }
 
-            var iframe = self.iframe;
+
+
+
             if (iframe) {
                 iframe.destroy(done);
+
             }
+
         }, callback);
     };
 
