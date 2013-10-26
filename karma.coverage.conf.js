@@ -77,7 +77,7 @@ module.exports = function(config) {
         BS_IOS_6: {
             base: 'BrowserStack',
             os: 'ios',
-            device: 'iPad 3rd (6.0)',
+            device: 'iPhone 4S (6.0)',
             browser: 'Mobile Safari',
             os_version: '6.0',
             browser_version: null
