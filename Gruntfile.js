@@ -157,12 +157,12 @@ module.exports = function(grunt) {
         var done = this.async();
         grunt.util.spawn({
             cmd: 'mkdir',
-            args: ['./coverage'],
+            args: ['-p', './coverage/aggregated'],
             opts: {stdio: 'inherit'}
         }, function() {
             grunt.util.spawn({
                 cmd: './node_modules/.bin/lcov-result-merger',
-                args: ['./tmp_coverage/*/lcov.info','./coverage/lcov.info'],
+                args: ['./tmp_coverage/*/lcov.info','./coverage/aggregated/lcov.info'],
                 opts: {stdio: 'inherit'}
             },done);
         });
