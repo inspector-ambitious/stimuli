@@ -133,16 +133,27 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('karma_coverage', function(){
+    grunt.registerTask('phantom', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.coverage.conf.js', '--browsers', 'PhantomJS,Firefox'],
+            args: ['start', 'karma.conf.js', '--browsers',
+                'PhantomJS'],
             opts: {stdio: 'inherit'}
         },done);
     });
 
-    grunt.registerTask('karma_browserstack', function(){
+    grunt.registerTask('coverage', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.coverage.conf.js', '--browsers',
+                'PhantomJS,Firefox,BS_IE8,BS_IE10,BS_IE11,BS_ANDROID_4,BS_IOS_6'],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('browserstack', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
@@ -153,16 +164,7 @@ module.exports = function(grunt) {
         },done);
     });
 
-    grunt.registerTask('build_watch', function(){
-        var done = this.async();
-        grunt.util.spawn({
-            cmd: 'karma',
-            args: ['start', 'karma.travis.conf.js', '--auto-watch'],
-            opts: {stdio: 'inherit'}
-        },done);
-    });
-
-    grunt.registerTask('karma_watch', function(){
+    grunt.registerTask('watch', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
@@ -198,7 +200,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('travis', ['jshint', 'build', 'karma_coverage', 'karma_browserstack', 'coveralls']);
+    grunt.registerTask('ci', ['coverage', 'browserstack', 'coveralls']);
 
-    grunt.registerTask('travis_local', ['nginx_start', 'build', 'karma_browserstack', 'nginx_stop']);
+    grunt.registerTask('test_travis_local', ['nginx_start', 'build', 'browserstack', 'nginx_stop']);
 };

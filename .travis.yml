@@ -28,5 +28,7 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  -  grunt travis &&
-    .travis/ghpages-deploy.sh
+  -  grunt jshint &&
+     grunt build &&
+     grunt phantom &&
+     grunt ci
