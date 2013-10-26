@@ -148,7 +148,7 @@ module.exports = function(grunt) {
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.coverage.conf.js', '--browsers',
-                'PhantomJS,Firefox,BS_IE8,BS_IE10,BS_IE11,BS_ANDROID_4,BS_IOS_6'],
+                'PhantomJS,Firefox,BS_IE8,BS_IE10,BS_ANDROID_4,BS_IOS_6'],
             opts: {stdio: 'inherit'}
         },done);
     });
