@@ -28,7 +28,4 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  -  grunt jshint &&
-     grunt build &&
-     grunt phantom &&
-     grunt ci
+  -  grunt travis

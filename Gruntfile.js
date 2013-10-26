@@ -143,7 +143,7 @@ module.exports = function(grunt) {
         },done);
     });
 
-    grunt.registerTask('coverage', function(){
+    grunt.registerTask('test_coverage', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
@@ -153,7 +153,7 @@ module.exports = function(grunt) {
         },done);
     });
 
-    grunt.registerTask('browserstack', function(){
+    grunt.registerTask('test_all', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
@@ -200,7 +200,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('ci', ['coverage', 'browserstack', 'coveralls']);
+    grunt.registerTask('travis', ['jshint', 'build', 'phantom', 'test_coverage', 'coveralls', 'test_all']);
 
-    grunt.registerTask('test_travis_local', ['nginx_start', 'build', 'browserstack', 'nginx_stop']);
+    grunt.registerTask('test_travis_local', ['nginx_start', 'build', 'test_all', 'nginx_stop']);
 };
