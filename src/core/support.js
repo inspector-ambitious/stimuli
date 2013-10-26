@@ -18,24 +18,11 @@
         isMacOSX = /Mac\sOS\sX/.test(userAgent),
         isIOS = /(iPad|iPhone|iPod)/.test(userAgent),
         isAndroid = /Android/.test(userAgent),
-        isIE = false,
-        IEVersion = 0,
-        jscriptMap = {
-            "5.8": 8,
-            "9": 9,
-            "10": 10
-        },
-        jscriptVersion = 'none',
-        isIE11;
+        isIE8  = /Trident\/4\.0/.test(userAgent),
+        isIE9 =  /Trident\/5\.0/.test(userAgent),
+        isIE10 = /Trident\/6\.0/.test(userAgent),
+        isIE11 = /Trident\/7\.0/.test(userAgent);
 
-    /*@cc_on
-     jscriptVersion = @_jscript_version;
-     @*/
-    IEVersion = jscriptMap[jscriptVersion];
-    if (IEVersion) {
-        isIE = true;
-    }
-    isIE11 = /Trident\/7\.0/.test(userAgent);
 
 Stimuli.core.Support = {
 
@@ -69,25 +56,25 @@ Stimuli.core.Support = {
      * @property {Boolean}
      * Is true if browser is Internet Explorer.
      */
-    isIE: isIE,
+    isIE: isIE8 || isIE9 || isIE10 || isIE11,
 
     /**
      * @property {Boolean}
      * Is true if browser is Internet Explorer 8
      */
-    isIE8: isIE && IEVersion === 8,
+    isIE8: isIE8,
 
     /**
      * @property {Boolean}
      * Is true if browser is Internet Explorer 9
      */
-    isIE9: isIE && IEVersion === 9,
+    isIE9: isIE9,
 
     /**
      * @property {Boolean}
      * Is true if browser is Internet Explorer 10
      */
-    isIE10: isIE && IEVersion === 10,
+    isIE10: isIE10,
 
     /**
      * @property {Boolean}

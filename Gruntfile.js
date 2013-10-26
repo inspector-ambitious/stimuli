@@ -180,7 +180,7 @@ module.exports = function(grunt) {
         },done);
     });
 
-    grunt.registerTask('watch', function(){
+    grunt.registerTask('test_watch', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',

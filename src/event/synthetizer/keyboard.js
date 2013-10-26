@@ -6,7 +6,7 @@
  * Abstraction layer for cross-browsers synthetic keyboard events injection.
  */
 (function() {
-    var isGecko = Stimuli.core.Support.isGecko;
+
     Stimuli.event.synthetizer.Keyboard = {
 
         /**
