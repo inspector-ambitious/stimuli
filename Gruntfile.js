@@ -148,7 +148,7 @@ module.exports = function(grunt) {
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.coverage.conf.js', '--browsers',
-            'Firefox,PhantomJS,BS_IE8,BS_IE10,BS_IE11,BS_ANDROID_4,BS_IOS_6'],
+            'Firefox,PhantomJS,BS_IE11'],
             opts: {stdio: 'inherit'}
         },done);
     });
@@ -157,14 +157,16 @@ module.exports = function(grunt) {
         var done = this.async();
         grunt.util.spawn({
             cmd: 'mkdir',
-            args: ['-p', './coverage/aggregated'],
+            args: ['coverage'],
             opts: {stdio: 'inherit'}
         }, function() {
             grunt.util.spawn({
                 cmd: './node_modules/.bin/lcov-result-merger',
-                args: ['./tmp_coverage/*/lcov.info','./coverage/aggregated/lcov.info'],
+                args: ['./tmp_coverage/*/lcov.info','./coverage/lcov.info'],
                 opts: {stdio: 'inherit'}
-            },done);
+            }, function() {
+                console.log(arguments);
+            });
         });
 
     });

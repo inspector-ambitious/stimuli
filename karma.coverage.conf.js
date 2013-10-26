@@ -9,7 +9,7 @@ module.exports = function(config) {
     conf.reporters = ['minimalist', 'coverage'];
 
     conf.coverageReporter = {
-        type: 'lcovonly',
+        type: 'lcov',
         dir: 'tmp_coverage/'
     };
 
