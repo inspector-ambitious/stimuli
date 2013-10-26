@@ -33,6 +33,9 @@
 
                     if (form && Dom.hasSubmit(form)) {
                         sequence.push(function() {
+                            if (Stimuli.core.Support.isIE11) {
+                                Sizzle('body', document);
+                            }
                             form.submit();
                         });
                         return sequence;
