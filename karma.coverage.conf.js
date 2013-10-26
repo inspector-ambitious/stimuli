@@ -8,7 +8,7 @@ module.exports = function(config) {
     conf.singleRun = true;
     conf.logLevel = config.LOG_INFO;
     conf.disableCompression = true;
-    conf.reporters = ['dots', 'coverage'];
+    conf.reporters = ['minimalist', 'coverage'];
     conf.coverageReporter = {
         type: 'lcovonly',
         dir: 'coverage/'
