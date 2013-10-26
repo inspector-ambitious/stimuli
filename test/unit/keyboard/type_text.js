@@ -536,7 +536,7 @@ describe('Stimuli.keyboard.TypeText', function() {
                     if (Stimuli.core.Support.isWebkit) {
                         expect(body.innerHTML).to.be('Ni1');
                     } else {
-                        expect(body.innerHTML).to.be('\nNi1');
+                        expect(body.innerHTML).to.be('Ni1\n');
                     }
                     done();
                 });
@@ -558,7 +558,7 @@ describe('Stimuli.keyboard.TypeText', function() {
                     if (Stimuli.core.Support.isWebkit) {
                         expect(body.innerHTML).to.be('ABCDEF');
                     } else {
-                        expect(body.innerHTML).to.be('\nABCDEF');
+                        expect(body.innerHTML).to.be('ABCDEF\n');
                     }
                     done();
                 });

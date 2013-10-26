@@ -15,7 +15,7 @@
         isGecko = /Gecko\//.test(userAgent),
         isLinux = /Linux/.test(userAgent),
         isWindows = /Windows\sNT/.test(userAgent),
-        isMacOSX = /Intel\sMac\sOS\sX/.test(userAgent),
+        isMacOSX = /Mac\sOS\sX/.test(userAgent),
         isIOS = /(iPad|iPhone|iPod)/.test(userAgent),
         isAndroid = /Android/.test(userAgent),
         isIE = false,

@@ -36,43 +36,7 @@
                 }, 25);
             }
 
-//            if (eventConfig.type === 'input') {
-//
-//                if (self.isEditable(target)) {
-//
-//                    if (Stimuli.core.Support.isWebkit) {
-//
-//                        self.inject(function() {
-//                            return Obj.merge({
-//                                type: 'textInput'
-//                            }, defaultConfig);
-//                        });
-//
-//                    }
-//
-//                    if (!Stimuli.core.Support.isWebkit) {
-//
-//                        self.then(function() {
-//                            if (self.isEditableInput(target) || self.isTextArea(target)) {
-//                                self.updateEditableValue(target, defaultConfig.key);
-//                            } else {
-//                                self.updateEditableHtml(target, defaultConfig.key);
-//                            }
-//                        });
-//
-//                        if (!Stimuli.core.Support.isIE8 && !Stimuli.core.Support.isIE9 &&
-//                            !Stimuli.core.Support.isIE10 && !Stimuli.core.Support.isWebkit &&
-//                            (self.isEditableInput(target) || self.isTextArea(target))) {
-//                            self.inject(function() {
-//                                return eventConfig;
-//                            });
-//                        }
-//                    }
-//                }
-
-//            }
         });
-
 
         self.then(function() {
             self.viewport.waitForReady(done);

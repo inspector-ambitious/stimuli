@@ -48,6 +48,29 @@ describe('Stimuli.keyboard.Type', function() {
 
         describe('Enter', function() {
 
+            describe('input', function() {
+
+                it('should submit the form', function(done) {
+                    var textinput;
+                    stimuli
+                        .browser
+                        .navigateTo('/base/test/fixtures/form.html')
+                        .then(function() {
+                            textinput = this.$('#text_input');
+                            forceFocus(textinput);
+                        })
+                        .keyboard
+                        .typeText('Foobar')
+                        .type('Enter')
+                        .then(function() {
+                            expect(this.getWindow().location + '').to.contain('/base/test/fixtures/big.html');
+                            done();
+                        });
+                });
+
+            });
+
+
             describe('textarea', function() {
 
                 it('should add a new line to the textarea input', function(done) {
@@ -73,6 +96,116 @@ describe('Stimuli.keyboard.Type', function() {
                         });
                 });
 
+            });
+
+            describe('editable html', function() {
+
+                if (!Stimuli.core.Support.isIE8) {
+
+                    describe('designMode=on', function() {
+
+                        it('should format the html properly', function(done) {
+                            var body;
+                            stimuli
+                                .browser
+                                .navigateTo('/base/test/fixtures/design_mode.html')
+                                .then(function() {
+                                    body = this.$('body');
+                                    forceFocus(body);
+                                })
+                                .keyboard
+                                .typeText('foo')
+                                .type('Enter')
+                                .then(function() {
+                                    if (Stimuli.core.Support.isWebkit) {
+                                        expect(body.innerHTML).to.be('foo<div><br></div>');
+                                    } else if (Stimuli.core.Support.isGecko) {
+                                        expect(body.innerHTML).to.be('foo<br><br>\n');
+                                    } else if (Stimuli.core.Support.isIE) {
+                                        expect(body.innerHTML).to.be('<p>foo</p><p>&nbsp;</p>\n');
+                                    }
+                                })
+                                .typeText('bar')
+                                .then(function() {
+                                    if (Stimuli.core.Support.isWebkit) {
+                                        expect(body.innerHTML).to.be('foo<div>bar</div>');
+                                    } else if (Stimuli.core.Support.isGecko) {
+                                        expect(body.innerHTML).to.be('foo<br>bar<br>\n');
+                                    } else if (Stimuli.core.Support.isIE) {
+                                        expect(body.innerHTML).to.be('<p>foo</p><p>bar</p>\n');
+                                    }
+                                })
+                                .type('Enter')
+                                .then(function() {
+                                    if (Stimuli.core.Support.isWebkit) {
+                                        expect(body.innerHTML).to.be('foo<div>bar</div><div><br></div>');
+                                    } else if (Stimuli.core.Support.isGecko) {
+                                        expect(body.innerHTML).to.be('foo<br>bar<br><br>\n');
+                                    } else if (Stimuli.core.Support.isIE) {
+                                        expect(body.innerHTML).to.be('<p>foo</p><p>bar</p><p>&nbsp;</p>\n');
+                                    }
+                                    done();
+                                });
+                        });
+
+                    });
+
+                }
+
+                describe('div.contentEditable=true', function() {
+
+                    it('should format the html properly', function(done) {
+                        var div;
+                        stimuli
+                            .browser
+                            .navigateTo('/base/test/fixtures/content_editable.html')
+                            .then(function() {
+                                div = this.$('#content_editable');
+                                forceFocus(div);
+                            })
+                            .keyboard
+                            .typeText('foo')
+                            .type('Enter')
+                            .then(function() {
+                                if (Stimuli.core.Support.isWebkit) {
+                                    expect(div.innerHTML).to.be('foo<div><br></div>');
+                                } else if (Stimuli.core.Support.isGecko) {
+                                    expect(div.innerHTML).to.be('foo<br><br>');
+                                } else if (Stimuli.core.Support.isIE8) {
+                                    expect(div.innerHTML).to.be('<P>foo</P>\r\n<P>&nbsp;</P>');
+                                } else if (Stimuli.core.Support.isIE) {
+                                    expect(div.innerHTML).to.be('<p>foo</p><p>&nbsp;</p>');
+                                }
+                            })
+                            .typeText('bar')
+                            .then(function() {
+                                if (Stimuli.core.Support.isWebkit) {
+                                    expect(div.innerHTML).to.be('foo<div>bar</div>');
+                                } else if (Stimuli.core.Support.isGecko) {
+                                    expect(div.innerHTML).to.be('foo<br>bar<br>');
+                                } else if (Stimuli.core.Support.isIE8) {
+                                    expect(div.innerHTML).to.be('<P>foo</P>\r\n<P>bar</P>');
+                                } else if (Stimuli.core.Support.isIE) {
+                                    expect(div.innerHTML).to.be('<p>foo</p><p>bar</p>');
+                                }
+                            })
+                            .type('Enter')
+                            .then(function() {
+                                if (Stimuli.core.Support.isWebkit) {
+                                    expect(div.innerHTML).to.be('foo<div>bar</div><div><br></div>');
+                                } else if (Stimuli.core.Support.isGecko) {
+                                    expect(div.innerHTML).to.be('foo<br>bar<br><br>');
+                                } else if (Stimuli.core.Support.isIE8) {
+                                    expect(div.innerHTML).to.be('<P>foo</P>\r\n<P>bar</P>\r\n<P>&nbsp;</P>');
+                                } else if (Stimuli.core.Support.isIE) {
+                                    expect(div.innerHTML).to.be('<p>foo</p><p>bar</p><p>&nbsp;</p>');
+                                }
+                                div = null;
+                                done();
+                            });
+                    });
+
+                });
             });
 
         });
