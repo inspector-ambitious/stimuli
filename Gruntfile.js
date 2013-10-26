@@ -137,7 +137,7 @@ module.exports = function(grunt) {
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.conf.js', '--browsers',
+            args: ['start', 'karma.phantom.conf.js', '--browsers',
                 'PhantomJS'],
             opts: {stdio: 'inherit'}
         },done);
