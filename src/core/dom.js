@@ -238,16 +238,29 @@
             }
 
             if (key === '\n') {
+                var html = target.innerHTML;
 
-                var html = target.innerHTML,
-                    p;
+                if (isIE8 && !/<P>/.test(html) || !isIE8 && !/<p>/.test(html)) {
 
-                if (!/<p|P>/.test(target.innerHTML)) {
-                    p = doc.createElement('p');
+                    var array;
+                    if (isIE8) {
+                        array = target.innerHTML.split(/\r\n/);
+                    } else {
+                        array = target.innerHTML.split(/\n/);
+                    }
 
-                    p.innerHTML = html.replace('\n', '');
-                    target.innerHTML = '';
-                    target.appendChild(p);
+                    html = '';
+
+                    Stimuli.core.Array.forEach(array, function(item) {
+                        if (item === '') {
+                            html += isIE8 ? '\r\n' : '\n';
+                        } else {
+                            html += '<p>' + item + '</p>';
+                        }
+                    });
+
+
+                    target.innerHTML = html;
 
                     if (isIE8) {
                         range.moveToElementText(target);
@@ -256,17 +269,29 @@
                         range.selectNodeContents(target);
                         range.collapse(false);
                     }
+
+                    childNodes = target.childNodes;
+                    i = childNodes.length - 1;
+                    for (; i >= 0; i--) {
+                        node = childNodes[i];
+                        if (this.isTextNode(node)) {
+                            if (node.textContent === '\n') {
+                                startBeforeNode = node;
+                            }
+                        }
+                    }
                 }
-                p = doc.createElement('p');
+
+                var p = doc.createElement('p');
                 p.innerHTML = '&nbsp;';
 
-                target.appendChild(p);
-                p = null;
-
-                if (/\n/.test(html) && !/\n/.test(target.innerHTML)) {
-                    target.innerHTML += '\n';
+                if (startBeforeNode) {
+                    target.insertBefore(p, startBeforeNode);
+                } else {
+                    target.appendChild(p);
                 }
 
+                p = null;
             } else {
                 if (isIE8) {
                     range.collapse(true);

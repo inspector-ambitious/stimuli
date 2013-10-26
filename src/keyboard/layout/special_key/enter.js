@@ -35,6 +35,7 @@
                         sequence.push(function() {
                             form.submit();
                         });
+                        return sequence;
                     }
 
                 } else {
