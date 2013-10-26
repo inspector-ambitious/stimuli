@@ -51,14 +51,8 @@
      */
     Viewport.prototype.getVisibleElementAt = function(x, y) {
         var context = this.context.getWindow(),
-            doc = context.document;
-
-        if (x < 0 || y < 0) {
-            return null;
-        }
-
-        var ret = doc.elementFromPoint(x, y);
-
+            doc = context.document,
+            ret = doc.elementFromPoint(x, y);
 
         // IE8 hack: Inside an iframe ie8 doesn't repaint properly inside an iframe, so before calling elementFromPoint
         // we trigger a reflow to force the layout to be recalculated
@@ -82,29 +76,6 @@
         return this.context.getWindow();
     };
 
-    /**
-     * Returns the current document.
-     * @return {Object}
-     */
-    Viewport.prototype.getDocument = function() {
-        return this.context.getWindow().document;
-    };
-
-    /**
-     * Updates window hash.
-     * @param {String} hash The new hash.
-     */
-    Viewport.prototype.updateHash = function(hash) {
-        this.context.getWindow().location.hash = hash;
-    };
-
-    /**
-     * Updates the current window url.
-     * @param {String} url The new url.
-     */
-    Viewport.prototype.updateUrl = function(url) {
-        this.context.getWindow().location = url;
-    };
 
     /**
      * Waits for the viewport to be ready, it allows to block while a stimulus caused
