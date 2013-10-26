@@ -166,6 +166,7 @@ module.exports = function(grunt) {
                 opts: {stdio: 'inherit'}
             }, function() {
                 console.log(arguments);
+                done();
             });
         });
 
