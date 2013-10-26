@@ -5,7 +5,6 @@ module.exports = {
     basePath: '',
 
 
-
     // frameworks to use
     frameworks: ['mocha'],
 
@@ -13,22 +12,9 @@ module.exports = {
     // list of files to exclude
     exclude: [],
 
-    preprocessors: {
-//        '**/src/**/*.js': 'coverage'
-    },
-
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
     reporters: ['minimalist'],
-
-//    coverageReporter: {
-//        type: 'lcovonly',
-//        dir : 'coverage/'
-//
-//    },
-
-
-    // web server port
 
 
     // enable / disable colors in the output (reporters and logs)

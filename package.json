@@ -22,13 +22,15 @@
           
     "devDependencies": {
                 
-        "grunt-contrib-jshint": "~0.6",
+        "grunt-contrib-jshint": "~0.7",
         
-        "grunt-jsduck": "~0.1",
+        "grunt-jsduck": "~1.0",
 
         "grunt-contrib-concat": "~0.3",
 
         "grunt-contrib-copy": "~0.4",
+
+        "grunt-karma-coveralls": "~2.0",
 
         "grunt-hub": "~0.5",
 
@@ -40,7 +42,7 @@
                 
         "karma-mocha": "~0.1",
         
-        "karma-coverage": "~0.1",
+        "karma-coverage": "git://github.com/yhwh/karma-coverage.git#master",
 
         "karma-browserstack-launcher": "git://github.com/yhwh/karma-browserstack-launcher.git#stimuli",
 

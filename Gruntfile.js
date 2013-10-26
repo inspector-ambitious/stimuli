@@ -77,6 +77,12 @@ module.exports = function(grunt) {
 
         },
 
+        coveralls: {
+            options: {
+                coverage_dir: 'coverage'
+            }
+        },
+
         hub: {
 
             event_tester: {
@@ -127,11 +133,11 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('karma_phantom', function(){
+    grunt.registerTask('karma_coverage', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.travis.conf.js', '--browsers', 'PhantomJS'],
+            args: ['start', 'karma.coverage.conf.js', '--browsers', 'PhantomJS,Firefox'],
             opts: {stdio: 'inherit'}
         },done);
     });
@@ -188,10 +194,11 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-hub');
+    grunt.loadNpmTasks('grunt-karma-coveralls');
 
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('travis', ['jshint', 'build', 'karma_phantom', 'karma_browserstack']);
+    grunt.registerTask('travis', ['jshint', 'build', 'karma_phantom', 'karma_browserstack', 'karma_coverage','coveralls']);
 
     grunt.registerTask('travis_local', ['nginx_start', 'build', 'karma_browserstack', 'nginx_stop']);
 };
