@@ -81,6 +81,14 @@ module.exports = function(config) {
             browser: 'Mobile Safari',
             os_version: '6.0',
             browser_version: null
+        },
+
+        BS_SAFARI6: {
+            base: 'BrowserStack',
+            browser: 'safari',
+            browser_version: '6.0',
+            os: 'OS X',
+            os_version: 'Mountain Lion'
         }
 
     };
