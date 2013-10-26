@@ -7,10 +7,12 @@ module.exports = function(config) {
 
 
     conf.reporters = ['minimalist', 'coverage'];
+
     conf.coverageReporter = {
         type: 'lcovonly',
-        dir: 'coverage/'
+        dir: 'tmp_coverage/'
     };
+
     conf.preprocessors =  {
         '**/src/**/*.js': ['coverage']
     };

@@ -143,13 +143,29 @@ module.exports = function(grunt) {
         },done);
     });
 
-    grunt.registerTask('test_coverage', function(){
+    grunt.registerTask('coverage', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.coverage.conf.js', '--browsers','PhantomJS'],
+            args: ['start', 'karma.coverage.conf.js', '--browsers','Firefox,PhantomJS'],
             opts: {stdio: 'inherit'}
         },done);
+    });
+
+    grunt.registerTask('merge_coverage_results', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'mkdir',
+            args: ['./coverage'],
+            opts: {stdio: 'inherit'}
+        }, function() {
+            grunt.util.spawn({
+                cmd: './node_modules/.bin/lcov-result-merger',
+                args: ['./tmp_coverage/*/lcov.info','./coverage/lcov.info'],
+                opts: {stdio: 'inherit'}
+            },done);
+        });
+
     });
 
     grunt.registerTask('test_all', function(){
@@ -199,7 +215,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('travis', ['jshint', 'build', 'phantom', 'test_coverage', 'coveralls', 'test_all']);
+    grunt.registerTask('travis', ['jshint', 'build', 'phantom', 'coverage',  'merge_coverage_results', 'coveralls', 'test_all']);
 
     grunt.registerTask('test_travis_local', ['nginx_start', 'build', 'test_all', 'nginx_stop']);
 };

@@ -32,6 +32,8 @@
 
         "grunt-karma-coveralls": "~2.0",
 
+        "lcov-result-merger": "~0.0",
+
         "grunt-hub": "~0.5",
 
         "expect.js" : "~0.2",
