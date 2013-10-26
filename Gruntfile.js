@@ -198,7 +198,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('travis', ['jshint', 'build', 'karma_phantom', 'karma_browserstack', 'karma_coverage','coveralls']);
+    grunt.registerTask('travis', ['jshint', 'build', 'karma_coverage', 'karma_browserstack', 'coveralls']);
 
     grunt.registerTask('travis_local', ['nginx_start', 'build', 'karma_browserstack', 'nginx_stop']);
 };
