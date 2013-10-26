@@ -148,7 +148,7 @@ module.exports = function(grunt) {
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.coverage.conf.js', '--browsers',
-            'Firefox,PhantomJS,BS_IE8,BS_IE10,BS_IE11,BS_ANDROID_4,BS_IOS_6'],
+            'BS_ANDROID_4,BS_IOS_6,Firefox,PhantomJS,BS_IE8,BS_IE10,BS_IE11'],
             opts: {stdio: 'inherit'}
         },done);
     });
@@ -174,7 +174,7 @@ module.exports = function(grunt) {
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.travis.conf.js', '--browsers',
-            'BS_IE8,BS_IE9,BS_IE10,BS_IE11,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6'
+            'BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_IE8,BS_IE9,BS_IE10,BS_IE11,BS_FIREFOX,BS_CHROME,BS_SAFARI51,BS_SAFARI6'
             ],
             opts: {stdio: 'inherit'}
         },done);
