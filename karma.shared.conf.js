@@ -4,22 +4,20 @@ module.exports = {
     // base path, that will be used to resolve files and exclude
     basePath: '',
 
-
     // frameworks to use
     frameworks: ['mocha'],
 
-
     // list of files to exclude
     exclude: [],
+
+    preprocessors: {},
 
     // test results reporter to use
     // possible values: 'dots', 'progress', 'junit', 'growl', 'coverage'
     reporters: ['minimalist'],
 
-
     // enable / disable colors in the output (reporters and logs)
     colors: true,
-
 
     // If browser does not capture in given timeout [ms], kill it
     captureTimeout: 60000,
