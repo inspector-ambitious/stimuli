@@ -148,7 +148,7 @@ module.exports = function(grunt) {
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.coverage.conf.js', '--browsers',
-            'Firefox,PhantomJS,BS_IE11'],
+            'Firefox,PhantomJS,BS_IE8,BS_IE10,BS_IE11,BS_ANDROID_4,BS_IOS_6'],
             opts: {stdio: 'inherit'}
         },done);
     });
@@ -164,10 +164,7 @@ module.exports = function(grunt) {
                 cmd: './node_modules/.bin/lcov-result-merger',
                 args: ['./tmp_coverage/*/lcov.info','./coverage/lcov.info'],
                 opts: {stdio: 'inherit'}
-            }, function() {
-                console.log(arguments);
-                done();
-            });
+            }, done);
         });
 
     });
