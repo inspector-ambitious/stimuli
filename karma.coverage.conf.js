@@ -6,7 +6,7 @@ module.exports = function(config) {
     conf.files = files.testFilesDev;
 
 
-    conf.reporters = ['minimalist', 'coverage'];
+    conf.reporters = ['coverage'];
 
     conf.coverageReporter = {
         type: 'lcov',
@@ -27,7 +27,7 @@ module.exports = function(config) {
         timeout: 600
     };
     conf.captureTimeout = 90000; // 1 min 30
-    conf.logLevel = config.LOG_INFO;
+    conf.logLevel = config.LOG_DEBUG;
     conf.reportSlowerThan = 30000;
     conf.disconnectTolerance = 5;
     conf.autoWatch = false;
@@ -37,7 +37,7 @@ module.exports = function(config) {
     conf.serverHost = '127.0.0.1';
     conf.clientHost = '127.0.0.1';
     conf.clientPort = 8080;
-    conf.transports = ['jsonp-polling', 'xhr-polling'];
+    conf.transports = ['xhr-polling'];
 
     conf.customLaunchers = {
 
@@ -74,12 +74,12 @@ module.exports = function(config) {
             browser_version: null
         },
 
-        BS_IOS_6: {
+        BS_IOS_7: {
             base: 'BrowserStack',
             os: 'ios',
-            device: 'iPhone 4S (6.0)',
+            device: 'iPhone 5S',
             browser: 'Mobile Safari',
-            os_version: '6.0',
+            os_version: '7.0',
             browser_version: null
         },
 

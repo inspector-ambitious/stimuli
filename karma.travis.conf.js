@@ -132,12 +132,12 @@ module.exports = function(config) {
             browser_version: null
         },
 
-        BS_IOS_6: {
+        BS_IOS_7: {
             base: 'BrowserStack',
             os: 'ios',
-            device: 'iPhone 4S (6.0)',
+            device: 'iPhone 5S',
             browser: 'Mobile Safari',
-            os_version: '6.0',
+            os_version: '7.0',
             browser_version: null
         }
 
