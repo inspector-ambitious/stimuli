@@ -14,7 +14,9 @@ var stimuliFiles = [
 
     'src/core/support.js',
     'src/core/object.js',
+    'src/core/array.js',
     'src/core/class.js',
+    'src/core/dom.js',
     'src/core/observable.js',
     'src/core/scheduler.js',
     'src/core/chainable.js',
@@ -22,7 +24,10 @@ var stimuliFiles = [
 
     'src/event/emitter.js',
     'src/event/observer.js',
+    'src/event/synthetizer/html.js',
     'src/event/synthetizer/mouse.js',
+    'src/event/synthetizer/keyboard.js',
+    'src/event/synthetizer/text.js',
 
     'src/shared/recorder.js',
     'src/shared/viewport.js',
@@ -40,7 +45,19 @@ var stimuliFiles = [
     'src/mouse/context_menu.js',
     'src/mouse/dblclick.js',
     'src/mouse/up.js',
-    'src/mouse/down.js'
+    'src/mouse/down.js',
+
+
+    'src/virtual/keyboard.js',
+    'src/keyboard/layout/special_key/enter.js',
+    'src/keyboard/layout/generic.js',
+    'src/keyboard/layout/virtual.js',
+    'src/keyboard/layout/windows/us.js',
+    'src/keyboard/layout/macosx/us.js',
+    'src/keyboard/layout/linux/us.js',
+    'src/keyboard/helper.js',
+    'src/keyboard/type.js',
+    'src/keyboard/type_text.js'
 
 ];
 
@@ -67,17 +84,11 @@ var sharedTestFiles = [
 ];
 
 // Files loaded by karma test runner for development
-var testFilesDev = [{
-    pattern: 'src/blank.html',
-    included: false
-}];
+var testFilesDev = [];
 
 // Files loaded by karma test runner for continuous integration (build)
 var testFilesBuild = [{
     pattern: distFolder + pkg.name + '.js'
-},{
-    pattern: distFolder + 'blank.html',
-    included: false
 }];
 
 // Add all stimulis sources for development

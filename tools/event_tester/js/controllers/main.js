@@ -56,7 +56,9 @@ function MainCtrl($scope, $http, $location, $templateCache) {
         { name: 'scroll', capture: false },
         { name: 'select', capture: false },
         { name: 'submit', capture: false },
+        { name: 'textInput', capture: false },
         { name: 'textinput', capture: false },
+        { name: 'input', capture: false },
         { name: 'unload', capture: false },
         { name: 'wheel', capture: false }
     ];
@@ -94,11 +96,11 @@ function MainCtrl($scope, $http, $location, $templateCache) {
     $scope.capturedEvents = [];
 
     function updateEventsList(event) {
-
+        var target = event.target || event.srcElement;
         var formattedEvent = {
             hideDetails: true,
             type: event.type,
-            targetTag: (event.target.tagName + '').toLowerCase(),
+            targetTag: (target.getAttribute('tagName') + '').toLowerCase(),
             bubbles: event.bubbles,
             detail: event.detail,
             screenX: event.screenX,
@@ -111,26 +113,34 @@ function MainCtrl($scope, $http, $location, $templateCache) {
             shiftKey: event.shiftKey,
             button: event.button,
             keyCode: event.keyCode,
+            charCode: event.charCode,
+            which: event.which,
             defaultPrevented: event.defaultPrevented
         };
 
-        if (event instanceof MouseEvent) {
-            formattedEvent.className = 'MouseEvent';
+        for (var prop in event) {
+            if (event.hasOwnProperty(prop)) {
+                if (typeof event[prop] === 'object') {
+                    formattedEvent[prop] = 'object';
+                } else {
+                    formattedEvent[prop] = event[prop];
+                }
+            }
         }
 
-        if (event.target.id) {
-            formattedEvent.targetId = '#' + event.target.id;
+        if (target.id) {
+            formattedEvent.targetId = '#' + target.id;
         }
 
-        if (event.target.className) {
-            formattedEvent.targetCls = '.' + event.target.className.replace(/\s/g, '.');
+        if (target.className) {
+            formattedEvent.targetCls = '.' + target.className.replace(/\s/g, '.');
         }
 
         $scope.capturedEvents.push(formattedEvent);
         $scope.$apply();
 
         if ($scope.console) {
-            console.log(event);
+            console.log((new Date()).getTime(), event);
         }
     }
 
@@ -138,7 +148,9 @@ function MainCtrl($scope, $http, $location, $templateCache) {
     $scope.startCapture = function() {
 
         if ($scope.capture) {
-            var viewport = new Stimuli.shared.Viewport();
+            var context = new Stimuli.shared.Context();
+            context.setNew(window);
+            var viewport = new Stimuli.shared.Viewport(context);
             var elements = viewport.$($scope.selector, true),
                 elementsLength = elements.length,
                 domEvents = $scope.domEvents,

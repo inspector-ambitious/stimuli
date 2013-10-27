@@ -77,6 +77,12 @@ module.exports = function(grunt) {
 
         },
 
+        coveralls: {
+            options: {
+                coverage_dir: 'coverage'
+            }
+        },
+
         hub: {
 
             event_tester: {
@@ -101,7 +107,12 @@ module.exports = function(grunt) {
 
                 // extra options
                 options: {
-                    'title': "Stimuli <%= pkg.version %> Documentation"
+                    exclude: [
+                        'src/keyboard/layout/macosx',
+                        'src/keyboard/layout/linux',
+                        'src/keyboard/layout/windows'
+                    ],
+                    title: "Stimuli <%= pkg.version %> Documentation"
                 }
             }
         }
@@ -122,36 +133,54 @@ module.exports = function(grunt) {
         });
     });
 
-    grunt.registerTask('karma_phantom', function(){
+    grunt.registerTask('phantom', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.travis.conf.js', '--browsers', 'PhantomJS'],
+            args: ['start', 'karma.phantom.conf.js', '--browsers',
+                'PhantomJS'],
             opts: {stdio: 'inherit'}
         },done);
     });
 
-    grunt.registerTask('karma_browserstack', function(){
+    grunt.registerTask('coverage', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'karma',
+            args: ['start', 'karma.coverage.conf.js', '--browsers',
+            'BS_IOS_7,BS_ANDROID_4,Firefox,PhantomJS,BS_IE8,BS_IE10,BS_IE11,BS_SAFARI6'], //BS_ANDROID_4,Firefox,PhantomJS,BS_IE8,BS_IE10,BS_IE11,BS_SAFARI6'],
+            opts: {stdio: 'inherit'}
+        },done);
+    });
+
+    grunt.registerTask('merge_coverage_results', function(){
+        var done = this.async();
+        grunt.util.spawn({
+            cmd: 'mkdir',
+            args: ['coverage'],
+            opts: {stdio: 'inherit'}
+        }, function() {
+            grunt.util.spawn({
+                cmd: './node_modules/.bin/lcov-result-merger',
+                args: ['./tmp_coverage/*/lcov.info','./coverage/lcov.info'],
+                opts: {stdio: 'inherit'}
+            }, done);
+        });
+
+    });
+
+    grunt.registerTask('test_all', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
             args: ['start', 'karma.travis.conf.js', '--browsers',
-            'BS_IE8,BS_IE9,BS_IE10,BS_FIREFOX,BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_6,BS_CHROME,BS_SAFARI51,BS_SAFARI6,BS_OPERA15'
+            'BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_7,BS_IE8,BS_IE9,BS_IE10,BS_IE11,BS_FIREFOX,BS_CHROME,BS_SAFARI51,BS_SAFARI6'
             ],
             opts: {stdio: 'inherit'}
         },done);
     });
 
-    grunt.registerTask('build_watch', function(){
-        var done = this.async();
-        grunt.util.spawn({
-            cmd: 'karma',
-            args: ['start', 'karma.travis.conf.js', '--auto-watch'],
-            opts: {stdio: 'inherit'}
-        },done);
-    });
-
-    grunt.registerTask('karma_watch', function(){
+    grunt.registerTask('test_watch', function(){
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
@@ -160,13 +189,34 @@ module.exports = function(grunt) {
         },done);
     });
 
+    grunt.registerTask('nginx_start', function(){
+      var done = this.async();
+      grunt.util.spawn({
+        cmd: 'nginx',
+        args: ['-c', '.nginx/nginx.conf', '-p', '.'],
+        opts: {stdio: 'inherit'}
+      },done);
+    });
+
+    grunt.registerTask('nginx_stop', function(){
+      var done = this.async();
+      grunt.util.spawn({
+        cmd: 'nginx',
+        args: ['-c', '.nginx/nginx.conf', '-p', '.', '-s', 'stop'],
+        opts: {stdio: 'inherit'}
+      },done);
+    });
+
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-jsduck');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-hub');
+    grunt.loadNpmTasks('grunt-karma-coveralls');
 
     grunt.registerTask('build', [ 'sizzle', 'concat:dist', 'jsduck', 'copy']);
 
-    grunt.registerTask('travis', ['jshint', 'build', 'karma_phantom', 'karma_browserstack']);
+    grunt.registerTask('travis', ['jshint', 'build', 'phantom', 'coverage',  'merge_coverage_results', 'coveralls', 'test_all']);
+
+    grunt.registerTask('test_travis_local', ['nginx_start', 'build', 'test_all', 'nginx_stop']);
 };

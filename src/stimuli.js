@@ -18,6 +18,8 @@ var Stimuli = function() {
 
     self.mouse = new Stimuli.virtual.Mouse(self.viewport);
 
+    self.keyboard = new Stimuli.virtual.Keyboard(self.viewport);
+
     self.recorder = new Stimuli.shared.Recorder();
 
     self.synchronize(self.recorder);
@@ -26,13 +28,18 @@ var Stimuli = function() {
 
     self.synchronize(self.mouse);
 
+    self.synchronize(self.keyboard);
+
     function mix(obj) {
         obj.browser = self.browser;
         obj.mouse = self.mouse;
+        obj.keyboard = self.keyboard;
         obj.recorder = self.recorder;
     }
 
     mix(self.browser);
+
+    mix(self.keyboard);
 
     mix(self.mouse);
 
@@ -59,22 +66,38 @@ Stimuli.browser = {};
 
 Stimuli.mouse = {};
 
-(function() {
-    var els = document.getElementsByTagName("script");
-    var str = "";
-    for(var i = 0; i < els.length; i++) {
-        var src = els[i].src;
-        if(/stimuli.js/.test(src)) {
-            Stimuli.blankPage = src.replace('stimuli.js', 'blank.html');
-        }
+Stimuli.keyboard = {
+    specialKey: {},
+    layout: {
+        android: {},
+        linux: {},
+        ios: {},
+        macosx: {},
+        windows: {}
     }
-})();
+};
+
 /**
  * Destroy the stimuli instance
  * @param {Object} options
  */
 Stimuli.prototype.destroy = function(callback) {
-    return this.browser.destroy(callback);
+    var self = this;
+
+    this.context = null;
+    this.viewport = null;
+    this.mouse = null;
+    this.keyboard = null;
+    this.recorder = null;
+    this.scheduler = null;
+    this.listeners = null;
+    this.browser.destroy();
+    // force sizzle to release an eventual reference to the iframe document
+    Sizzle('body', document);
+    this.browser = null;
+    if (callback) {
+        callback();
+    }
 };
 
 /**

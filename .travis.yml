@@ -12,6 +12,7 @@ env:
     - secure: "FBCyQQpcsOreZ0khYc0YNZWFTo6JJVyp8HwL8/FNRP6ecRAI2jKEgfWPiIUuPBtRO+MIfmWm9fRKJtmi8XMHtQc6aDt+gd/uqLICVd00K6cN3ui89uc3QpJiLjMONQ6WJmYjDNCNKQgYq3pP4WRk+MZyE/G++Wp1kBkF9HyBpdE="
     - secure: "PrybvamC97PyuwgE3QJQkUAKDdYqjhDfJSqcpgIH+38TIEoRUEyZFe4Dho79MAc/7t8YynQKhv6yJBWTI8b/aHztzBpV/gHNkp9BA39+Joh8/JHPXCnTTdhH1BxQdmcAX3rnZIzichA5m4W0OL7beIQgfSrezNntOYv9CS+U3Ao="
     - secure: "Wc+aV50jtAPDqf0/eQKyzbdG38/oqzKfOUgduVxw0IGfpnokYr0o40OnJ9jxnLID6Z/y9uTAEOXiuCDJQQyOaFdaX+fB/UvPXr0YHh1FBG/wujfOswesplQ5HzJulfh5dB6r7nE1bhinHJLAcklYfKjzaTJ3hTZzLXrsYGGKrGc="
+    - secure: "DNjUJNW5tPaKJtIRFaYUGUSJMMAeYQlzik+l/fCTyzeGuedLqFc/PItTLljS3q9Q89+0rHpzrgNo1Ku1SZWQZd4YOzE0Fdct32uI0dHFXURwsyh4y5db2VhtqSOjpfhvTeKrLvfXESAYLnPbea31o7RwHXb2ParzWBnbw/j69H4="
 
 before_install:
   - npm config set loglevel error
@@ -27,5 +28,4 @@ before_script:
   - sh -e /etc/init.d/xvfb start
 
 script:
-  -  grunt travis &&
-    .travis/ghpages-deploy.sh
+  -  grunt travis

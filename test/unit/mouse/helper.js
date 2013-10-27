@@ -23,6 +23,10 @@ describe('Stimuli.mouse.Helper', function() {
 
     after(function() {
         stimuli.destroy();
+        yellow = null;
+        blue = null;
+        options = null;
+        helper = null;
         position = null;
     });
 

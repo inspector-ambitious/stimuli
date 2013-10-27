@@ -32,7 +32,7 @@
 
             if (Stimuli.core.Support.documentCreateEvent) { // IE9+, Safari, PhantomJS, Firefox, Chrome
                 
-                event = eventConfig.view.document.createEvent('MouseEvents');
+                event = eventConfig.view.document.createEvent('MouseEvent');
 
                 event.initMouseEvent(
                     eventConfig.type,
@@ -70,18 +70,6 @@
                     var e = eventConfig.view.event;
 
                     e.cancelBubble = !eventConfig.bubbles;
-
-                    // A possible hack to force an event to not be cancelable
-                    // we could set the returnValue to readonly...
-                    // But don't think it's a good idea to do that. 
-                    // Leaving this commented code for now.
-                    // if (!eventConfig.cancelable) {
-                    //     Object.defineProperty( e, 'returnValue', {
-                    //         get: function () {
-                    //             return undefined;
-                    //         }
-                    //     });
-                    // }
 
                     if (currentListener) {
                         currentListener.apply(this);

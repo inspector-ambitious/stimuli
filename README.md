@@ -1,5 +1,9 @@
-Stimuli [![Build Status](https://travis-ci.org/yhwh/stimuli.png?branch=master)](https://travis-ci.org/yhwh/stimuli)
+Stimuli
 =======
+[![Build Status](https://travis-ci.org/yhwh/stimuli.png?branch=master)](https://travis-ci.org/yhwh/stimuli)
+[![Code Climate](https://codeclimate.com/github/yhwh/stimuli.png)](https://codeclimate.com/github/yhwh/stimuli)
+[![Coverage Status](https://coveralls.io/repos/yhwh/stimuli/badge.png)](https://coveralls.io/r/yhwh/stimuli)
+[![devDependency Status](https://david-dm.org/yhwh/stimuli/dev-status.png)](https://david-dm.org/yhwh/stimuli#info=devDependencies)
 
 What is it ?
 ------------

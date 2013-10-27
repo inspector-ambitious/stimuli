@@ -22,6 +22,8 @@ docs
 
 coverage
 
+tmp_coverage
+
 *.sublime-project
 *.sublime-workspace
 

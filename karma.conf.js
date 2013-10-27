@@ -9,6 +9,8 @@ module.exports = function(config) {
     conf.autoWatch = true;
     conf.singleRun = false;
     conf.logLevel = config.LOG_INFO;
+    conf.disableCompression = true;
+
     config.set(conf);
 
 };

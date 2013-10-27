@@ -32,15 +32,62 @@
         },
 
         /**
+         * Determines if an event is a keyboard event
+         * @param {String} eventType The event type
+         * @return {Boolean} True if it's a keyboard event
+         */
+        isKeyboardEvent: function(eventType) {
+            return {
+                keyup: true,
+                keydown: true,
+                keypress: true
+            }[eventType] || false;
+        },
+
+        /**
+         * Determines if an event is a text event
+         * @param {String} eventType The event type
+         * @return {Boolean} True if it's a text event
+         */
+        isTextEvent: function(eventType) {
+            return {
+                textinput: true,
+                textInput: true
+            }[eventType] || false;
+        },
+
+        /**
+         * Determines if an event is a html event
+         * @param {String} eventType The event type
+         * @return {Boolean} True if it's a html event
+         */
+        isHtmlEvent: function(eventType) {
+            return {
+                input: true,
+                paste: true
+            }[eventType] || false;
+        },
+
+        /**
          * Emits the event and call the callback function
          * @param {Object} data The event configuration
          * @param {Function} callback The callback function to be called after the invent is injected.
          */
         emit: function(data, callback) {
-            var result;
+            var eventType = data.type,
+                result;
 
-            if (this.isMouseEvent(data.type)) {
+            if (this.isMouseEvent(eventType)) {
                 result = synthetizer.Mouse.inject(data);
+            }
+            else if (this.isKeyboardEvent(eventType)) {
+                result = synthetizer.Keyboard.inject(data);
+            }
+            else if (this.isTextEvent(eventType)) {
+                result = synthetizer.Text.inject(data);
+            }
+            else if (this.isHtmlEvent(eventType)) {
+                result = synthetizer.Html.inject(data);
             }
 
             callback(result.event, result.canceled);

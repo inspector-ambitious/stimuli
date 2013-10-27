@@ -10,9 +10,8 @@
  */
 (function() {
     
-    Stimuli.shared.Command = function(viewport, args) {
+    Stimuli.shared.Command = function(viewport) {
         var self = this;
-        self.args = args;
         self.viewport = viewport;
     };
 

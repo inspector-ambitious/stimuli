@@ -58,12 +58,12 @@ describe('Stimuli.mouse.Click', function() {
         });
 
         it('should not navigate to the other page if the event is default prevented', function(done) {
-
+            var eventObserver;
             stimuli
                 .browser
                 .navigateTo('/base/test/fixtures/links.html')
                 .then(function() {
-                    var eventObserver = new Stimuli.event.Observer(this.$('#simplediv_link'));
+                    eventObserver = new Stimuli.event.Observer(this.$('#simplediv_link'));
                     eventObserver.subscribe('click', function(e) {
                         if (Stimuli.core.Support.isIE8) {
                             e.returnValue = false;
@@ -76,6 +76,7 @@ describe('Stimuli.mouse.Click', function() {
                 .click('#simplediv_link')
                 .then(function() {
                     expect(/links\.html$/.test(this.getWindow().location + '')).to.be(true);
+                    eventObserver.unsubscribeAll();
                     done();
                 });
         });
@@ -98,12 +99,12 @@ describe('Stimuli.mouse.Click', function() {
         });
 
         it('should not update the current window hash if the event is default prevented', function(done) {
-
+            var eventObserver;
             stimuli
                 .browser
                 .navigateTo('/base/test/fixtures/links.html')
                 .then(function() {
-                    var eventObserver = new Stimuli.event.Observer(this.$('#hashtag_link'));
+                    eventObserver = new Stimuli.event.Observer(this.$('#hashtag_link'));
                     eventObserver.subscribe('click', function(e) {
                         if (Stimuli.core.Support.isIE8) {
                             e.returnValue = false;
@@ -116,6 +117,7 @@ describe('Stimuli.mouse.Click', function() {
                 .click('#hashtag_link')
                 .then(function() {
                     expect(this.getWindow().location.hash + '').not.to.be('#hashtaglink');
+                    eventObserver.unsubscribeAll();
                     done();
                 });
         });
@@ -138,12 +140,12 @@ describe('Stimuli.mouse.Click', function() {
         });
 
         it('should not navigate to the form action if the event is default prevented', function(done) {
-
+            var eventObserver;
             stimuli
                 .browser
                 .navigateTo('/base/test/fixtures/form.html')
                 .then(function() {
-                    var eventObserver = new Stimuli.event.Observer(this.$('#submit_button'));
+                    eventObserver = new Stimuli.event.Observer(this.$('#submit_button'));
                     eventObserver.subscribe('click', function(e) {
                         if (Stimuli.core.Support.isIE8) {
                             e.returnValue = false;
@@ -156,6 +158,7 @@ describe('Stimuli.mouse.Click', function() {
                 .click('#submit_button')
                 .then(function() {
                     expect(/form\.html$/.test(this.getWindow().location + '')).to.be(true);
+                    eventObserver.unsubscribeAll();
                     done();
                 });
         });

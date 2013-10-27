@@ -14,6 +14,13 @@
 
         this.context = context || null;
 
+        this.modifiers = {
+            alt: false,
+            shift: false,
+            control: false,
+            meta: false
+        };
+
     };
 
     var Viewport = Stimuli.shared.Viewport;
@@ -44,14 +51,8 @@
      */
     Viewport.prototype.getVisibleElementAt = function(x, y) {
         var context = this.context.getWindow(),
-            doc = context.document;
-
-        if (x < 0 || y < 0) {
-            return null;
-        }
-
-        var ret = doc.elementFromPoint(x, y);
-
+            doc = context.document,
+            ret = doc.elementFromPoint(x, y);
 
         // IE8 hack: Inside an iframe ie8 doesn't repaint properly inside an iframe, so before calling elementFromPoint
         // we trigger a reflow to force the layout to be recalculated
@@ -75,29 +76,6 @@
         return this.context.getWindow();
     };
 
-    /**
-     * Returns the current document.
-     * @return {Object}
-     */
-    Viewport.prototype.getDocument = function() {
-        return this.context.getWindow().document;
-    };
-
-    /**
-     * Updates window hash.
-     * @param {String} hash The new hash.
-     */
-    Viewport.prototype.updateHash = function(hash) {
-        this.context.getWindow().location.hash = hash;
-    };
-
-    /**
-     * Updates the current window url.
-     * @param {String} url The new url.
-     */
-    Viewport.prototype.updateUrl = function(url) {
-        this.context.getWindow().location = url;
-    };
 
     /**
      * Waits for the viewport to be ready, it allows to block while a stimulus caused
@@ -106,6 +84,53 @@
      */
     Viewport.prototype.waitForReady = function(callback) {
         this.context.waitForReady(callback);
+    };
+
+
+    /**
+     * Returns the currently active keyboard modifiers
+     * @return {String} The modifiers list separated by a whitespace
+     */
+    Viewport.prototype.getModifiers = function() {
+        var array = [],
+            modifiers = this.modifiers,
+            prop;
+
+        for (prop in modifiers) {
+            if (modifiers.hasOwnProperty(prop) && modifiers[prop]) {
+                array.push(prop);
+            }
+
+        }
+
+        return array.join(' ');
+    };
+
+    /**
+     * Returns the state of a keyboard modifier
+     * @param {String} modifierName The modifier name (Shift, Control, Alt or Meta)
+     * @return {Boolean} True is the modifier is active
+     */
+    Viewport.prototype.getModifierState = function(modifierName) {
+
+        return this.modifiers[modifierName];
+    };
+
+    /**
+     * Sets a keyboard modifier active.
+     * @param {String} modifierName The modifier name (Shift, Control, Alt or Meta)
+     */
+    Viewport.prototype.setModifier = function(modifierName) {
+        this.modifiers[modifierName] = true;
+    };
+
+    /**
+     * Sets a keyboard modifier inactive
+     * @param {String} modifierName The modifier name (Shift, Control, Alt or Meta)
+     */
+
+    Viewport.prototype.unsetModifier = function(modifierName) {
+        this.modifiers[modifierName] = true;
     };
 
 
