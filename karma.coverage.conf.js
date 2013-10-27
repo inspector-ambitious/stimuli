@@ -37,7 +37,7 @@ module.exports = function(config) {
     conf.serverHost = '127.0.0.1';
     conf.clientHost = '127.0.0.1';
     conf.clientPort = 8080;
-    conf.transports = ['xhr-polling'];
+    conf.transports = ['jsonp-polling', 'xhr-polling'];
 
     conf.customLaunchers = {
 
