@@ -19,7 +19,7 @@ module.exports = function(config) {
         timeout: 600
     };
     conf.captureTimeout = 90000; // 1 min 30
-    conf.logLevel = config.LOG_INFO;
+    conf.logLevel = config.LOG_DEBUG;
     conf.reportSlowerThan = 30000;
     conf.disconnectTolerance = 5;
     conf.autoWatch = false;
