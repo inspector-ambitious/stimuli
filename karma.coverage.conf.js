@@ -6,7 +6,7 @@ module.exports = function(config) {
     conf.files = files.testFilesDev;
 
 
-    conf.reporters = ['coverage'];
+    conf.reporters = ['minimalist', 'coverage'];
 
     conf.coverageReporter = {
         type: 'lcov',
