@@ -137,7 +137,7 @@ module.exports = function(grunt) {
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.phantom.conf.js', '--browsers',
+            args: ['start', '.karma/karma.phantom.conf.js', '--browsers',
                 'PhantomJS'],
             opts: {stdio: 'inherit'}
         },done);
@@ -147,7 +147,7 @@ module.exports = function(grunt) {
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.coverage.conf.js', '--browsers',
+            args: ['start', '.karma/karma.coverage.conf.js', '--browsers',
             'BS_IOS_7,BS_ANDROID_4,Firefox,PhantomJS,BS_IE8,BS_IE10,BS_IE11,BS_SAFARI6'], //BS_ANDROID_4,Firefox,PhantomJS,BS_IE8,BS_IE10,BS_IE11,BS_SAFARI6'],
             opts: {stdio: 'inherit'}
         },done);
@@ -173,7 +173,7 @@ module.exports = function(grunt) {
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.travis.conf.js', '--browsers',
+            args: ['start', '.karma/karma.travis.conf.js', '--browsers',
             'BS_ANDROID_4,BS_ANDROID_41,BS_ANDROID_42,BS_IOS_7,BS_IE8,BS_IE9,BS_IE10,BS_IE11,BS_FIREFOX,BS_CHROME,BS_SAFARI51,BS_SAFARI6'
             ],
             opts: {stdio: 'inherit'}
@@ -184,7 +184,7 @@ module.exports = function(grunt) {
         var done = this.async();
         grunt.util.spawn({
             cmd: 'karma',
-            args: ['start', 'karma.conf.js'],
+            args: ['start', '.karma/karma.conf.js'],
             opts: {stdio: 'inherit'}
         },done);
     });
