@@ -44,7 +44,7 @@ Build stimuli in build/:
 How to tests ?
 --------------
 
-The testing frameworks are: [mocha](http://visionmedia.github.io/mocha/),
+The testing frameworks are: [mocha](http://mochajs.org/),
 [Sinon.JS](http://sinonjs.org/) and [expect.js](https://github.com/LearnBoost/expect.js/).
 
 The tests are automatically run with [karma](http://karma-runner.github.io/).
